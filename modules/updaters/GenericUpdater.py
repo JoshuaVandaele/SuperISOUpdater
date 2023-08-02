@@ -23,7 +23,8 @@ class GenericUpdater(ABC):
             file_path (str): The path to the file that needs to be updated.
         """
         self.file_path = os.path.abspath(file_path)
-        self.folder_path = os.path.dirname(self.file_path)
+        self.folder_path = os.path.dirname(file_path)
+
         self.version_splitter = "."
 
         if self.has_edition():
@@ -32,6 +33,14 @@ class GenericUpdater(ABC):
             ):
                 raise ValueError(
                     f"Invalid edition. The available editions are: {', '.join(self.valid_editions)}."  # type: ignore
+                )
+
+        if self.has_lang():
+            if self.lang.lower() not in (  # type: ignore
+                valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
+            ):
+                raise ValueError(
+                    f"Invalid language. The available languages are: {', '.join(self.valid_langs)}."  # type: ignore
                 )
 
         os.makedirs(self.folder_path, exist_ok=True)
@@ -48,14 +57,14 @@ class GenericUpdater(ABC):
 
         # Determine the old and new file paths
         old_file = self._get_local_file()
-        if versioning_flag:
-            new_file = self._get_versioned_latest_file_name(absolute=True, edition=True)
-        else:
-            if self.has_edition():
-                new_file = self._get_editioned_file_name(absolute=True)
-            else:
-                new_file = self.file_path
+        new_file = self._get_normalized_file_path(
+            True,
+            self._get_latest_version(),
+            self.edition if self.has_edition() else None,  # type: ignore
+            self.lang if self.has_lang() else None,  # type: ignore
+        )
 
+        if not versioning_flag:
             # If the file is being replaced, back it up
             if old_file:
                 old_file += ".old"
@@ -76,7 +85,7 @@ class GenericUpdater(ABC):
                 "Integrity check failed: An error occurred"
             ) from e
 
-        if not self.check_integrity():
+        if not integrity_check:
             # If integrity check failed, restore the old file or remove the new file
             if versioning_flag or not old_file:
                 os.remove(new_file)
@@ -161,10 +170,13 @@ class GenericUpdater(ABC):
         Returns:
             str | None: The path of the locally stored file if found, None if no file exists.
         """
-        if self.has_edition():
-            file_path = self._get_editioned_file_name(absolute=True)
-        else:
-            file_path = self.file_path
+        file_path = self._get_normalized_file_path(
+            absolute=True,
+            version=None,
+            edition=self.edition if self.has_edition() else None,  # type: ignore
+            lang=self.lang if self.has_lang() else None,  # type: ignore
+        )
+
         local_files = glob.glob(file_path.replace("[[VER]]", "*"))
 
         if local_files:
@@ -183,16 +195,23 @@ class GenericUpdater(ABC):
 
         local_file = self._get_local_file()
 
-        if not local_file or "[[VER]]" not in self._get_editioned_file_name():
+        if not local_file or "[[VER]]" not in self.file_path:
             return None
 
+        normalized_path: str = self._get_normalized_file_path(
+            absolute=True,
+            version=None,
+            edition=self.edition if self.has_edition() else None,  # type: ignore
+            lang=self.lang if self.has_lang() else None,  # type: ignore
+        )
+
         local_version_regex = re.search(
-            self._get_editioned_file_name().replace("[[VER]]", r"(.+)"),
-            local_file,
+            normalized_path.replace("[[VER]]", r"(.+)"), local_file
         )
 
         if local_version_regex:
             local_version = self._str_to_version(local_version_regex.group(1))
+
         return local_version
 
     def _get_latest_version(self) -> list[str]:
@@ -297,3 +316,55 @@ class GenericUpdater(ABC):
             return file_name
 
         return file_name.replace("[[EDITION]]", self.edition)  # type: ignore
+
+    def has_lang(self) -> bool:
+        return (
+            hasattr(self, "lang")
+            and hasattr(self, "valid_langs")
+            and "[[LANG]]" in self.file_path
+        )
+
+    def _get_lang_file_name(self, absolute: bool = False) -> str:
+        file_name = self.file_path if absolute else os.path.basename(self.file_path)
+
+        if not self.has_lang():
+            return file_name
+
+        return file_name.replace("[[LANG]]", self.lang)  # type: ignore
+
+    def _get_normalized_file_path(
+        self,
+        absolute: bool,
+        version: list[str] | None = None,
+        edition: str | None = None,
+        lang: str | None = None,
+    ) -> str:
+        """
+        Get the normalized file path with customizable version, edition, and language.
+
+        Args:
+            absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
+            version (list[str] | None, optional): The version as a list of version components. Defaults to None.
+            edition (str | None, optional): The edition of the file. Defaults to None.
+            lang (str | None, optional): The language of the file. Defaults to None.
+
+        Returns:
+            str: The normalized file path.
+        """
+        file_name: str = os.path.basename(self.file_path)
+
+        # Replace placeholders with the specified version, edition, and language
+        if version is not None and "[[VER]]" in file_name:
+            file_name = file_name.replace("[[VER]]", self._version_to_str(version))
+
+        if edition is not None and "[[EDITION]]" in file_name:
+            file_name = file_name.replace("[[EDITION]]", edition)
+
+        if lang is not None and "[[LANG]]" in file_name:
+            file_name = file_name.replace("[[LANG]]", lang)
+
+        # Remove all spaces from the file name
+        file_name = "".join(file_name.split())
+
+        # Return the absolute or relative file path based on the 'absolute' parameter
+        return os.path.join(self.folder_path, file_name) if absolute else file_name

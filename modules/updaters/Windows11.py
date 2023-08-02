@@ -25,9 +25,56 @@ class Windows11(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
+    def __init__(self, folder_path: str, lang: str) -> None:
+        self.valid_langs = [
+            "Arabic",
+            "Brazilian Portuguese",
+            "Bulgarian",
+            "Chinese",
+            "Chinese",
+            "Croatian",
+            "Czech",
+            "Danish",
+            "Dutch",
+            "English",
+            "English International",
+            "Estonian",
+            "Finnish",
+            "French",
+            "French Canadian",
+            "German",
+            "Greek",
+            "Hebrew",
+            "Hungarian",
+            "Italian",
+            "Japanese",
+            "Korean",
+            "Latvian",
+            "Lithuanian",
+            "Norwegian",
+            "Polish",
+            "Portuguese",
+            "Romanian",
+            "Russian",
+            "Serbian Latin",
+            "Slovak",
+            "Slovenian",
+            "Spanish",
+            "Spanish (Mexico)",
+            "Swedish",
+            "Thai",
+            "Turkish",
+            "Ukrainian",
+        ]
+        self.lang = lang
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
+        # Make the parameter case insensitive, and find back the correct case using valid_editions
+        self.lang = next(
+            valid_lang
+            for valid_lang in self.valid_langs
+            if valid_lang.lower() == self.lang.lower()
+        )
         self.version_splitter = "H"
         self.headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0",
@@ -56,7 +103,9 @@ class Windows11(GenericUpdater):
         self.hash: str | None = None
 
     def _get_download_link(self) -> str:
-        download_link, self.hash = windows_consumer_download(windows_version="11")
+        download_link, self.hash = windows_consumer_download(
+            windows_version="11", lang=self.lang
+        )
         return download_link
 
     def check_integrity(self) -> bool:
@@ -64,7 +113,9 @@ class Windows11(GenericUpdater):
             return False
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True),
+            self._get_normalized_file_path(
+                True, self._get_latest_version(), None, self.lang
+            ),
             self.hash,
         )
 
