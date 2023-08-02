@@ -18,7 +18,7 @@ git clone https://github.com/FolfyBlue/SuperISOUpdater
 
 ## Usage
 
-To use the `update_isos.py` script, follow these steps:
+To use the `superiso.py` script, follow these steps:
 
 1. Open your terminal or command prompt.
 2. Navigate to the directory where you placed the script (SuperISOUpdater).
@@ -26,19 +26,19 @@ To use the `update_isos.py` script, follow these steps:
 ### Running the script
 
 ```sh
-python update_isos.py <Ventoy Partition>
+python superiso.py <Ventoy Partition>
 ```
 
 #### Example on Windows
 
 ```sh
-python update_isos.py E:
+python superiso.py E:
 ```
 
 #### Example on Linux
 
 ```sh
-python update_isos.py /run/media/folfy/Ventoy/
+python superiso.py /run/media/folfy/Ventoy/
 ```
 
 ### Logging
@@ -48,18 +48,18 @@ The script generates logs during its execution. You can control the log level us
 To set a specific log level, use the `-l` option followed by the desired log level:
 
 ```sh
-python update_isos.py <Ventoy Partition> -l DEBUG
+python superiso.py <Ventoy Partition> -l DEBUG
 ```
 
 You can also specify a log file using the `-f` or `--log-file` argument to save the logs to a file instead of displaying them in the console:
 
 ```sh
-python update_isos.py <Ventoy Partition> -f /path/to/log_file.log
+python superiso.py <Ventoy Partition> -f /path/to/log_file.log
 ```
 
 ## Customization
 
-The `update_isos.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
+The `superiso.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
 
 To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs by modifying the corresponding values in the configuration file.
 
