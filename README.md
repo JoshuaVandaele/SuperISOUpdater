@@ -99,8 +99,8 @@ The tool currently supports the following ISOs:
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
   - **Windows**
-    - Windows 11
-    - Windows 10
+    - Windows 11 (Multi-edition ISO, Any language)
+    - Windows 10 (Multi-edition ISO, Any language)
   - **Other**
     - N/A
 

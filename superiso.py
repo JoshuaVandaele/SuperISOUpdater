@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 from typing import Type
 
 from modules.updaters import *
@@ -71,28 +72,35 @@ def run_updaters(
 
             updaters: list[GenericUpdater] = []
 
+            params: list[dict] = []
             # Parse parameters and create updater instances
-            if not value:
-                updaters.append(updater_class(install_path))
+            if "editions" in value:
+                for edition in value["editions"]:
+                    params.append({"edition": edition})
             else:
-                if "editions" in value:
-                    for edition in value["editions"]:
-                        try:
-                            updaters.append(
-                                updater_class(install_path, edition=edition)
-                            )
-                        except Exception:
-                            installer_for = f"{key} {edition}"
-                            logging.exception(
-                                f"[{installer_for}] An error occurred while trying to add the installer. See traceback below."
-                            )
+                params.append({})
+            if "lang" in value:
+                param_len = len(params)
+                params += params
+                for i in range(param_len):
+                    for lang in value["lang"]:
+                        params[i]["lang"] = lang
+                        params[i + param_len]["lang"] = lang
 
+            for param in params:
+                try:
+                    updaters.append(updater_class(install_path, **param))
+                except Exception:
+                    installer_for = f"{key} {param}"
+                    logging.exception(
+                        f"[{installer_for}] An error occurred while trying to add the installer. See traceback below."
+                    )
             # Run updater(s)
             for updater in updaters:
                 run_updater(updater)
 
         else:
-            run_updaters(f"{install_path}/{key}", value, updater_list)
+            run_updaters(os.path.join(install_path, key), value, updater_list)
 
 
 def main(ventoy_path: str, log_level: str, log_file: str | None):
@@ -161,5 +169,5 @@ if __name__ == "__main__":
         main(args.ventoy_path, args.log_level, args.log_file)
     except Exception:
         logging_critical_exception(
-            "An error occurred while executing the main function! See traceback bellow for a detailed traceback."
+            "An error occurred while executing the main function! See traceback below for a detailed traceback."
         )
