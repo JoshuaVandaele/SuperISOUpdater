@@ -13,6 +13,7 @@ class GenericUpdater(ABC):
     Abstract base class for a generic updater that manages software updates.
 
     Attributes:
+        file_path (str): The path to the file that needs to be updated.
     """
 
     def __init__(self, file_path: str, *args, **kwargs) -> None:
@@ -297,12 +298,27 @@ class GenericUpdater(ABC):
         )
 
     def _str_to_version(self, version_str: str):
+        """
+        Convert a version string to a list of version components.
+
+        Args:
+            version_str (str): The version as a string.
+
+        Returns:
+            list[str]: The version as a list of version components.
+        """
         return [
             version_number.strip()
             for version_number in version_str.split(self.version_splitter)
         ]
 
     def has_edition(self) -> bool:
+        """
+        Check if the updater supports different editions.
+
+        Returns:
+            bool: True if different editions are supported, False otherwise.
+        """
         return (
             hasattr(self, "edition")
             and hasattr(self, "valid_editions")
@@ -310,6 +326,15 @@ class GenericUpdater(ABC):
         )
 
     def _get_editioned_file_name(self, absolute: bool = False) -> str:
+        """
+        Get the file name with the edition component replaced by the specified edition.
+
+        Args:
+            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
+
+        Returns:
+            str: The editioned file name.
+        """
         file_name = self.file_path if absolute else os.path.basename(self.file_path)
 
         if not self.has_edition():
@@ -318,6 +343,12 @@ class GenericUpdater(ABC):
         return file_name.replace("[[EDITION]]", self.edition)  # type: ignore
 
     def has_lang(self) -> bool:
+        """
+        Check if the updater supports different languages.
+
+        Returns:
+            bool: True if different languages are supported, False otherwise.
+        """
         return (
             hasattr(self, "lang")
             and hasattr(self, "valid_langs")
@@ -325,6 +356,15 @@ class GenericUpdater(ABC):
         )
 
     def _get_lang_file_name(self, absolute: bool = False) -> str:
+        """
+        Get the file name with the language component replaced by the specified language.
+
+        Args:
+            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
+
+        Returns:
+            str: The language file name.
+        """
         file_name = self.file_path if absolute else os.path.basename(self.file_path)
 
         if not self.has_lang():
