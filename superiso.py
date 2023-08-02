@@ -1,4 +1,5 @@
 import argparse
+import copy
 import logging
 import os
 from typing import Type
@@ -81,7 +82,7 @@ def run_updaters(
                 params.append({})
             if "lang" in value:
                 param_len = len(params)
-                params += params
+                params += copy.deepcopy(params)
                 for i in range(param_len):
                     for lang in value["lang"]:
                         params[i]["lang"] = lang
