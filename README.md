@@ -16,12 +16,24 @@ Super ISO Updater is a powerful tool that provides a convenient way to check for
 git clone https://github.com/FolfyBlue/SuperISOUpdater
 ```
 
+2. Navigate into the newly created directory by running
+
+```sh
+cd SuperISOUpdater
+```
+
+3. Install the requirements with the following command:
+
+```sh
+python -m pip install -r requirements.txt
+```
+
 ## Usage
 
 To use the `superiso.py` script, follow these steps:
 
 1. Open your terminal or command prompt.
-2. Navigate to the directory where you placed the script (SuperISOUpdater).
+2. Navigate to the directory where you cloned the script.
 
 ### Running the script
 
