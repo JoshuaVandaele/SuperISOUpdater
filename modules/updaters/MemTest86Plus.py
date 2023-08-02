@@ -53,7 +53,7 @@ class MemTest86Plus(GenericUpdater):
             )
 
         self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="lxml"
+            self.download_page.content, features="html.parser"
         )
         self.soup_download_card: Tag = self.soup_download_page.find(
             "div", attrs={"class": "col-xxl-4"}

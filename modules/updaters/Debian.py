@@ -54,7 +54,7 @@ class Debian(GenericUpdater):
             )
 
         self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="lxml"
+            self.download_page.content, features="html.parser"
         )
 
         self.soup_index_list: Tag = self.soup_download_page.find(
