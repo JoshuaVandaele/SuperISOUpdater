@@ -1,0 +1,96 @@
+# Diagnostic Tools
+
+[DiagnosticTools]
+enabled = true
+directory = "Diagnostic Tools"
+
+[DiagnosticTools.HirensBootCDPE]
+enabled = true
+
+[DiagnosticTools.MemTest86Plus]
+enabled = true
+
+[DiagnosticTools.SystemRescue]
+enabled = true
+
+# Boot Repair
+
+[BootRepair]
+enabled = true
+directory = "Boot Repair"
+
+[BootRepair.SuperGrub2]
+enabled = true
+
+# Operating Systems
+
+[OperatingSystems]
+enabled = true
+directory = "Operating Systems"
+
+# Linux
+[OperatingSystems.Linux]
+enabled = true
+directory = "Linux"
+
+[OperatingSystems.Linux.ArchLinux]
+enabled = true
+
+[OperatingSystems.Linux.Debian]
+enabled = true
+# Available editions:
+# "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce"
+editions = ["kde"]
+
+[OperatingSystems.Linux.Ubuntu]
+enabled = true
+# Available editions:
+# "LTS", "interim"
+editions = ["LTS"]
+
+[OperatingSystems.Linux.Fedora]
+enabled = true
+# Available editions:
+# "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3"
+editions = ["KDE"]
+
+[OperatingSystems.Linux.KaliLinux]
+enabled = true
+# Available editions:
+# "installer", "installer-netinst", "installer-purple", "live"
+editions = ["installer", "live"]
+
+[OperatingSystems.Linux.LinuxMint]
+enabled = true
+# Available editions:
+# "cinnamon", "mate", "xfce"
+editions = ["cinnamon"]
+
+[OperatingSystems.Linux.Manjaro]
+enabled = true
+# Available editions:
+# "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "sway", "mate"
+editions = ["plasma"]
+
+[OperatingSystems.Linux.OpenSUSE]
+enabled = true
+# Available editions:
+# "leap", "leap-micro", "jump"
+editions = ["leap"]
+
+[OperatingSystems.Linux.RockyLinux]
+enabled = true
+# Available editions:
+# "dvd", "boot", "minimal"
+editions = ["dvd"]
+
+# Windows
+[OperatingSystems.Windows]
+enabled = true
+directory = "Windows"
+
+[OperatingSystems.Windows.Windows11]
+enabled = true
+
+[OperatingSystems.Windows.Windows10]
+enabled = true
