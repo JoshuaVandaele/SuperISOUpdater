@@ -1,6 +1,6 @@
 # Super ISO Updater
 
-This tool provides a convenient way to check for updates and install the latest versions of various ISO files. It is designed to work with a Ventoy drive and supports a variety of ISOs. This README will guide you on how to use this tool effectively.
+Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is specifically designed to work with a Ventoy drive and supports a wide range of ISOs. This README will guide you on how to use this tool effectively.
 
 ## Getting Started
 
@@ -10,11 +10,18 @@ This tool provides a convenient way to check for updates and install the latest 
 
 ### Installation
 
-1. Clone this repository locally using `git clone https://github.com/FolfyBlue/SuperISOUpdater`
+1. Clone this repository locally by running
+
+```sh
+git clone https://github.com/FolfyBlue/SuperISOUpdater
+```
 
 ## Usage
 
-To use the `update_isos.py` script, open your terminal or command prompt, navigate to the directory where you placed the script, and follow the steps below:
+To use the `update_isos.py` script, follow these steps:
+
+1. Open your terminal or command prompt.
+2. Navigate to the directory where you placed the script (SuperISOUpdater).
 
 ### Running the script
 
@@ -54,7 +61,7 @@ python update_isos.py <Ventoy Partition> -f /path/to/log_file.log
 
 The `update_isos.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
 
-To customize the ISOs, open the config.toml file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs by modifying the corresponding values in the configuration file.
+To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs by modifying the corresponding values in the configuration file.
 
 _NOTE: Be cautious when modifying the configuration file, as incorrect changes may cause the script to malfunction._
 
@@ -62,25 +69,37 @@ _NOTE: Be cautious when modifying the configuration file, as incorrect changes m
 
 The tool currently supports the following ISOs:
 
-- Diagnostic Tools
+- **Diagnostic Tools**
   - Hiren's BootCD PE
   - Memtest86+
   - SystemRescue
-- Boot Repair
+- **Boot Repair**
   - Super Grub 2
-- Operating Systems
-  - Linux
+- **Operating Systems**
+  - **Linux**
     - Arch Linux
-    - Debian
-    - Ubuntu
-    - Fedora
-    - Linux Mint
-    - Manjaro
-    - Kali Linux
-    - Rocky Linux
-    - OpenSUSE
-  - Windows
+    - Debian (editions: "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce")
+    - Ubuntu (editions: "LTS", "interim")
+    - Fedora (editions: "KDE", "Budgie", "Cinnamon", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
+    - Linux Mint (editions: "cinnamon", "mate", "xfce")
+    - Manjaro (editions: "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "sway", "mate")
+    - Kali Linux (editions: "installer", "live", "installer-netinst", "installer-purple")
+    - Rocky Linux (editions: "dvd", "boot", "minimal")
+    - OpenSUSE (editions: "leap", "leap-micro", "jump")
+  - **Windows**
     - Windows 11
     - Windows 10
-  - Other
+  - **Other**
     - N/A
+
+## Contribute
+
+If you have any suggestions, bug reports, or feature requests, feel free to open an issue or submit a pull request. Your contributions are highly appreciated!
+
+## License
+
+This project is licensed under the [GPLv3 License](./LICENSE).
+
+---
+
+Thank you for using Super ISO Updater! If you encounter any issues or need assistance, please don't hesitate to reach out. Happy updating!
