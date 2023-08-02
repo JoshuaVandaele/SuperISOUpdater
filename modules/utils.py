@@ -249,7 +249,7 @@ def windows_consumer_download(
     iso_download_link_page = f"https://www.microsoft.com/en-US/api/controls/contentinclude/html?pageId=6e2a1789-ef16-4f27-a296-74ef7ef5d96b&host=www.microsoft.com&segments=software-download,{url_segment}&query=&action=GetProductDownloadLinksBySku&sessionId={session_id}&skuId={sku_id}&language={lang}&sdVersion=2"
     r = requests.get(iso_download_link_page, headers=headers)
 
-    s = BeautifulSoup(r.content, features="lxml")
+    s = BeautifulSoup(r.content, features="html.parser")
 
     hash_table: Tag | None = s.find("table", "table-bordered")  # type: ignore
     if not hash_table:

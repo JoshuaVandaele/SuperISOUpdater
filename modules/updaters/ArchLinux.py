@@ -36,7 +36,7 @@ class ArchLinux(GenericUpdater):
             )
 
         self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="lxml"
+            self.download_page.content, features="html.parser"
         )
 
     def _get_download_link(self) -> str:

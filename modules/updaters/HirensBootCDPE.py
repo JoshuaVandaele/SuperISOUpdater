@@ -37,7 +37,7 @@ class HirensBootCDPE(GenericUpdater):
             )
 
         self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="lxml"
+            self.download_page.content, features="html.parser"
         )
 
     def _find_in_table(self, row_name_contains: str) -> Tag | None:
