@@ -2,13 +2,13 @@ import hashlib
 import logging
 import os
 import re
-import shutil
 import traceback
 import uuid
 
 import requests
 import tomllib
 from bs4 import BeautifulSoup, Tag
+from tqdm import tqdm
 
 
 def logging_critical_exception(msg, *args, **kwargs):
@@ -154,21 +154,35 @@ def parse_hash(
     )
 
 
-def download_file(url: str, local_file: str) -> None:
+def download_file(url: str, local_file: str, progress_bar: bool = True) -> None:
     """
     Download a file from a given URL and save it to the local file system.
 
     Args:
         url (str): The URL of the file to download.
         local_file (str): The path where the downloaded file will be saved on the local file system.
+        progress_bar (bool): Whether to show a progress bar during the download (default: True).
 
     Returns:
         None
     """
     logging.debug(f"[download_file] Downloading {url} to {os.path.abspath(local_file)}")
     with requests.get(url, stream=True) as r:
+        total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
+
         with open(local_file, "wb") as f:
-            shutil.copyfileobj(r.raw, f)
+            if progress_bar:
+                with tqdm(
+                    total=total_size,
+                    unit="B",
+                    desc=os.path.basename(local_file),
+                ) as pbar:
+                    for data in r.iter_content():
+                        f.write(data)
+                        pbar.update(len(data))
+            else:
+                for data in r.iter_content():
+                    f.write(data)
 
 
 def windows_consumer_download(
