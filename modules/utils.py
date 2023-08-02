@@ -2,6 +2,7 @@ import hashlib
 import logging
 import os
 import re
+import shutil
 import traceback
 import uuid
 
@@ -177,12 +178,12 @@ def download_file(url: str, local_file: str, progress_bar: bool = True) -> None:
                     unit="B",
                     desc=os.path.basename(local_file),
                 ) as pbar:
-                    for data in r.iter_content():
-                        f.write(data)
-                        pbar.update(len(data))
+                    for chunk in r.iter_content(chunk_size=1024):
+                        if chunk:
+                            f.write(chunk)
+                            pbar.update(len(chunk))
             else:
-                for data in r.iter_content():
-                    f.write(data)
+                shutil.copyfileobj(r.raw, f)
 
 
 def windows_consumer_download(
