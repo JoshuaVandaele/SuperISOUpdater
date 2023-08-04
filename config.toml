@@ -127,7 +127,6 @@ langs = ["English International"]
 enabled = true
 directory = "Other"
 
-
 [OperatingSystems.Other.FreeDOS]
 enabled = true
 # Available editions:

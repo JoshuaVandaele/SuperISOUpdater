@@ -14,7 +14,7 @@ FILE_NAME = "Win11_[[VER]]_EnglishInternational_x64v2.iso"
 
 class Windows11(GenericUpdater):
     """
-    A class representing an updater for Windows11.
+    A class representing an updater for Windows 11.
 
     Attributes:
         download_page (requests.Response): The HTTP response containing the download page HTML.

@@ -12,7 +12,7 @@ FILE_NAME = "openSUSE-[[EDITION]]-[[VER]]-DVD-x86_64-Current.iso"
 
 class OpenSUSE(GenericUpdater):
     """
-    A class representing an updater for OpenSUSE Leap.
+    A class representing an updater for OpenSUSE.
 
     Attributes:
         valid_editions (list[str]): List of valid editions to use
