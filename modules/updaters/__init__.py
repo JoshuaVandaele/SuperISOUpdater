@@ -3,6 +3,7 @@ from .Clonezilla import Clonezilla
 from .Debian import Debian
 from .Fedora import Fedora
 from .GenericUpdater import GenericUpdater
+from .GPartedLive import GPartedLive
 from .HirensBootCDPE import HirensBootCDPE
 from .KaliLinux import KaliLinux
 from .LinuxMint import LinuxMint
@@ -22,6 +23,7 @@ __all__ = [
     "Clonezilla",
     "Fedora",
     "GenericUpdater",
+    "GPartedLive",
     "HirensBootCDPE",
     "KaliLinux",
     "LinuxMint",
