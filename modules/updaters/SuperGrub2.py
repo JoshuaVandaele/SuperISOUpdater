@@ -54,7 +54,7 @@ class SuperGrub2(GenericUpdater):
     def install_latest_version(self) -> None:
         download_link: str = self._get_download_link()
 
-        new_file = self._get_versioned_latest_file_name(absolute=True)
+        new_file = self._get_complete_normalized_file_path(absolute=True)
 
         archive_path = f"{new_file}.zip"
 

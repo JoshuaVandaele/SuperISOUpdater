@@ -56,7 +56,7 @@ class Manjaro(GenericUpdater):
         sha512_sum = parse_hash(sha512_sums, [], 0)
 
         return sha512_hash_check(
-            self._get_versioned_latest_file_name(absolute=True, edition=True),
+            self._get_complete_normalized_file_path(absolute=True),
             sha512_sum,
         )
 

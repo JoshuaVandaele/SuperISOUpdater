@@ -41,7 +41,7 @@ class OpenSUSE(GenericUpdater):
         sha256_sum = parse_hash(sha256_sums, [], 0)
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True, edition=True),
+            self._get_complete_normalized_file_path(absolute=True),
             sha256_sum,
         )
 

@@ -69,12 +69,7 @@ class FreeDOS(GenericUpdater):
         """
         download_link = self._get_download_link()
 
-        new_file = self._get_normalized_file_path(
-            True,
-            self._get_latest_version(),
-            self.edition if self.has_edition() else None,  # type: ignore
-            self.lang if self.has_lang() else None,  # type: ignore
-        )
+        new_file = self._get_complete_normalized_file_path(absolute=True)
         archive_path = new_file.replace("[[EXT]]", "zip")
 
         local_file = self._get_local_file()

@@ -49,11 +49,11 @@ class ArchLinux(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_versioned_latest_file_name()], 0
+            sha256_sums, [self._get_complete_normalized_file_path(absolute=False)], 0
         )
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True),
+            self._get_complete_normalized_file_path(absolute=True),
             sha256_sum,
         )
 

@@ -72,5 +72,5 @@ class Clonezilla(GenericUpdater):
         sha256_hash = parse_hash(sha256_sums, ["amd64.iso"], 0)
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True), sha256_hash
+            self._get_complete_normalized_file_path(absolute=True), sha256_hash
         )

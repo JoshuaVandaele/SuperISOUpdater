@@ -89,7 +89,7 @@ class UltimateBootCD(GenericUpdater):
         )
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True), sha256_sum
+            self._get_complete_normalized_file_path(absolute=True), sha256_sum
         )
 
     def _get_latest_version(self) -> list[str]:
