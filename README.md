@@ -85,6 +85,7 @@ The tool currently supports the following ISOs:
   - Hiren's BootCD PE
   - Memtest86+
   - SystemRescue
+  - UltimateBootCD
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
