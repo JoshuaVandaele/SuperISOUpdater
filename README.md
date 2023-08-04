@@ -89,6 +89,7 @@ The tool currently supports the following ISOs:
   - Super Grub 2
 - **Disk Utilities**
   - Clonezilla
+  - GParted Live
 - **Operating Systems**
   - **Linux**
     - Arch Linux

@@ -31,6 +31,9 @@ directory = "Disk Utilities"
 [DiskUtils.Clonezilla]
 enabled = true
 
+[DiskUtils.GPartedLive]
+enabled = true
+
 # Operating Systems
 
 [OperatingSystems]

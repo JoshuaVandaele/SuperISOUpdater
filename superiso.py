@@ -127,6 +127,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         SuperGrub2,
         # Disk Utilities
         Clonezilla,
+        GPartedLive,
         # Operating Systems
         ArchLinux,
         Debian,
