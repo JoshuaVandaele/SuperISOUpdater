@@ -73,20 +73,21 @@ def run_updaters(
 
             updaters: list[GenericUpdater] = []
 
-            params: list[dict] = []
-            # Parse parameters and create updater instances
-            if "editions" in value:
-                for edition in value["editions"]:
-                    params.append({"edition": edition})
-            else:
-                params.append({})
-            if "lang" in value:
-                param_len = len(params)
-                params += copy.deepcopy(params)
-                for i in range(param_len):
-                    for lang in value["lang"]:
-                        params[i]["lang"] = lang
-                        params[i + param_len]["lang"] = lang
+            params: list[dict] = [{}]
+
+            editions = value.get("editions", [])
+            langs = value.get("langs", [])
+
+            if editions and langs:
+                params = [
+                    {"edition": edition, "lang": lang}
+                    for edition in editions
+                    for lang in langs
+                ]
+            elif editions:
+                params = [{"edition": edition} for edition in editions]
+            elif langs:
+                params = [{"lang": lang} for lang in langs]
 
             for param in params:
                 try:
