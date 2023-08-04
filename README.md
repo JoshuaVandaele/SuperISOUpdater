@@ -87,6 +87,8 @@ The tool currently supports the following ISOs:
   - SystemRescue
 - **Boot Repair**
   - Super Grub 2
+- **Disk Utilities**
+  - Clonezilla
 - **Operating Systems**
   - **Linux**
     - Arch Linux

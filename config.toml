@@ -22,6 +22,15 @@ directory = "Boot Repair"
 [BootRepair.SuperGrub2]
 enabled = true
 
+# Disk Utilities
+
+[DiskUtils]
+enabled = true
+directory = "Disk Utilities"
+
+[DiskUtils.Clonezilla]
+enabled = true
+
 # Operating Systems
 
 [OperatingSystems]
