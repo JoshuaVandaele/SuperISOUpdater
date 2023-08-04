@@ -115,3 +115,15 @@ enabled = true
 # Available languages:
 # "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
 lang = ["English International"]
+
+# Other
+[OperatingSystems.Other]
+enabled = true
+directory = "Other"
+
+
+[OperatingSystems.Other.FreeDOS]
+enabled = true
+# Available editions:
+# "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD"
+editions = ["LiveCD"]
