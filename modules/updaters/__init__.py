@@ -1,4 +1,5 @@
 from .ArchLinux import ArchLinux
+from .Clonezilla import Clonezilla
 from .Debian import Debian
 from .Fedora import Fedora
 from .GenericUpdater import GenericUpdater
@@ -18,6 +19,7 @@ from .Windows11 import Windows11
 __all__ = [
     "ArchLinux",
     "Debian",
+    "Clonezilla",
     "Fedora",
     "GenericUpdater",
     "HirensBootCDPE",

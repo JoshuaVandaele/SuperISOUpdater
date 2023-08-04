@@ -125,6 +125,8 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         SystemRescue,
         # Boot Repair
         SuperGrub2,
+        # Disk Utilities
+        Clonezilla,
         # Operating Systems
         ArchLinux,
         Debian,
