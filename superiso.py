@@ -123,6 +123,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         HirensBootCDPE,
         MemTest86Plus,
         SystemRescue,
+        UltimateBootCD,
         # Boot Repair
         SuperGrub2,
         # Disk Utilities

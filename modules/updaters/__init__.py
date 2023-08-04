@@ -14,6 +14,7 @@ from .RockyLinux import RockyLinux
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .Ubuntu import Ubuntu
+from .UltimateBootCD import UltimateBootCD
 from .Windows10 import Windows10
 from .Windows11 import Windows11
 
@@ -34,6 +35,7 @@ __all__ = [
     "SuperGrub2",
     "SystemRescue",
     "Ubuntu",
+    "UltimateBootCD",
     "Windows10",
     "Windows11",
 ]

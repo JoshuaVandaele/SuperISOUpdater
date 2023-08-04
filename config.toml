@@ -13,6 +13,9 @@ enabled = true
 [DiagnosticTools.SystemRescue]
 enabled = true
 
+[DiagnosticTools.UltimateBootCD]
+enabled = true
+
 # Boot Repair
 
 [BootRepair]
