@@ -14,7 +14,7 @@ FILE_NAME = "manjaro-[[EDITION]]-[[VER]]-linux61.iso"
 
 class Manjaro(GenericUpdater):
     """
-    A class representing an updater for Manjaro Plasma.
+    A class representing an updater for Manjaro.
 
     Attributes:
         valid_editions (list[str]): List of valid editions to use

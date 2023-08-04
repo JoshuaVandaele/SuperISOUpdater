@@ -14,7 +14,7 @@ FILE_NAME = "ubuntu-[[EDITION]]-[[VER]]-desktop-amd64.iso"
 
 class Ubuntu(GenericUpdater):
     """
-    A class representing an updater for Ubuntu LTS.
+    A class representing an updater for Ubuntu.
 
     Attributes:
         valid_editions (list[str]): List of valid editions to use

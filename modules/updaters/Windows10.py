@@ -15,7 +15,7 @@ FILE_NAME = "Win10_[[VER]]_[[LANG]]_x64v1.iso"
 
 class Windows10(GenericUpdater):
     """
-    A class representing an updater for Windows10.
+    A class representing an updater for Windows 10.
 
     Attributes:
         download_page (requests.Response): The HTTP response containing the download page HTML.

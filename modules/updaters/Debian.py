@@ -14,7 +14,7 @@ FILE_NAME = "debian-live-[[VER]]-amd64-[[EDITION]].iso"
 
 class Debian(GenericUpdater):
     """
-    A class representing an updater for Debian Live (KDE).
+    A class representing an updater for Debian.
 
     Attributes:
         valid_editions (list[str]): List of valid editions to use
