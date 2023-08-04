@@ -14,6 +14,7 @@ from .OpenSUSE import OpenSUSE
 from .RockyLinux import RockyLinux
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
+from .TempleOS import TempleOS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
 from .Windows10 import Windows10
@@ -36,6 +37,7 @@ __all__ = [
     "RockyLinux",
     "SuperGrub2",
     "SystemRescue",
+    "TempleOS",
     "Ubuntu",
     "UltimateBootCD",
     "Windows10",

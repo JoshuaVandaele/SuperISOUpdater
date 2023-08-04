@@ -11,6 +11,8 @@ import tomllib
 from bs4 import BeautifulSoup, Tag
 from tqdm import tqdm
 
+READ_CHUNK_SIZE = 524288
+
 
 def logging_critical_exception(msg, *args, **kwargs):
     """
@@ -79,7 +81,7 @@ def md5_hash_check(file: str, hash: str) -> bool:
     """
     with open(file, "rb") as f:
         file_hash = hashlib.md5()
-        while chunk := f.read(8192):
+        while chunk := f.read(READ_CHUNK_SIZE):
             file_hash.update(chunk)
     result = hash.lower() == file_hash.hexdigest()
 
@@ -102,7 +104,7 @@ def sha256_hash_check(file: str, hash: str) -> bool:
     """
     with open(file, "rb") as f:
         file_hash = hashlib.sha256()
-        while chunk := f.read(8192):
+        while chunk := f.read(READ_CHUNK_SIZE):
             file_hash.update(chunk)
     result = hash.lower() == file_hash.hexdigest()
 
@@ -125,7 +127,7 @@ def sha512_hash_check(file: str, hash: str) -> bool:
     """
     with open(file, "rb") as f:
         file_hash = hashlib.sha512()
-        while chunk := f.read(8192):
+        while chunk := f.read(READ_CHUNK_SIZE):
             file_hash.update(chunk)
     result = hash.lower() == file_hash.hexdigest()
 
