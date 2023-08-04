@@ -2,6 +2,7 @@ from .ArchLinux import ArchLinux
 from .Clonezilla import Clonezilla
 from .Debian import Debian
 from .Fedora import Fedora
+from .FreeDOS import FreeDOS
 from .GenericUpdater import GenericUpdater
 from .GPartedLive import GPartedLive
 from .HirensBootCDPE import HirensBootCDPE
@@ -23,6 +24,7 @@ __all__ = [
     "Debian",
     "Clonezilla",
     "Fedora",
+    "FreeDOS",
     "GenericUpdater",
     "GPartedLive",
     "HirensBootCDPE",

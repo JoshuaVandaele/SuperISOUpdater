@@ -141,6 +141,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         OpenSUSE,
         Windows11,
         Windows10,
+        FreeDOS,
     ]
 
     run_updaters(ventoy_path, config, available_updaters)
