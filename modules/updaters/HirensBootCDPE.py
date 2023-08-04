@@ -121,5 +121,5 @@ class HirensBootCDPE(GenericUpdater):
             raise LookupError("Failed to find the `Tag` containing the SHA-256 value")
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True), sha256_tag.getText()
+            self._get_complete_normalized_file_path(absolute=True), sha256_tag.getText()
         )

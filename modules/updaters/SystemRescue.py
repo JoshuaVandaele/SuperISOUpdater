@@ -131,6 +131,6 @@ class SystemRescue(GenericUpdater):
 
     def check_integrity(self) -> bool:
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True),
+            self._get_complete_normalized_file_path(absolute=True),
             self._get_sha256_checksum(self._get_latest_version()),
         )

@@ -67,9 +67,7 @@ class Debian(GenericUpdater):
             )
 
     def _get_download_link(self) -> str:
-        return (
-            f"{DOWNLOAD_PAGE_URL}/{self._get_versioned_latest_file_name(edition=True)}"
-        )
+        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=True)}"
 
     def check_integrity(self) -> bool:
         sha256_url = f"{DOWNLOAD_PAGE_URL}/SHA256SUMS"
@@ -77,11 +75,11 @@ class Debian(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_versioned_latest_file_name(edition=True)], 0
+            sha256_sums, [self._get_complete_normalized_file_path(absolute=True)], 0
         )
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True, edition=True),
+            self._get_complete_normalized_file_path(absolute=True),
             sha256_sum,
         )
 
@@ -93,7 +91,12 @@ class Debian(GenericUpdater):
         latest = next(
             href
             for a_tag in download_a_tags
-            if self._get_editioned_file_name().split("[[VER]]")[-1]
+            if self._get_normalized_file_path(
+                absolute=False,
+                version=None,
+                edition=self.edition if self.has_edition() else None,  # type: ignore
+                lang=self.lang if self.has_lang() else None,  # type: ignore
+            ).split("[[VER]]")[-1]
             in (href := a_tag.get("href"))
         )
 

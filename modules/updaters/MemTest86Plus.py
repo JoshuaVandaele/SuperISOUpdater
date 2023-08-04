@@ -92,7 +92,7 @@ class MemTest86Plus(GenericUpdater):
         """
         download_link = self._get_download_link()
 
-        new_file = self._get_versioned_latest_file_name(absolute=True)
+        new_file = self._get_complete_normalized_file_path(absolute=True)
 
         archive_path = f"{new_file}.zip"
 
@@ -128,6 +128,6 @@ class MemTest86Plus(GenericUpdater):
         sha_256_checksum: str = parse_hash(sha_256_checksums_str, ["64.iso"], 0)
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True) + ".zip",
+            self._get_complete_normalized_file_path(absolute=True) + ".zip",
             sha_256_checksum,
         )

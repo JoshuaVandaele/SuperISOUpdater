@@ -58,12 +58,7 @@ class GenericUpdater(ABC):
 
         # Determine the old and new file paths
         old_file = self._get_local_file()
-        new_file = self._get_normalized_file_path(
-            True,
-            self._get_latest_version(),
-            self.edition if self.has_edition() else None,  # type: ignore
-            self.lang if self.has_lang() else None,  # type: ignore
-        )
+        new_file = self._get_complete_normalized_file_path(absolute=True)
 
         if not versioning_flag:
             # If the file is being replaced, back it up
@@ -206,9 +201,10 @@ class GenericUpdater(ABC):
             lang=self.lang if self.has_lang() else None,  # type: ignore
         )
 
-        local_version_regex = re.search(
-            normalized_path.replace("[[VER]]", r"(.+)"), local_file
+        version_regex: str = r"(.+)".join(
+            re.escape(part) for part in normalized_path.split("[[VER]]")
         )
+        local_version_regex = re.search(version_regex, local_file)
 
         if local_version_regex:
             local_version = self._str_to_version(local_version_regex.group(1))
@@ -241,62 +237,6 @@ class GenericUpdater(ABC):
         """
         return self.version_splitter.join(str(i) for i in version)
 
-    def _get_versioned_file_name(
-        self, version: list[str], absolute: bool = False, edition: bool = False
-    ) -> str:
-        """
-        Get the file name with version components replaced by the specified version.
-
-        Args:
-            version (list[str]): The version as a list of version components.
-            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
-            edition (bool, optional): If True, add the edition to the file name as well. Defaults to False.
-
-        Returns:
-            str: The versioned file name.
-        """
-        file_name = self.file_path if absolute else os.path.basename(self.file_path)
-        if "[[VER]]" in file_name:
-            file_name = file_name.replace("[[VER]]", self._version_to_str(version))
-        if self.has_edition() and edition:
-            file_name = file_name.replace("[[EDITION]]", self.edition)  # type: ignore
-        return file_name
-
-    def _get_versioned_local_file_name(
-        self, absolute: bool = False, edition: bool = False
-    ) -> str | None:
-        """
-        Get the versioned local file name if it exists.
-
-        Args:
-            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
-            edition (bool, optional): If True, add the edition to the file name as well. Defaults to False.
-
-        Returns:
-            str | None: The versioned local file name or None if no local version exists.
-        """
-        local_version = self._get_local_version()
-        if local_version:
-            return self._get_versioned_file_name(local_version, absolute, edition)
-        return None
-
-    def _get_versioned_latest_file_name(
-        self, absolute: bool = False, edition: bool = False
-    ) -> str:
-        """
-        Get the versioned latest file name.
-
-        Args:
-            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
-            edition (bool, optional): If True, add the edition to the file name as well. Defaults to False.
-
-        Returns:
-            str: The versioned latest file name.
-        """
-        return self._get_versioned_file_name(
-            self._get_latest_version(), absolute, edition
-        )
-
     def _str_to_version(self, version_str: str):
         """
         Convert a version string to a list of version components.
@@ -325,23 +265,6 @@ class GenericUpdater(ABC):
             and "[[EDITION]]" in self.file_path
         )
 
-    def _get_editioned_file_name(self, absolute: bool = False) -> str:
-        """
-        Get the file name with the edition component replaced by the specified edition.
-
-        Args:
-            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
-
-        Returns:
-            str: The editioned file name.
-        """
-        file_name = self.file_path if absolute else os.path.basename(self.file_path)
-
-        if not self.has_edition():
-            return file_name
-
-        return file_name.replace("[[EDITION]]", self.edition)  # type: ignore
-
     def has_lang(self) -> bool:
         """
         Check if the updater supports different languages.
@@ -355,23 +278,6 @@ class GenericUpdater(ABC):
             and "[[LANG]]" in self.file_path
         )
 
-    def _get_lang_file_name(self, absolute: bool = False) -> str:
-        """
-        Get the file name with the language component replaced by the specified language.
-
-        Args:
-            absolute (bool, optional): If True, return the absolute file path. Defaults to False.
-
-        Returns:
-            str: The language file name.
-        """
-        file_name = self.file_path if absolute else os.path.basename(self.file_path)
-
-        if not self.has_lang():
-            return file_name
-
-        return file_name.replace("[[LANG]]", self.lang)  # type: ignore
-
     def _get_normalized_file_path(
         self,
         absolute: bool,
@@ -384,12 +290,20 @@ class GenericUpdater(ABC):
 
         Args:
             absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
-            version (list[str] | None, optional): The version as a list of version components. Defaults to None.
-            edition (str | None, optional): The edition of the file. Defaults to None.
-            lang (str | None, optional): The language of the file. Defaults to None.
+            version (list[str], optional): The version as a list of version components.
+                                    If provided, it replaces '[[VER]]' in the file name.
+                                    Defaults to None.
+            edition (str, optional): The edition of the file. If provided, it replaces '[[EDITION]]' in the file name.
+                                    Defaults to None.
+            lang (str, optional): The language of the file. If provided, it replaces '[[LANG]]' in the file name.
+                                    Defaults to None.
 
         Returns:
             str: The normalized file path.
+
+        Note:
+            This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name
+            with the specified version, edition, and language respectively. It also removes all spaces from the file name.
         """
         file_name: str = os.path.basename(self.file_path)
 
@@ -408,3 +322,27 @@ class GenericUpdater(ABC):
 
         # Return the absolute or relative file path based on the 'absolute' parameter
         return os.path.join(self.folder_path, file_name) if absolute else file_name
+
+    def _get_complete_normalized_file_path(self, absolute: bool, latest: bool = True):
+        """
+        Get the complete normalized file path with customizable version, edition, and language.
+
+        Args:
+            absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
+            latest (bool, optional): If True, use the latest version, edition, and language to construct the file path.
+                                    If False, use the local version, edition, and language.
+                                    Defaults to True.
+
+        Returns:
+            str: The normalized file path.
+
+        Note:
+            This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name
+            with the specified version, edition, and language respectively. It also removes all spaces from the file name.
+        """
+        return self._get_normalized_file_path(
+            absolute=absolute,
+            version=self._get_latest_version() if latest else self._get_local_version(),
+            edition=self.edition if self.has_edition() else None,  # type: ignore
+            lang=self.lang if self.has_lang() else None,  # type: ignore
+        )

@@ -46,7 +46,7 @@ class LinuxMint(GenericUpdater):
 
     def _get_download_link(self) -> str:
         latest_version_str = self._version_to_str(self._get_latest_version())
-        return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/{self._get_versioned_latest_file_name(edition=True)}"
+        return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/{self._get_complete_normalized_file_path(absolute=False)}"
 
     def check_integrity(self) -> bool:
         latest_version_str = self._version_to_str(self._get_latest_version())
@@ -56,11 +56,11 @@ class LinuxMint(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_versioned_latest_file_name(edition=True)], 0
+            sha256_sums, [self._get_complete_normalized_file_path(absolute=False)], 0
         )
 
         return sha256_hash_check(
-            self._get_versioned_latest_file_name(absolute=True, edition=True),
+            self._get_complete_normalized_file_path(absolute=True),
             sha256_sum,
         )
 
