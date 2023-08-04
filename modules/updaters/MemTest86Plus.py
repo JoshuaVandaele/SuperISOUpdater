@@ -70,16 +70,21 @@ class MemTest86Plus(GenericUpdater):
             raise DownloadLinkNotFoundError("Could not find the download link")
         return f"{DOWNLOAD_PAGE_URL}{download_element.get('href')}"
 
-    def _get_latest_version(self) -> list[str]:
-        card_title: Tag | None = self.soup_download_card.find(
-            "span", attrs={"class": "text-primary fs-2"}
-        )  # type: ignore
+    def check_integrity(self) -> bool:
+        """
+        Check the integrity of the downloaded file by verifying its SHA-256 hash against the one provided on the website.
 
-        if not card_title:
-            raise VersionNotFoundError("Could not find the latest version")
+        Returns:
+            bool: True if the integrity check passes, False otherwise.
+        """
+        version_str = self._version_to_str(self._get_latest_version())
+        sha_256_url = f"{DOWNLOAD_PAGE_URL}/download/v{version_str}/sha256sum.txt"
+        sha_256_checksums_str: str = requests.get(sha_256_url).text
+        sha_256_checksum: str = parse_hash(sha_256_checksums_str, ["64.iso"], 0)
 
-        return self._str_to_version(
-            card_title.getText().split("v")[-1]  # Parse from Memtest86+ v 0.0
+        return sha256_hash_check(
+            self._get_complete_normalized_file_path(absolute=True) + ".zip",
+            sha_256_checksum,
         )
 
     def install_latest_version(self) -> None:
@@ -115,19 +120,14 @@ class MemTest86Plus(GenericUpdater):
 
         os.rename(extracted_file, new_file)
 
-    def check_integrity(self) -> bool:
-        """
-        Check the integrity of the downloaded file by verifying its SHA-256 hash against the one provided on the website.
+    def _get_latest_version(self) -> list[str]:
+        card_title: Tag | None = self.soup_download_card.find(
+            "span", attrs={"class": "text-primary fs-2"}
+        )  # type: ignore
 
-        Returns:
-            bool: True if the integrity check passes, False otherwise.
-        """
-        version_str = self._version_to_str(self._get_latest_version())
-        sha_256_url = f"{DOWNLOAD_PAGE_URL}/download/v{version_str}/sha256sum.txt"
-        sha_256_checksums_str: str = requests.get(sha_256_url).text
-        sha_256_checksum: str = parse_hash(sha_256_checksums_str, ["64.iso"], 0)
+        if not card_title:
+            raise VersionNotFoundError("Could not find the latest version")
 
-        return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True) + ".zip",
-            sha_256_checksum,
+        return self._str_to_version(
+            card_title.getText().split("v")[-1]  # Parse from Memtest86+ v 0.0
         )

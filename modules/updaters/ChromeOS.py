@@ -47,6 +47,17 @@ class ChromeOS(GenericUpdater):
             d for d in self.chromium_releases_info if d["channel"] == self.edition
         )
 
+    def _get_download_link(self) -> str:
+        return self.cur_edition_info["url"]
+
+    def check_integrity(self) -> bool:
+        sha1_sum = self.cur_edition_info["sha1"]
+
+        return sha1_hash_check(
+            self._get_complete_normalized_file_path(absolute=True) + ".zip",
+            sha1_sum,
+        )
+
     def install_latest_version(self) -> None:
         """
         Download and install the latest version of the software.
@@ -89,17 +100,6 @@ class ChromeOS(GenericUpdater):
         os.remove(archive_path)
         if local_file:
             os.remove(local_file)  # type: ignore
-
-    def _get_download_link(self) -> str:
-        return self.cur_edition_info["url"]
-
-    def check_integrity(self) -> bool:
-        sha1_sum = self.cur_edition_info["sha1"]
-
-        return sha1_hash_check(
-            self._get_complete_normalized_file_path(absolute=True) + ".zip",
-            sha1_sum,
-        )
 
     def _get_latest_version(self) -> list[str]:
         return self._str_to_version(self.cur_edition_info["version"])

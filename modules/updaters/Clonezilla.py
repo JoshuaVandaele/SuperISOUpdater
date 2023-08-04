@@ -23,34 +23,10 @@ class Clonezilla(GenericUpdater):
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
 
-    @staticmethod
-    def _get_clonezilla_version_style(version: str):
-        """
-        Convert the version string from "x.y.z" to "x.y-z" format, as used by Clonezilla.
-
-        Parameters:
-            version (str): The version string in "x.y.z.a" format.
-
-        Returns:
-            str: The version string in "x.y.z-a" format.
-        """
-        return "-".join(version.rsplit(".", 1))
-
     def _get_download_link(self) -> str:
         ver = self._version_to_str(self._get_latest_version())
         repo = "https://downloads.sourceforge.net"
         return f"{repo}/clonezilla/clonezilla-live-{self._get_clonezilla_version_style(ver)}-amd64.iso"
-
-    def _get_latest_version(self) -> list[str]:
-        r = requests.get(f"{DOMAIN}/downloads/stable/changelog-contents.php")
-        soup = BeautifulSoup(r.content, features="html.parser")
-        first_paragraph: Tag | None = soup.find("p")  # type: ignore
-        if not first_paragraph:
-            raise VersionNotFoundError(
-                "Unable to extract `<p>` elements from changelog"
-            )
-        version = first_paragraph.getText().split()[-1]
-        return self._str_to_version(version.replace("-", "."))
 
     def check_integrity(self) -> bool:
         r = requests.get(f"{DOMAIN}/downloads/stable/checksums-contents.php")
@@ -74,3 +50,27 @@ class Clonezilla(GenericUpdater):
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True), sha256_hash
         )
+
+    def _get_latest_version(self) -> list[str]:
+        r = requests.get(f"{DOMAIN}/downloads/stable/changelog-contents.php")
+        soup = BeautifulSoup(r.content, features="html.parser")
+        first_paragraph: Tag | None = soup.find("p")  # type: ignore
+        if not first_paragraph:
+            raise VersionNotFoundError(
+                "Unable to extract `<p>` elements from changelog"
+            )
+        version = first_paragraph.getText().split()[-1]
+        return self._str_to_version(version.replace("-", "."))
+
+    @staticmethod
+    def _get_clonezilla_version_style(version: str):
+        """
+        Convert the version string from "x.y.z" to "x.y-z" format, as used by Clonezilla.
+
+        Parameters:
+            version (str): The version string in "x.y.z.a" format.
+
+        Returns:
+            str: The version string in "x.y.z-a" format.
+        """
+        return "-".join(version.rsplit(".", 1))
