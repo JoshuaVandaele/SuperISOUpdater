@@ -194,15 +194,17 @@ class GenericUpdater(ABC):
         if not local_file or "[[VER]]" not in self.file_path:
             return None
 
-        normalized_path: str = self._get_normalized_file_path(
-            absolute=True,
-            version=None,
-            edition=self.edition if self.has_edition() else None,  # type: ignore
-            lang=self.lang if self.has_lang() else None,  # type: ignore
-        )
+        normalized_path_without_ext: str = os.path.splitext(
+            self._get_normalized_file_path(
+                absolute=True,
+                version=None,
+                edition=self.edition if self.has_edition() else None,  # type: ignore
+                lang=self.lang if self.has_lang() else None,  # type: ignore
+            )
+        )[0]
 
         version_regex: str = r"(.+)".join(
-            re.escape(part) for part in normalized_path.split("[[VER]]")
+            re.escape(part) for part in normalized_path_without_ext.split("[[VER]]")
         )
         local_version_regex = re.search(version_regex, local_file)
 
