@@ -67,7 +67,7 @@ class Debian(GenericUpdater):
             )
 
     def _get_download_link(self) -> str:
-        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=True)}"
+        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}"
 
     def check_integrity(self) -> bool:
         sha256_url = f"{DOWNLOAD_PAGE_URL}/SHA256SUMS"
@@ -75,7 +75,7 @@ class Debian(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_complete_normalized_file_path(absolute=True)], 0
+            sha256_sums, [self._get_complete_normalized_file_path(absolute=False)], 0
         )
 
         return sha256_hash_check(
