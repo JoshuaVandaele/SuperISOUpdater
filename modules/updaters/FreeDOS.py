@@ -64,7 +64,6 @@ class FreeDOS(GenericUpdater):
         Download and install the latest version of the software.
 
         Raises:
-            ValueError: If no download link is available for the latest version.
             IntegrityCheckError: If the integrity check of the downloaded file fails.
         """
         download_link = self._get_download_link()
@@ -110,12 +109,6 @@ class FreeDOS(GenericUpdater):
             os.remove(local_file)  # type: ignore
 
     def _get_local_file(self) -> str | None:
-        """
-        Get the path of the locally stored file that matches the filename pattern.
-
-        Returns:
-            str | None: The path of the locally stored file if found, None if no file exists.
-        """
         file_path = self._get_normalized_file_path(
             absolute=True,
             version=None,
