@@ -127,3 +127,9 @@ enabled = true
 # Available editions:
 # "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD"
 editions = ["LiveCD"]
+
+[OperatingSystems.Other.TempleOS]
+enabled = true
+# Available editions:
+# "Distro", "Lite"
+editions = ["Distro"]

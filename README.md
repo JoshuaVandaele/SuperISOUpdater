@@ -107,6 +107,7 @@ The tool currently supports the following ISOs:
     - Windows 10 (Multi-edition ISO, Any language)
   - **Other**
     - FreeDOS (editions: "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD")
+    - TempleOS (editions: "Distro", "Lite")
 
 ## Contribute
 

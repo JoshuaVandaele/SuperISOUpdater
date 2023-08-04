@@ -142,6 +142,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         Windows11,
         Windows10,
         FreeDOS,
+        TempleOS,
     ]
 
     run_updaters(ventoy_path, config, available_updaters)
