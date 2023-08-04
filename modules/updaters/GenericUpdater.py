@@ -46,6 +46,47 @@ class GenericUpdater(ABC):
 
         os.makedirs(self.folder_path, exist_ok=True)
 
+    @abstractmethod
+    def _get_download_link(self) -> str:
+        """
+        (Protected) Get the download link for the latest version of the software.
+
+        Returns:
+            str: The download link for the latest version of the software.
+
+        Raises:
+            DownloadLinkNotFoundError: If the download link is not found.
+        """
+        pass
+
+    @abstractmethod
+    def check_integrity(self) -> bool:
+        """
+        Check the integrity of the downloaded software.
+
+        Returns:
+            bool: True if the downloaded software is valid, otherwise False.
+        """
+        pass
+
+    def check_for_updates(self) -> bool:
+        """
+        Check if there are updates available for the software.
+
+        Returns:
+            bool: True if updates are available, False if the local version is up to date.
+        """
+        if not (local_version := self._get_local_version()):
+            return True
+
+        is_update_available = self._compare_version_numbers(
+            local_version, self._get_latest_version()
+        )
+        logging.debug(
+            f"[GenericUpdater.check_for_updates] {self._version_to_str(local_version)} > {self._version_to_str(self._get_latest_version())}? {is_update_available}"
+        )
+        return is_update_available
+
     def install_latest_version(self) -> None:
         """
         Install the latest version of the software.
@@ -93,71 +134,31 @@ class GenericUpdater(ABC):
         if old_file:
             os.remove(old_file)
 
-    @abstractmethod
-    def _get_download_link(self) -> str:
+    def has_edition(self) -> bool:
         """
-        (Protected) Get the download link for the latest version of the software.
+        Check if the updater supports different editions.
 
         Returns:
-            str: The download link for the latest version of the software.
-
-        Raises:
-            DownloadLinkNotFoundError: If the download link is not found.
+            bool: True if different editions are supported, False otherwise.
         """
-        pass
-
-    @abstractmethod
-    def check_integrity(self) -> bool:
-        """
-        Check the integrity of the downloaded software.
-
-        Returns:
-            bool: True if the downloaded software is valid, otherwise False.
-        """
-        pass
-
-    def check_for_updates(self) -> bool:
-        """
-        Check if there are updates available for the software.
-
-        Returns:
-            bool: True if updates are available, False if the local version is up to date.
-        """
-        if not (local_version := self._get_local_version()):
-            return True
-
-        is_update_available = self._compare_version_numbers(
-            local_version, self._get_latest_version()
+        return (
+            hasattr(self, "edition")
+            and hasattr(self, "valid_editions")
+            and "[[EDITION]]" in self.file_path
         )
-        logging.debug(
-            f"[GenericUpdater.check_for_updates] {self._version_to_str(local_version)} > {self._version_to_str(self._get_latest_version())}? {is_update_available}"
-        )
-        return is_update_available
 
-    @staticmethod
-    def _compare_version_numbers(
-        old_version: list[str], new_version: list[str]
-    ) -> bool:
+    def has_lang(self) -> bool:
         """
-        Compare version numbers to check if a new version is available.
-
-        Args:
-            old_version (list[str]): The old version as a list of version components.
-            new_version (list[str]): The new version as a list of version components.
+        Check if the updater supports different languages.
 
         Returns:
-            bool: True if the new version is greater than the old version, False otherwise.
+            bool: True if different languages are supported, False otherwise.
         """
-        for i in range(len(new_version)):
-            try:
-                if int(new_version[i]) > int(old_version[i]):
-                    return True
-            except ValueError:
-                if int(new_version[i], 32) > int(old_version[i], 32):
-                    return True
-            except IndexError:
-                return True
-        return False
+        return (
+            hasattr(self, "lang")
+            and hasattr(self, "valid_langs")
+            and "[[LANG]]" in self.file_path
+        )
 
     def _get_local_file(self) -> str | None:
         """
@@ -225,59 +226,6 @@ class GenericUpdater(ABC):
         """
         raise NotImplementedError(
             f"{self.__class__.__name__} has not been implemented yet."
-        )
-
-    def _version_to_str(self, version: list[str]):
-        """
-        Convert a list of version components to a version string.
-
-        Args:
-            version (list[str]): The version as a list of version components.
-
-        Returns:
-            str: The version as a string with components joined by the version splitter.
-        """
-        return self.version_splitter.join(str(i) for i in version)
-
-    def _str_to_version(self, version_str: str):
-        """
-        Convert a version string to a list of version components.
-
-        Args:
-            version_str (str): The version as a string.
-
-        Returns:
-            list[str]: The version as a list of version components.
-        """
-        return [
-            version_number.strip()
-            for version_number in version_str.split(self.version_splitter)
-        ]
-
-    def has_edition(self) -> bool:
-        """
-        Check if the updater supports different editions.
-
-        Returns:
-            bool: True if different editions are supported, False otherwise.
-        """
-        return (
-            hasattr(self, "edition")
-            and hasattr(self, "valid_editions")
-            and "[[EDITION]]" in self.file_path
-        )
-
-    def has_lang(self) -> bool:
-        """
-        Check if the updater supports different languages.
-
-        Returns:
-            bool: True if different languages are supported, False otherwise.
-        """
-        return (
-            hasattr(self, "lang")
-            and hasattr(self, "valid_langs")
-            and "[[LANG]]" in self.file_path
         )
 
     def _get_normalized_file_path(
@@ -348,3 +296,55 @@ class GenericUpdater(ABC):
             edition=self.edition if self.has_edition() else None,  # type: ignore
             lang=self.lang if self.has_lang() else None,  # type: ignore
         )
+
+    def _version_to_str(self, version: list[str]):
+        """
+        Convert a list of version components to a version string.
+
+        Args:
+            version (list[str]): The version as a list of version components.
+
+        Returns:
+            str: The version as a string with components joined by the version splitter.
+        """
+        return self.version_splitter.join(str(i) for i in version)
+
+    def _str_to_version(self, version_str: str):
+        """
+        Convert a version string to a list of version components.
+
+        Args:
+            version_str (str): The version as a string.
+
+        Returns:
+            list[str]: The version as a list of version components.
+        """
+        return [
+            version_number.strip()
+            for version_number in version_str.split(self.version_splitter)
+        ]
+
+    @staticmethod
+    def _compare_version_numbers(
+        old_version: list[str], new_version: list[str]
+    ) -> bool:
+        """
+        Compare version numbers to check if a new version is available.
+
+        Args:
+            old_version (list[str]): The old version as a list of version components.
+            new_version (list[str]): The new version as a list of version components.
+
+        Returns:
+            bool: True if the new version is greater than the old version, False otherwise.
+        """
+        for i in range(len(new_version)):
+            try:
+                if int(new_version[i]) > int(old_version[i]):
+                    return True
+            except ValueError:
+                if int(new_version[i], 32) > int(old_version[i], 32):
+                    return True
+            except IndexError:
+                return True
+        return False

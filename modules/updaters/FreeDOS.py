@@ -59,6 +59,34 @@ class FreeDOS(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    def _get_download_link(self) -> str:
+        latest_version = self._get_latest_version()
+        latest_version_str = self._version_to_str(latest_version)
+        return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/official/FD{''.join(latest_version)}-{self.edition}.zip"
+
+    def check_integrity(self) -> bool:
+        checksums_url = "https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.3/official/verify.txt"
+
+        checksums = requests.get(checksums_url).text
+
+        try:
+            sha256_sums = next(
+                sums for sums in checksums.split("\n\n") if "sha256" in sums
+            )
+        except StopIteration as e:
+            raise IntegrityCheckError(
+                "Could not find the sha256 hash in the hash list file"
+            ) from e
+
+        sha256_sum = parse_hash(sha256_sums, [self.edition], 0)
+
+        return sha256_hash_check(
+            self._get_normalized_file_path(
+                True, self._get_latest_version(), self.edition
+            ).replace("[[EXT]]", "zip"),
+            sha256_sum,
+        )
+
     def install_latest_version(self) -> None:
         """
         Download and install the latest version of the software.
@@ -122,34 +150,6 @@ class FreeDOS(GenericUpdater):
         if local_files:
             return local_files[0]
         return None
-
-    def _get_download_link(self) -> str:
-        latest_version = self._get_latest_version()
-        latest_version_str = self._version_to_str(latest_version)
-        return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/official/FD{''.join(latest_version)}-{self.edition}.zip"
-
-    def check_integrity(self) -> bool:
-        checksums_url = "https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.3/official/verify.txt"
-
-        checksums = requests.get(checksums_url).text
-
-        try:
-            sha256_sums = next(
-                sums for sums in checksums.split("\n\n") if "sha256" in sums
-            )
-        except StopIteration as e:
-            raise IntegrityCheckError(
-                "Could not find the sha256 hash in the hash list file"
-            ) from e
-
-        sha256_sum = parse_hash(sha256_sums, [self.edition], 0)
-
-        return sha256_hash_check(
-            self._get_normalized_file_path(
-                True, self._get_latest_version(), self.edition
-            ).replace("[[EXT]]", "zip"),
-            sha256_sum,
-        )
 
     def _get_latest_version(self) -> list[str]:
         download_a_tags = self.soup_download_page.find_all("a", href=True)

@@ -40,6 +40,60 @@ class HirensBootCDPE(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    def _get_download_link(self) -> str:
+        download_tag: Tag | None = self._find_in_table("Filename")
+
+        if not download_tag:
+            raise DownloadLinkNotFoundError(
+                "Failed to find the `Tag` containing the download link"
+            )
+
+        href_attributes = download_tag.find_all(href=True)
+        if not href_attributes:
+            raise DownloadLinkNotFoundError("No download link found in the `Tag`")
+
+        return href_attributes[0].get("href")
+
+    def check_integrity(self) -> bool:
+        """
+        Check the integrity of the downloaded file by verifying its SHA-256 hash against the one provided on the website.
+
+        Returns:
+            bool: True if the integrity check passes, False otherwise.
+
+        Raises:
+            LookupError: If the SHA-256 hash or its container Tag is not found in the download page.
+        """
+        sha256_tag: Tag | None = self._find_in_table("SHA-256")
+
+        if not sha256_tag:
+            raise LookupError("Failed to find the `Tag` containing the SHA-256 value")
+
+        return sha256_hash_check(
+            self._get_complete_normalized_file_path(absolute=True), sha256_tag.getText()
+        )
+
+    def _get_latest_version(self) -> list[str]:
+        s: Tag | None = self.soup_download_page.find(
+            "div", attrs={"class": "post-content"}
+        )  # type: ignore
+        if not s:
+            raise VersionNotFoundError(
+                "Could not find the div containing version information"
+            )
+
+        s = s.find("span")  # type: ignore
+        if not s:
+            raise VersionNotFoundError(
+                "Could not find the span containing the version information"
+            )
+
+        return self._str_to_version(
+            s.getText()
+            .split("(v")[1]  # Parse from Hiren’s BootCD PE x64 (v1.0.2) – ISO Content
+            .split(")")[0]
+        )
+
     def _find_in_table(self, row_name_contains: str) -> Tag | None:
         """
         Find the HTML Tag containing specific information in the download page table.
@@ -69,57 +123,3 @@ class HirensBootCDPE(GenericUpdater):
                     next_is_result = True
 
         raise LookupError(f"Failed to find '{row_name_contains}' in the table")
-
-    def _get_download_link(self) -> str:
-        download_tag: Tag | None = self._find_in_table("Filename")
-
-        if not download_tag:
-            raise DownloadLinkNotFoundError(
-                "Failed to find the `Tag` containing the download link"
-            )
-
-        href_attributes = download_tag.find_all(href=True)
-        if not href_attributes:
-            raise DownloadLinkNotFoundError("No download link found in the `Tag`")
-
-        return href_attributes[0].get("href")
-
-    def _get_latest_version(self) -> list[str]:
-        s: Tag | None = self.soup_download_page.find(
-            "div", attrs={"class": "post-content"}
-        )  # type: ignore
-        if not s:
-            raise VersionNotFoundError(
-                "Could not find the div containing version information"
-            )
-
-        s = s.find("span")  # type: ignore
-        if not s:
-            raise VersionNotFoundError(
-                "Could not find the span containing the version information"
-            )
-
-        return self._str_to_version(
-            s.getText()
-            .split("(v")[1]  # Parse from Hiren’s BootCD PE x64 (v1.0.2) – ISO Content
-            .split(")")[0]
-        )
-
-    def check_integrity(self) -> bool:
-        """
-        Check the integrity of the downloaded file by verifying its SHA-256 hash against the one provided on the website.
-
-        Returns:
-            bool: True if the integrity check passes, False otherwise.
-
-        Raises:
-            LookupError: If the SHA-256 hash or its container Tag is not found in the download page.
-        """
-        sha256_tag: Tag | None = self._find_in_table("SHA-256")
-
-        if not sha256_tag:
-            raise LookupError("Failed to find the `Tag` containing the SHA-256 value")
-
-        return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True), sha256_tag.getText()
-        )

@@ -51,53 +51,6 @@ class SuperGrub2(GenericUpdater):
                 "Could not find the article containing download information"
             )
 
-    def install_latest_version(self) -> None:
-        download_link: str = self._get_download_link()
-
-        new_file = self._get_complete_normalized_file_path(absolute=True)
-
-        archive_path = f"{new_file}.zip"
-
-        download_file(download_link, archive_path)
-
-        local_file = self._get_local_file()
-
-        if not self.check_integrity(archive_path):
-            os.remove(archive_path)
-            raise IntegrityCheckError("Integrity check failed")
-
-        with zipfile.ZipFile(archive_path) as z:
-            file_list = z.namelist()
-            iso = next(file for file in file_list if file.endswith(".img"))
-            extracted_file = z.extract(iso, path=os.path.dirname(new_file))
-
-        if local_file:
-            os.remove(local_file)  # type: ignore
-        os.remove(archive_path)
-
-        os.rename(extracted_file, new_file)
-
-    def _find_in_table(self, row_name_contains: str) -> Tag | None:
-        """
-        Find the HTML Tag containing specific information in the download page table.
-
-        Args:
-            row_name_contains (str): A string that identifies the row in the table.
-
-        Returns:
-            Tag | None: The HTML Tag containing the desired information, or None .
-        """
-        download_table: Tag | None = self.soup_latest_download_article.find("table", attrs={"cellpadding": "5px"})  # type: ignore
-
-        if not download_table:
-            raise LookupError("Could not find the table with download information")
-
-        for tr in download_table.find_all("tr"):
-            for td in tr.find_all("td"):
-                if row_name_contains in td.getText():
-                    return td
-        return None
-
     def _get_download_link(self) -> str:
         download_tag = self._find_in_table("Download supergrub2")
 
@@ -126,6 +79,32 @@ class SuperGrub2(GenericUpdater):
 
         return sha256_hash_check(archive_to_check, sha_256_checksum)
 
+    def install_latest_version(self) -> None:
+        download_link: str = self._get_download_link()
+
+        new_file = self._get_complete_normalized_file_path(absolute=True)
+
+        archive_path = f"{new_file}.zip"
+
+        download_file(download_link, archive_path)
+
+        local_file = self._get_local_file()
+
+        if not self.check_integrity(archive_path):
+            os.remove(archive_path)
+            raise IntegrityCheckError("Integrity check failed")
+
+        with zipfile.ZipFile(archive_path) as z:
+            file_list = z.namelist()
+            iso = next(file for file in file_list if file.endswith(".img"))
+            extracted_file = z.extract(iso, path=os.path.dirname(new_file))
+
+        if local_file:
+            os.remove(local_file)  # type: ignore
+        os.remove(archive_path)
+
+        os.rename(extracted_file, new_file)
+
     def _get_latest_version(self) -> list[str]:
         download_table: Tag | None = self.soup_latest_download_article.find("table", attrs={"cellpadding": "5px"})  # type: ignore
         if not download_table:
@@ -146,3 +125,24 @@ class SuperGrub2(GenericUpdater):
             .replace("s", self.version_splitter)
             .replace("-beta", self.version_splitter)
         )
+
+    def _find_in_table(self, row_name_contains: str) -> Tag | None:
+        """
+        Find the HTML Tag containing specific information in the download page table.
+
+        Args:
+            row_name_contains (str): A string that identifies the row in the table.
+
+        Returns:
+            Tag | None: The HTML Tag containing the desired information, or None .
+        """
+        download_table: Tag | None = self.soup_latest_download_article.find("table", attrs={"cellpadding": "5px"})  # type: ignore
+
+        if not download_table:
+            raise LookupError("Could not find the table with download information")
+
+        for tr in download_table.find_all("tr"):
+            for td in tr.find_all("td"):
+                if row_name_contains in td.getText():
+                    return td
+        return None

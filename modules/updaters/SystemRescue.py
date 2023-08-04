@@ -7,7 +7,7 @@ from bs4.element import Tag
 
 from modules.exceptions import DownloadLinkNotFoundError, VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import sha256_hash_check
+from modules.utils import parse_hash, sha256_hash_check
 
 DOMAIN = "https://www.system-rescue.org"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/Download"
@@ -50,6 +50,49 @@ class SystemRescue(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    def _get_download_link(self) -> str:
+        download_tag: Tag | None = self._find_in_table("Fastly")
+
+        if not download_tag:
+            raise DownloadLinkNotFoundError(
+                "Failed to find the `Tag` containing the download link"
+            )
+
+        href_attributes = download_tag.find_all(href=True)
+        if not href_attributes:
+            raise DownloadLinkNotFoundError("No download link found in the `Tag`")
+
+        return href_attributes[0].get("href")
+
+    def check_integrity(self) -> bool:
+        version_str = self._version_to_str(self._get_latest_version())
+        sha256_download_link = f"{DOMAIN}/releases/{version_str}/systemrescue-{version_str}-amd64.iso.sha256"
+
+        r = requests.get(sha256_download_link)
+        sha256_checksum = parse_hash(
+            r.text,
+            [self._get_normalized_file_path(False, self._get_latest_version())],
+            0,
+        )
+
+        return sha256_hash_check(
+            self._get_complete_normalized_file_path(absolute=True),
+            sha256_checksum,
+        )
+
+    def _get_latest_version(self) -> list[str]:
+        download_link = self._get_download_link()
+
+        latest_version_regex = re.search(
+            r"releases\/(.+)\/",  # Parse from https://fastly-cdn.system-rescue.org/releases/10.01/systemrescue-10.01-amd64.iso
+            download_link,
+        )
+
+        if latest_version_regex:
+            return self._str_to_version(latest_version_regex.group(1))
+
+        raise VersionNotFoundError("Could not find the latest available version")
+
     def _find_in_table(self, row_name_contains: str) -> Tag | None:
         """
         Find the HTML Tag containing specific information in the download page table.
@@ -83,54 +126,3 @@ class SystemRescue(GenericUpdater):
                     return td
 
         raise LookupError(f"Failed to find '{row_name_contains}' in the table")
-
-    def _get_download_link(self) -> str:
-        download_tag: Tag | None = self._find_in_table("Fastly")
-
-        if not download_tag:
-            raise DownloadLinkNotFoundError(
-                "Failed to find the `Tag` containing the download link"
-            )
-
-        href_attributes = download_tag.find_all(href=True)
-        if not href_attributes:
-            raise DownloadLinkNotFoundError("No download link found in the `Tag`")
-
-        return href_attributes[0].get("href")
-
-    def _get_sha256_checksum(self, version: list[str]) -> str:
-        """
-        Get the SHA-256 checksum for the specified version of SystemRescue.
-
-        Args:
-            version (list[str]): A list of integers representing the version number.
-
-        Returns:
-            str: The SHA-256 checksum of the specified version.
-        """
-        version_str = self._version_to_str(version)
-        sha256_download_link = f"{DOMAIN}/releases/{version_str}/systemrescue-{version_str}-amd64.iso.sha256"
-
-        r = requests.get(sha256_download_link)
-        sha256_checksum = r.text.split(" ")[0]
-
-        return sha256_checksum
-
-    def _get_latest_version(self) -> list[str]:
-        download_link = self._get_download_link()
-
-        latest_version_regex = re.search(
-            r"releases\/(.+)\/",  # Parse from https://fastly-cdn.system-rescue.org/releases/10.01/systemrescue-10.01-amd64.iso
-            download_link,
-        )
-
-        if latest_version_regex:
-            return self._str_to_version(latest_version_regex.group(1))
-
-        raise VersionNotFoundError("Could not find the latest available version")
-
-    def check_integrity(self) -> bool:
-        return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True),
-            self._get_sha256_checksum(self._get_latest_version()),
-        )
