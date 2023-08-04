@@ -15,13 +15,14 @@ FILE_NAME = "TempleOS_[[EDITION]]_[[VER]].ISO"
 
 class TempleOS(GenericUpdater):
     """
-    A class representing an updater for Ubuntu LTS.
+    A class representing an updater for TempleOS.
 
     Attributes:
         valid_editions (list[str]): List of valid editions to use
         edition (str): Edition to download
         download_page (requests.Response): The HTTP response containing the download page HTML.
         soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
+        server_file_name (str): The name of the file to download on the server
 
     Note:
         This class inherits from the abstract base class GenericUpdater.
