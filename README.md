@@ -106,7 +106,7 @@ The tool currently supports the following ISOs:
     - Windows 11 (Multi-edition ISO, Any language)
     - Windows 10 (Multi-edition ISO, Any language)
   - **Other**
-    - FreeDOS (editions: )
+    - FreeDOS (editions: "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD")
 
 ## Contribute
 
