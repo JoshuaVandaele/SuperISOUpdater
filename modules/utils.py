@@ -91,6 +91,29 @@ def md5_hash_check(file: str, hash: str) -> bool:
     return result
 
 
+def sha1_hash_check(file: str, hash: str) -> bool:
+    """
+    Calculate the SHA-1 hash of a given file and compare it with a provided hash value.
+
+    Args:
+        file (str): The path to the file for which the hash is to be calculated.
+        hash (str): The SHA-1 hash value to compare against the calculated hash.
+
+    Returns:
+        bool: True if the calculated SHA-1 hash matches the provided hash; otherwise, False.
+    """
+    with open(file, "rb") as f:
+        file_hash = hashlib.sha1()
+        while chunk := f.read(READ_CHUNK_SIZE):
+            file_hash.update(chunk)
+    result = hash.lower() == file_hash.hexdigest()
+
+    logging.debug(
+        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is equal to `{file_hash.hexdigest()}`? {result}"
+    )
+    return result
+
+
 def sha256_hash_check(file: str, hash: str) -> bool:
     """
     Calculate the SHA-256 hash of a given file and compare it with a provided hash value.
