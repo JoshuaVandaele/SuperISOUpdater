@@ -139,6 +139,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         KaliLinux,
         RockyLinux,
         OpenSUSE,
+        ChromeOS,
         Windows11,
         Windows10,
         FreeDOS,
