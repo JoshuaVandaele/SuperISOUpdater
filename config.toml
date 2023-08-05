@@ -2,7 +2,7 @@
 
 [DiagnosticTools]
 enabled = true
-directory = "Diagnostic Tools"
+directory = "Diagnostic_Tools"
 
 [DiagnosticTools.HirensBootCDPE]
 enabled = true
@@ -20,7 +20,7 @@ enabled = true
 
 [BootRepair]
 enabled = true
-directory = "Boot Repair"
+directory = "Boot_Repair"
 
 [BootRepair.SuperGrub2]
 enabled = true
@@ -29,7 +29,7 @@ enabled = true
 
 [DiskUtils]
 enabled = true
-directory = "Disk Utilities"
+directory = "Disk_Utilities"
 
 [DiskUtils.Clonezilla]
 enabled = true
@@ -41,7 +41,7 @@ enabled = true
 
 [OperatingSystems]
 enabled = true
-directory = "Operating Systems"
+directory = "Operating_Systems"
 
 # Linux
 [OperatingSystems.Linux]
