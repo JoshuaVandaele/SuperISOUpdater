@@ -103,6 +103,7 @@ The tool currently supports the following ISOs:
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
     - Tails
+    - Rescuezilla (editions: "focal", "jammy", "kinetic")
     - ChromeOS (editions: "LTC", "LTR", "DEV", "STABLE")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)

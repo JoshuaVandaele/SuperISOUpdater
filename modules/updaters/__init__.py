@@ -14,6 +14,7 @@ from .MemTest86Plus import MemTest86Plus
 from .OpenSUSE import OpenSUSE
 from .RockyLinux import RockyLinux
 from .Tails import Tails
+from .Rescuezilla import Rescuezilla
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .TempleOS import TempleOS
@@ -39,6 +40,7 @@ __all__ = [
     "OpenSUSE",
     "RockyLinux",
     "Tails",
+    "Rescuezilla",
     "SuperGrub2",
     "SystemRescue",
     "TempleOS",
