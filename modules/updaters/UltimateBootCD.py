@@ -1,3 +1,4 @@
+from functools import cache
 import os
 from random import shuffle
 
@@ -73,6 +74,7 @@ class UltimateBootCD(GenericUpdater):
         if not self.download_table:
             raise LookupError(f"Could not find table of downloads in any mirrors")
 
+    @cache
     def _get_download_link(self) -> str:
         latest_version: list[str] = self._get_latest_version()
         return f"{self.mirror}/ubcd{self._version_to_str(latest_version)}.iso"
@@ -92,6 +94,7 @@ class UltimateBootCD(GenericUpdater):
             self._get_complete_normalized_file_path(absolute=True), sha256_sum
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_a_tags = self.download_table.find_all("a", href=True)  # type: ignore
         if not download_a_tags:

@@ -1,3 +1,4 @@
+from functools import cache
 import os
 import zipfile
 
@@ -64,6 +65,7 @@ class MemTest86Plus(GenericUpdater):
                 "Could not find the card containing download information"
             )
 
+    @cache
     def _get_download_link(self) -> str:
         download_element: Tag | None = self.soup_download_card.find("a", string="Linux ISO (64 bits)")  # type: ignore
         if not download_element:
@@ -120,6 +122,7 @@ class MemTest86Plus(GenericUpdater):
 
         os.rename(extracted_file, new_file)
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         card_title: Tag | None = self.soup_download_card.find(
             "span", attrs={"class": "text-primary fs-2"}

@@ -1,3 +1,4 @@
+from functools import cache
 import os
 import re
 
@@ -50,6 +51,7 @@ class SystemRescue(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         download_tag: Tag | None = self._find_in_table("Fastly")
 
@@ -80,6 +82,7 @@ class SystemRescue(GenericUpdater):
             sha256_checksum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_link = self._get_download_link()
 

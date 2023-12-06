@@ -1,3 +1,4 @@
+from functools import cache
 import os
 import zipfile
 
@@ -51,6 +52,7 @@ class SuperGrub2(GenericUpdater):
                 "Could not find the article containing download information"
             )
 
+    @cache
     def _get_download_link(self) -> str:
         download_tag = self._find_in_table("Download supergrub2")
 
@@ -105,6 +107,7 @@ class SuperGrub2(GenericUpdater):
 
         os.rename(extracted_file, new_file)
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_table: Tag | None = self.soup_latest_download_article.find("table", attrs={"cellpadding": "5px"})  # type: ignore
         if not download_table:

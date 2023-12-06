@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -66,6 +67,7 @@ class Fedora(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         latest_version = self._get_latest_version()
         return f"https://download.fedoraproject.org/pub/fedora/linux/releases/{latest_version[0]}/Spins/x86_64/iso/Fedora-{self.edition}-Live-x86_64-{latest_version[0]}-{latest_version[1]}{'.'+latest_version[2] if len(latest_version)>2 else ''}.iso"
@@ -83,6 +85,7 @@ class Fedora(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         downloads_list: Tag | None = self.soup_download_page.find(
             "div", attrs={"class": "spins-theme"}

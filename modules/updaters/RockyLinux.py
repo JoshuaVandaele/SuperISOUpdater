@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -44,6 +45,7 @@ class RockyLinux(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         latest_version_str = self._version_to_str(self._get_latest_version())
         return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/isos/x86_64/{self._get_complete_normalized_file_path(absolute=False)}"
@@ -64,6 +66,7 @@ class RockyLinux(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_a_tags = self.soup_download_page.find_all("a", href=True)
         if not download_a_tags:
