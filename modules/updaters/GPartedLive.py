@@ -30,7 +30,7 @@ class GPartedLive(GenericUpdater):
     @cache
     def _get_download_link(self) -> str:
         ver = self._version_to_str(self._get_latest_version())
-        return f"https://downloads.sourceforge.net/gparted/gparted-live-{self._get_gparted_version_style(ver)}-amd64.iso"
+        return f"https://downloads.sourceforge.net/gparted/gparted-live-{GPartedLive._get_gparted_version_style(ver)}-amd64.iso"
 
     def check_integrity(self) -> bool:
         checksums: list[str] = self.checksum_file.split("###")
