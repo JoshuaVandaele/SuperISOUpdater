@@ -46,6 +46,12 @@ enabled = true
 [DiskUtils.ShredOS]
 enabled = true
 
+[DiskUtils.HDAT2]
+enabled = true
+# Available editions:
+# "full", "lite", "diskette"
+editions = ["full"]
+
 # Operating Systems
 
 [OperatingSystems]
