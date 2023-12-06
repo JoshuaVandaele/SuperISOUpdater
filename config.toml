@@ -99,6 +99,10 @@ enabled = true
 # "dvd", "boot", "minimal"
 editions = ["dvd"]
 
+
+[OperatingSystems.Linux.Tails]
+enabled = true
+
 [OperatingSystems.Linux.ChromeOS]
 enabled = true
 # Available editions:
