@@ -7,9 +7,10 @@ from bs4 import BeautifulSoup
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import parse_hash, sha256_hash_check
+from urllib.parse import urljoin
 
 DOMAIN = "https://cdimage.kali.org"
-DOWNLOAD_PAGE_URL = f"{DOMAIN}/current"
+DOWNLOAD_PAGE_URL = urljoin(DOMAIN, "current/")
 FILE_NAME = "kali-linux-[[VER]]-[[EDITION]]-amd64.iso"
 
 
@@ -52,10 +53,12 @@ class KaliLinux(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}"
+        return urljoin(
+            DOWNLOAD_PAGE_URL, self._get_complete_normalized_file_path(absolute=False)
+        )
 
     def check_integrity(self) -> bool:
-        sha256_url = f"{DOWNLOAD_PAGE_URL}/SHA256SUMS"
+        sha256_url = urljoin(DOWNLOAD_PAGE_URL, "SHA256SUMS")
 
         sha256_sums = requests.get(sha256_url).text
 
