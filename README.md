@@ -86,11 +86,13 @@ The tool currently supports the following ISOs:
   - Memtest86+
   - SystemRescue
   - UltimateBootCD
+  - Rescuezilla (editions: "focal", "jammy", "kinetic")
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
   - Clonezilla
   - GParted Live
+  - ShredOS
 - **Operating Systems**
   - **Linux**
     - Arch Linux
@@ -103,7 +105,6 @@ The tool currently supports the following ISOs:
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
     - Tails
-    - Rescuezilla (editions: "focal", "jammy", "kinetic")
     - ChromeOS (editions: "LTC", "LTR", "DEV", "STABLE")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)

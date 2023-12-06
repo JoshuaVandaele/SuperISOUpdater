@@ -15,6 +15,7 @@ from .OpenSUSE import OpenSUSE
 from .RockyLinux import RockyLinux
 from .Tails import Tails
 from .Rescuezilla import Rescuezilla
+from .ShredOS import ShredOS
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .TempleOS import TempleOS
@@ -32,6 +33,7 @@ __all__ = [
     "FreeDOS",
     "GenericUpdater",
     "GPartedLive",
+    "ShredOS",
     "HirensBootCDPE",
     "KaliLinux",
     "LinuxMint",

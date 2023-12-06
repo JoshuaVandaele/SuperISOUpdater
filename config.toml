@@ -43,6 +43,9 @@ enabled = true
 [DiskUtils.GPartedLive]
 enabled = true
 
+[DiskUtils.ShredOS]
+enabled = true
+
 # Operating Systems
 
 [OperatingSystems]
