@@ -50,13 +50,10 @@ class Tails(GenericUpdater):
 
     def check_integrity(self) -> bool:
         sig_url = f"{self._get_download_link()}.sig"
-        print(sig_url)
 
         sig = requests.get(sig_url).content
         pub_key = requests.get(PUB_KEY_URL).content
 
-        print(sig)
-        print("==========")
         return pgp_check(
             self._get_complete_normalized_file_path(absolute=True), sig, pub_key
         )

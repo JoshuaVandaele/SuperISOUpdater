@@ -22,6 +22,7 @@ from .SystemRescue import SystemRescue
 from .TempleOS import TempleOS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
+from .TrueNAS import TrueNAS
 from .Windows10 import Windows10
 from .Windows11 import Windows11
 
@@ -50,6 +51,7 @@ __all__ = [
     "TempleOS",
     "Ubuntu",
     "UltimateBootCD",
+    "TrueNAS",
     "Windows10",
     "Windows11",
 ]

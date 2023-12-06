@@ -28,7 +28,7 @@ class Clonezilla(GenericUpdater):
     def _get_download_link(self) -> str:
         ver = self._version_to_str(self._get_latest_version())
         repo = "https://downloads.sourceforge.net"
-        return f"{repo}/clonezilla/clonezilla-live-{self._get_clonezilla_version_style(ver)}-amd64.iso"
+        return f"{repo}/clonezilla/clonezilla-live-{Clonezilla._get_clonezilla_version_style(ver)}-amd64.iso"
 
     def check_integrity(self) -> bool:
         r = requests.get(f"{DOMAIN}/downloads/stable/checksums-contents.php")

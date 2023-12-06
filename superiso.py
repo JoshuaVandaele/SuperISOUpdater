@@ -145,6 +145,7 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         OpenSUSE,
         Tails,
         ChromeOS,
+        TrueNAS,
         Windows11,
         Windows10,
         FreeDOS,
