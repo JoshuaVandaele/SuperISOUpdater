@@ -16,6 +16,12 @@ enabled = true
 [DiagnosticTools.UltimateBootCD]
 enabled = true
 
+[DiagnosticTools.Rescuezilla]
+enabled = true
+# Available editions:
+# "focal", "jammy", "kinetic"
+editions = ["jammy"]
+
 # Boot Repair
 
 [BootRepair]
