@@ -96,4 +96,21 @@ class Ubuntu(GenericUpdater):
             raise VersionNotFoundError(
                 f"We were not able to find {self.edition} downloads"
             )
-        return self._str_to_version(latest.getText().split()[1])
+        # This is `x.y`, however to get `x.y.z` we need to go to `/x.y`
+        xy_version = latest.getText().split()[1]
+
+        version_page = requests.get(f"{DOWNLOAD_PAGE_URL}/{xy_version}")
+
+        soup_version_page = BeautifulSoup(version_page.content, features="html.parser")
+
+        title = soup_version_page.find("title")
+
+        if not title:
+            raise VersionNotFoundError(
+                "We were not able to find the title of the version page"
+            )
+
+        title_text = title.getText()
+
+        # Extract version from string "Ubuntu x.y.z (Name of Release)"
+        return self._str_to_version(title_text.split()[1])
