@@ -54,6 +54,9 @@ def parse_config_from_dict(input_dict: dict):
     new_dict = {}
     for key, value in input_dict.items():
         if isinstance(value, dict):
+            if "enabled" in value and not value["enabled"]:
+                del value
+                continue
             if "directory" in value:
                 new_key = value["directory"]
                 del value["directory"]
@@ -61,10 +64,7 @@ def parse_config_from_dict(input_dict: dict):
                 new_key = key
             new_dict[new_key] = parse_config_from_dict(value)
         elif key == "enabled":
-            if value == True:
-                continue
-            else:
-                return
+            continue
         else:
             new_dict[key] = value
     return new_dict
