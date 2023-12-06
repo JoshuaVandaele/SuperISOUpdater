@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -102,6 +103,7 @@ class Windows11(GenericUpdater):
 
         self.hash: str | None = None
 
+    @cache
     def _get_download_link(self) -> str:
         download_link, self.hash = windows_consumer_download(
             windows_version="11", lang=self.lang
@@ -117,6 +119,7 @@ class Windows11(GenericUpdater):
             self.hash,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         header: Tag | None = self.soup_main_content.find("header")  # type: ignore
         if not header:

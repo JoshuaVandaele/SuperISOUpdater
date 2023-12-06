@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -49,6 +50,7 @@ class KaliLinux(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}"
 
@@ -66,6 +68,7 @@ class KaliLinux(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_a_tags = self.soup_download_page.find_all("a", href=True)
         if not download_a_tags:

@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -51,6 +52,7 @@ class Ubuntu(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         latest_version_str = self._version_to_str(self._get_latest_version())
         return f"{DOMAIN}/{latest_version_str}/{f'ubuntu-{latest_version_str}-desktop-amd64.iso'}"
@@ -71,6 +73,7 @@ class Ubuntu(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_categories = self.soup_download_page.find_all(
             "div", attrs={"class": "col-4"}

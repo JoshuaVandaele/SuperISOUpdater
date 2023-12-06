@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -29,6 +30,7 @@ class OpenSUSE(GenericUpdater):
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
 
+    @cache
     def _get_download_link(self) -> str:
         latest_version_str = self._version_to_str(self._get_latest_version())
         return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/iso/openSUSE-Leap-{latest_version_str}-NET-x86_64-Media.iso"
@@ -45,6 +47,7 @@ class OpenSUSE(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         r = requests.get(f"{DOWNLOAD_PAGE_URL}?jsontable")
 

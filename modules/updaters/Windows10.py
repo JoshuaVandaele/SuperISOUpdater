@@ -1,3 +1,4 @@
+from functools import cache
 import logging
 import os
 
@@ -104,6 +105,7 @@ class Windows10(GenericUpdater):
 
         self.hash: str | None = None
 
+    @cache
     def _get_download_link(self) -> str:
         download_link, self.hash = windows_consumer_download(
             windows_version="10", lang=self.lang
@@ -123,6 +125,7 @@ class Windows10(GenericUpdater):
             self.hash,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         software_download_tag: Tag | None = self.soup_main_content.find("div", attrs={"id": "SoftwareDownload_EditionSelection"})  # type: ignore
         if not software_download_tag:

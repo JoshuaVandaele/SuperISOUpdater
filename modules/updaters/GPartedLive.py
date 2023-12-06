@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -26,6 +27,7 @@ class GPartedLive(GenericUpdater):
             "https://gparted.org/gparted-live/stable/CHECKSUMS.TXT"
         ).text.strip()
 
+    @cache
     def _get_download_link(self) -> str:
         ver = self._version_to_str(self._get_latest_version())
         return f"https://downloads.sourceforge.net/gparted/gparted-live-{self._get_gparted_version_style(ver)}-amd64.iso"
@@ -45,6 +47,7 @@ class GPartedLive(GenericUpdater):
             self._get_complete_normalized_file_path(absolute=True), sha256_hash
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         # Get last line of the checksum file
         version = self.checksum_file.splitlines()[-1]
@@ -55,6 +58,7 @@ class GPartedLive(GenericUpdater):
 
         return self._str_to_version(version)
 
+    @cache
     @staticmethod
     def _get_gparted_version_style(version: str):
         """

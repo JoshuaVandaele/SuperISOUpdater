@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -23,6 +24,7 @@ class Clonezilla(GenericUpdater):
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
 
+    @cache
     def _get_download_link(self) -> str:
         ver = self._version_to_str(self._get_latest_version())
         repo = "https://downloads.sourceforge.net"
@@ -51,6 +53,7 @@ class Clonezilla(GenericUpdater):
             self._get_complete_normalized_file_path(absolute=True), sha256_hash
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         r = requests.get(f"{DOMAIN}/downloads/stable/changelog-contents.php")
         soup = BeautifulSoup(r.content, features="html.parser")
@@ -62,6 +65,7 @@ class Clonezilla(GenericUpdater):
         version = first_paragraph.getText().split()[-1]
         return self._str_to_version(version.replace("-", "."))
 
+    @cache
     @staticmethod
     def _get_clonezilla_version_style(version: str):
         """

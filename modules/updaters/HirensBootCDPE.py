@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -40,6 +41,7 @@ class HirensBootCDPE(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         download_tag: Tag | None = self._find_in_table("Filename")
 
@@ -73,6 +75,7 @@ class HirensBootCDPE(GenericUpdater):
             self._get_complete_normalized_file_path(absolute=True), sha256_tag.getText()
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         s: Tag | None = self.soup_download_page.find(
             "div", attrs={"class": "post-content"}

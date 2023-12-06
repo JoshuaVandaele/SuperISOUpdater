@@ -1,3 +1,4 @@
+from functools import cache
 import os
 
 import requests
@@ -66,6 +67,7 @@ class Debian(GenericUpdater):
                 "We couldn't find the list of indexes containing the download URLs"
             )
 
+    @cache
     def _get_download_link(self) -> str:
         return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}"
 
@@ -83,6 +85,7 @@ class Debian(GenericUpdater):
             sha256_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_a_tags = self.soup_index_list.find_all("a", href=True)
         if not download_a_tags:

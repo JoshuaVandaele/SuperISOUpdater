@@ -1,3 +1,4 @@
+from functools import cache
 import os
 from datetime import datetime
 
@@ -57,6 +58,7 @@ class TempleOS(GenericUpdater):
             f"TempleOS{'Lite' if self.edition == 'Lite' else ''}.ISO"
         )
 
+    @cache
     def _get_download_link(self) -> str:
         return f"{DOWNLOAD_PAGE_URL}/{self.server_file_name}"
 
@@ -72,6 +74,7 @@ class TempleOS(GenericUpdater):
             md5_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         file_list_soup: Tag | None = self.soup_download_page.find("pre")  # type: ignore
         if not file_list_soup:

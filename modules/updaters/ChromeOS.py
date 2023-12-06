@@ -1,3 +1,4 @@
+from functools import cache
 import os
 import zipfile
 
@@ -47,6 +48,7 @@ class ChromeOS(GenericUpdater):
             d for d in self.chromium_releases_info if d["channel"] == self.edition
         )
 
+    @cache
     def _get_download_link(self) -> str:
         return self.cur_edition_info["url"]
 
@@ -101,5 +103,6 @@ class ChromeOS(GenericUpdater):
         if local_file:
             os.remove(local_file)  # type: ignore
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         return self._str_to_version(self.cur_edition_info["version"])

@@ -1,3 +1,4 @@
+from functools import cache
 import os
 import re
 
@@ -45,6 +46,7 @@ class Manjaro(GenericUpdater):
             self.file_info_json["official"] | self.file_info_json["community"]
         )
 
+    @cache
     def _get_download_link(self) -> str:
         return self.file_info_json["releases"]["plasma"]["image"]
 
@@ -60,6 +62,7 @@ class Manjaro(GenericUpdater):
             sha512_sum,
         )
 
+    @cache
     def _get_latest_version(self) -> list[str]:
         download_link = self._get_download_link()
 
