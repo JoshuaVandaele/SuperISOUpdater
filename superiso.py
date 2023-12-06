@@ -125,11 +125,13 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         MemTest86Plus,
         SystemRescue,
         UltimateBootCD,
+        Rescuezilla,
         # Boot Repair
         SuperGrub2,
         # Disk Utilities
         Clonezilla,
         GPartedLive,
+        ShredOS,
         # Operating Systems
         ArchLinux,
         Debian,
@@ -141,7 +143,6 @@ def main(ventoy_path: str, log_level: str, log_file: str | None):
         RockyLinux,
         OpenSUSE,
         Tails,
-        Rescuezilla,
         ChromeOS,
         Windows11,
         Windows10,
