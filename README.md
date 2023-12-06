@@ -93,6 +93,7 @@ The tool currently supports the following ISOs:
   - Clonezilla
   - GParted Live
   - ShredOS
+  - HDAT2 (editions: "full", "lite", "diskette")
 - **Operating Systems**
   - **Linux**
     - Arch Linux

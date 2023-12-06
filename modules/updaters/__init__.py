@@ -6,6 +6,7 @@ from .Fedora import Fedora
 from .FreeDOS import FreeDOS
 from .GenericUpdater import GenericUpdater
 from .GPartedLive import GPartedLive
+from .HDAT2 import HDAT2
 from .HirensBootCDPE import HirensBootCDPE
 from .KaliLinux import KaliLinux
 from .LinuxMint import LinuxMint
@@ -33,6 +34,7 @@ __all__ = [
     "FreeDOS",
     "GenericUpdater",
     "GPartedLive",
+    "HDAT2",
     "ShredOS",
     "HirensBootCDPE",
     "KaliLinux",
