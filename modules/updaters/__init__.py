@@ -13,6 +13,7 @@ from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
 from .OpenSUSE import OpenSUSE
 from .RockyLinux import RockyLinux
+from .Tails import Tails
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .TempleOS import TempleOS
@@ -37,6 +38,7 @@ __all__ = [
     "MemTest86Plus",
     "OpenSUSE",
     "RockyLinux",
+    "Tails",
     "SuperGrub2",
     "SystemRescue",
     "TempleOS",

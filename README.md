@@ -102,6 +102,7 @@ The tool currently supports the following ISOs:
     - Kali Linux (editions: "installer", "live", "installer-netinst", "installer-purple")
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
+    - Tails
     - ChromeOS (editions: "LTC", "LTR", "DEV", "STABLE")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)

@@ -11,6 +11,8 @@ import tomllib
 from bs4 import BeautifulSoup, Tag
 from tqdm import tqdm
 
+from pgpy import PGPKey, PGPSignature
+
 READ_CHUNK_SIZE = 524288
 
 
@@ -158,6 +160,41 @@ def sha512_hash_check(file: str, hash: str) -> bool:
         f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is equal to `{file_hash.hexdigest()}`? {result}"
     )
     return result
+
+
+def pgp_check(file_path: str, signature: str | bytes, public_key: str | bytes) -> bool:
+    """Verifies the signature of a file against a publick ey
+
+    Args:
+        file_path (str): Path to the file to check
+        signature (str | bytes): Signature
+        public_key (str | bytes): Public Key
+
+    Raises:
+        ValueError: If the supplied public key is invalid
+        ValueError: If the supplied signature is invalid
+
+    Returns:
+        bool: Weither the check was successful or not
+    """
+    pub_key = PGPKey.from_blob(public_key)
+    sig = PGPSignature.from_blob(signature)
+
+    if not pub_key:
+        raise ValueError(f"Invalid pub_key: {public_key}")
+    elif not sig:
+        raise ValueError(f"Invalid signature: {signature}")
+
+    # For some reason, from_blob can return either a tuple with either [ThingIwant, Literally Nothing] or directly ThingIWant
+    if isinstance(pub_key, tuple):
+        pub_key = pub_key[0]
+    if isinstance(sig, tuple):
+        sig = sig[0]
+
+    with open(file_path, "rb") as f:
+        file_content = f.read()
+
+    return bool(pub_key.verify(file_content, sig))
 
 
 def parse_hash(
