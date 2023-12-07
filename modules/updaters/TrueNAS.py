@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import parse_hash, sha256_hash_check
+from modules.utils import sha256_hash_check
 
 DOMAIN = "https://www.truenas.com"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/download-truenas-[[EDITION]]"
@@ -53,7 +53,7 @@ class TrueNAS(GenericUpdater):
         if not a_tag:
             raise LookupError("Could not find HTML tag containing download URL")
 
-        return a_tag["href"]
+        return a_tag["href"]  # type: ignore
 
     def check_integrity(self) -> bool:
         sha256_url = f"{self._get_download_link()}.sha256"

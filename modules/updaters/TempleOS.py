@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from modules.exceptions import IntegrityCheckError, VersionNotFoundError
+from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import md5_hash_check, parse_hash
 
