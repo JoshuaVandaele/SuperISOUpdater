@@ -77,6 +77,12 @@ To customize the ISOs, open the `config.toml` file and edit the relevant section
 
 _NOTE: Be cautious when modifying the configuration file, as incorrect changes may cause the script to malfunction._
 
+You can specify a custom configuration file using the `-c` or `--config-file` argument when running the script:
+
+```sh
+python superiso.py <Ventoy Partition> -c /path/to/config.toml
+```
+
 ## Supported ISOs
 
 The tool currently supports the following ISOs:
