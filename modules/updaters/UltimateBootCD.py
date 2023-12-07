@@ -5,7 +5,7 @@ from random import shuffle
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from modules.exceptions import IntegrityCheckError, VersionNotFoundError
+from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import parse_hash, sha256_hash_check
 
