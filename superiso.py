@@ -1,4 +1,5 @@
 import argparse
+from ast import arg
 import copy
 import logging
 import os
@@ -105,17 +106,20 @@ def run_updaters(
             run_updaters(os.path.join(install_path, key), value, updater_list)
 
 
-def main(ventoy_path: str, log_level: str, log_file: str | None):
+def main(
+    ventoy_path: str, log_level: str, log_file: str | None, config_file: str | None
+):
     """Main function to run the update process.
 
     Args:
         ventoy_path (str): Path to the Ventoy drive.
         log_level (str): The log level. Valid choices: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
         log_file (str | None): The path to the log file. If None, log to console.
+        config_file (str | None): The path to the config file. If None, use config.toml.
     """
     setup_logging(log_level, log_file)
 
-    config = parse_config("config.toml")
+    config = parse_config(config_file or "config.toml")
     if not config:
         raise ValueError("Configuration file could not be parsed or is empty")
 
@@ -177,10 +181,15 @@ if __name__ == "__main__":
         "-f", "--log-file", help="Path to the log file (default: log to console)"
     )
 
+    # Add the optional argument for config file
+    parser.add_argument(
+        "-c", "--config-file", help="Path to the config file (default: config.toml)"
+    )
+
     args = parser.parse_args()
 
     try:
-        main(args.ventoy_path, args.log_level, args.log_file)
+        main(args.ventoy_path, args.log_level, args.log_file, args.config_file)
     except Exception:
         logging_critical_exception(
             "An error occurred while executing the main function! See traceback below for a detailed traceback."
