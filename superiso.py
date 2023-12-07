@@ -1,10 +1,29 @@
+from abc import ABCMeta
 import argparse
+from functools import cache
 import logging
 import os
 from typing import Type
 
-from modules.updaters import *
+import modules.updaters
+from modules.updaters import GenericUpdater
 from modules.utils import logging_critical_exception, parse_config
+
+
+@cache
+def get_available_updaters() -> list[Type[GenericUpdater]]:
+    """Get a list of available updaters.
+
+    Returns:
+        list[Type[GenericUpdater]]: A list of available updater classes.
+    """
+    return [
+        getattr(modules.updaters, updater)
+        for updater in dir(modules.updaters)
+        if updater != "GenericUpdater"
+        and isinstance(getattr(modules.updaters, updater), ABCMeta)
+        and issubclass(getattr(modules.updaters, updater), GenericUpdater)
+    ]
 
 
 def setup_logging(log_level: str, log_file: str | None):
@@ -121,38 +140,7 @@ def main(
     if not config:
         raise ValueError("Configuration file could not be parsed or is empty")
 
-    available_updaters: list[Type[GenericUpdater]] = [
-        # Diagnostic Tools
-        HirensBootCDPE,
-        MemTest86Plus,
-        SystemRescue,
-        UltimateBootCD,
-        Rescuezilla,
-        # Boot Repair
-        SuperGrub2,
-        # Disk Utilities
-        Clonezilla,
-        GPartedLive,
-        ShredOS,
-        HDAT2,
-        # Operating Systems
-        ArchLinux,
-        Debian,
-        Ubuntu,
-        Fedora,
-        LinuxMint,
-        Manjaro,
-        KaliLinux,
-        RockyLinux,
-        OpenSUSE,
-        Tails,
-        ChromeOS,
-        TrueNAS,
-        Windows11,
-        Windows10,
-        FreeDOS,
-        TempleOS,
-    ]
+    available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
 
     run_updaters(ventoy_path, config, available_updaters)
 
