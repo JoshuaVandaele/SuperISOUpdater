@@ -88,7 +88,7 @@ def md5_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[md5_hash_check] {os.path.abspath(file)}: `{hash}` is equal to `{file_hash.hexdigest()}`? {result}"
+        f"[md5_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -111,7 +111,7 @@ def sha1_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is equal to `{file_hash.hexdigest()}`? {result}"
+        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -134,7 +134,7 @@ def sha256_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha256_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is equal to `{file_hash.hexdigest()}`? {result}"
+        f"[sha256_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -157,7 +157,7 @@ def sha512_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is equal to `{file_hash.hexdigest()}`? {result}"
+        f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -193,8 +193,12 @@ def pgp_check(file_path: str, signature: str | bytes, public_key: str | bytes) -
 
     with open(file_path, "rb") as f:
         file_content = f.read()
+    
+    result = bool(pub_key.verify(file_content, sig))
+    
+    print(f"[pgp_check] {os.path.abspath(file_path)}: Signature is{'' if result else "n't"} valid")
 
-    return bool(pub_key.verify(file_content, sig))
+    return result
 
 
 def parse_hash(
