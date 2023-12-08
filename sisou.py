@@ -153,7 +153,36 @@ def main():
 
     setup_logging(args.log_level, args.log_file)
 
-    config = parse_config(args.config_file or "config.toml")
+    config_file = args.config_file
+    if not config_file:
+        logging.info(
+            "No config file specified. Trying to find config.toml in the current directory..."
+        )
+        config_file = os.path.join(os.getcwd(), "config.toml")
+
+        if not os.path.isfile(config_file):
+            logging.info(
+                "No config file specified. Trying to find config.toml in the ventoy drive..."
+            )
+            config_file = os.path.join(args.ventoy_path, "config.toml")
+
+            if not os.path.isfile(config_file):
+                logging.info(
+                    "No config.toml found in the ventoy drive. Generating one from config.toml.default..."
+                )
+                with open(
+                    os.path.join(
+                        os.path.dirname(__file__), "config", "config.toml.default"
+                    )
+                ) as default_config_file:
+                    with open(config_file, "w") as new_config_file:
+                        new_config_file.write(default_config_file.read())
+                logging.info(
+                    "Generated config.toml in the ventoy drive. Please edit it to your liking and run sisou again."
+                )
+                return
+
+    config = parse_config(config_file)
     if not config:
         raise ValueError("Configuration file could not be parsed or is empty")
 
