@@ -10,6 +10,17 @@ Super ISO Updater is a powerful tool that provides a convenient way to check for
 
 ### Installation
 
+#### Using pip
+
+1. Open your terminal or command prompt.
+2. Install the package using the following command:
+
+```sh
+python -m pip install sisou
+```
+
+#### Using git
+
 1. Clone this repository locally by running
 
 ```sh
@@ -22,15 +33,15 @@ git clone https://github.com/FolfyBlue/SuperISOUpdater
 cd SuperISOUpdater
 ```
 
-3. Install the requirements with the following command:
+3. Install the module using the following command:
 
 ```sh
-python -m pip install -r requirements.txt
+python -m pip install .
 ```
 
 ## Usage
 
-To use the `sisou.py` script, follow these steps:
+To use sisou, follow these steps:
 
 1. Open your terminal or command prompt.
 2. Navigate to the directory where you cloned the script.
@@ -38,19 +49,19 @@ To use the `sisou.py` script, follow these steps:
 ### Running the script
 
 ```sh
-python sisou.py <Ventoy Partition>
+sisou <Ventoy Partition>
 ```
 
 #### Example on Windows
 
 ```sh
-python sisou.py E:
+sisou E:
 ```
 
 #### Example on Linux
 
 ```sh
-python sisou.py /run/media/folfy/Ventoy/
+sisou /run/media/folfy/Ventoy/
 ```
 
 ### Logging
@@ -60,13 +71,13 @@ The script generates logs during its execution. You can control the log level us
 To set a specific log level, use the `-l` option followed by the desired log level:
 
 ```sh
-python sisou.py <Ventoy Partition> -l DEBUG
+sisou <Ventoy Partition> -l DEBUG
 ```
 
 You can also specify a log file using the `-f` or `--log-file` argument to save the logs to a file instead of displaying them in the console:
 
 ```sh
-python sisou.py <Ventoy Partition> -f /path/to/log_file.log
+sisou <Ventoy Partition> -f /path/to/log_file.log
 ```
 
 ## Customization
@@ -80,7 +91,7 @@ _NOTE: Be cautious when modifying the configuration file, as incorrect changes m
 You can specify a custom configuration file using the `-c` or `--config-file` argument when running the script:
 
 ```sh
-python sisou.py <Ventoy Partition> -c /path/to/config.toml
+sisou <Ventoy Partition> -c /path/to/config.toml
 ```
 
 ## Supported ISOs
