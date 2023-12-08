@@ -123,31 +123,8 @@ def run_updaters(
             run_updaters(os.path.join(install_path, key), value, updater_list)
 
 
-def main(
-    ventoy_path: str, log_level: str, log_file: str | None, config_file: str | None
-):
-    """Main function to run the update process.
-
-    Args:
-        ventoy_path (str): Path to the Ventoy drive.
-        log_level (str): The log level. Valid choices: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
-        log_file (str | None): The path to the log file. If None, log to console.
-        config_file (str | None): The path to the config file. If None, use config.toml.
-    """
-    setup_logging(log_level, log_file)
-
-    config = parse_config(config_file or "config.toml")
-    if not config:
-        raise ValueError("Configuration file could not be parsed or is empty")
-
-    available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
-
-    run_updaters(ventoy_path, config, available_updaters)
-
-    logging.debug("Finished execution")
-
-
-if __name__ == "__main__":
+def main():
+    """Main function to run the update process."""
     parser = argparse.ArgumentParser(description="Process a file and set log level")
 
     # Add the positional argument for the file path
@@ -174,9 +151,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    try:
-        main(args.ventoy_path, args.log_level, args.log_file, args.config_file)
-    except Exception:
-        logging_critical_exception(
-            "An error occurred while executing the main function! See traceback below for a detailed traceback."
-        )
+    setup_logging(args.log_level, args.log_file)
+
+    config = parse_config(args.config_file or "config.toml")
+    if not config:
+        raise ValueError("Configuration file could not be parsed or is empty")
+
+    available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
+
+    run_updaters(args.ventoy_path, config, available_updaters)
+
+    logging.debug("Finished execution")
+
+
+if __name__ == "__main__":
+    main()
