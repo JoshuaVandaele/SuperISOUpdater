@@ -2,6 +2,25 @@
 
 Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is specifically designed to work with a Ventoy drive and supports a wide range of ISOs. This README will guide you on how to use this tool effectively.
 
+## Table of Contents
+
+- [Super ISO Updater](#super-iso-updater)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+      - [Using pip](#using-pip)
+      - [Using git](#using-git)
+  - [Usage](#usage)
+    - [Running the script](#running-the-script)
+      - [Example on Windows](#example-on-windows)
+      - [Example on Linux](#example-on-linux)
+    - [Logging](#logging)
+  - [Customization](#customization)
+  - [Supported ISOs](#supported-isos)
+  - [Contribute](#contribute)
+  - [License](#license)
+
 ## Getting Started
 
 ### Prerequisites
