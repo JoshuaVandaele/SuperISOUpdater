@@ -137,7 +137,7 @@ The tool currently supports the following ISOs:
     - Ubuntu (editions: "LTS", "interim")
     - Fedora (editions: "KDE", "Budgie", "Cinnamon", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
     - Linux Mint (editions: "cinnamon", "mate", "xfce")
-    - Manjaro (editions: "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "sway", "mate")
+    - Manjaro (editions: "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "mate")
     - Kali Linux (editions: "installer", "live", "installer-netinst", "installer-purple")
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")

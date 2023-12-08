@@ -34,7 +34,6 @@ class Manjaro(GenericUpdater):
             "budgie",
             "cinnamon",
             "i3",
-            "sway",
             "mate",
         ]
         self.edition = edition.lower()
@@ -48,10 +47,10 @@ class Manjaro(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        return self.file_info_json["releases"]["plasma"]["image"]
+        return self.file_info_json["releases"][self.edition]["image"]
 
     def check_integrity(self) -> bool:
-        sha512_url = self.file_info_json["releases"]["plasma"]["checksum"]
+        sha512_url = self.file_info_json["releases"][self.edition]["checksum"]
 
         sha512_sums = requests.get(sha512_url).text
 
@@ -67,7 +66,7 @@ class Manjaro(GenericUpdater):
         download_link = self._get_download_link()
 
         latest_version_regex = re.search(
-            r"kde\/(.+)\/",  # Parse from https://fastly-cdn.system-rescue.org/releases/10.01/systemrescue-10.01-amd64.iso
+            r"manjaro-\w+-(.+?)-",
             download_link,
         )
 
