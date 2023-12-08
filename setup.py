@@ -35,9 +35,10 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
     ],
     keywords="ventoy, updater, os, iso, updater, sisou, cli",  # Optional
-    # package_dir={"superisoupdater": "."},  # Optional
     packages=find_packages(),  # Required
     py_modules=["sisou"],  # Required
+    include_package_data=True,
+    package_data={"": ["config.toml.default"]},
     python_requires=">=3.10, <4",
     install_requires=[
         "beautifulsoup4==4.12.2",
@@ -49,13 +50,6 @@ setup(
     #     "dev": [""],
     #     "test": [""],
     # },
-    # If there are data files included in your packages that need to be
-    # installed, specify them here.
-    # package_data={  # Optional
-    #     "sample": ["package_data.dat"],
-    # },
-    # Entry points. The following would provide a command called `sample` which
-    # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         "console_scripts": [
             "sisou = sisou:main",
@@ -65,4 +59,5 @@ setup(
         "Bug Reports": "https://github.com/JoshuaVandaele/SuperISOUpdater/issues",
         "Source": "https://github.com/JoshuaVandaele/SuperISOUpdater/",
     },
+    zip_safe=False,
 )
