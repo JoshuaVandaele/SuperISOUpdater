@@ -27,25 +27,20 @@ class ChromeOS(GenericUpdater):
     """
 
     def __init__(self, folder_path: str, edition: str) -> None:
-        self.valid_editions = ["LTC", "LTR", "DEV", "STABLE"]
+        self.valid_editions = ["ltc", "ltr", "stable"]
         self.edition = edition
 
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
-
-        # Make the parameter case insensitive, and find back the correct case using valid_editions
-        self.edition = next(
-            valid_ed
-            for valid_ed in self.valid_editions
-            if valid_ed.lower() == self.edition.lower()
-        )
 
         self.chromium_releases_info: list[dict] = requests.get(
             f"{DOMAIN}/dl/edgedl/chromeos/recovery/cloudready_recovery2.json"
         ).json()
 
         self.cur_edition_info: dict = next(
-            d for d in self.chromium_releases_info if d["channel"] == self.edition
+            d
+            for d in self.chromium_releases_info
+            if d["channel"].lower() == self.edition
         )
 
     @cache

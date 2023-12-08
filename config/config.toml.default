@@ -120,8 +120,8 @@ enabled = true
 [OperatingSystems.Linux.ChromeOS]
 enabled = true
 # Available editions:
-# "LTC", "LTR", "DEV", "STABLE"
-editions = ["STABLE"]
+# "ltc", "ltr", "stable"
+editions = ["stable"]
 
 # Windows
 [OperatingSystems.Windows]

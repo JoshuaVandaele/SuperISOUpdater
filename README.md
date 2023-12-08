@@ -143,7 +143,7 @@ The tool currently supports the following ISOs:
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
     - TrueNAS (editions: "scale")
     - Tails
-    - ChromeOS (editions: "LTC", "LTR", "DEV", "STABLE")
+    - ChromeOS (editions: "ltc", "ltr", "stable")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)
     - Windows 10 (Multi-edition ISO, Any language)
