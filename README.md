@@ -30,7 +30,7 @@ python -m pip install -r requirements.txt
 
 ## Usage
 
-To use the `superiso.py` script, follow these steps:
+To use the `sisou.py` script, follow these steps:
 
 1. Open your terminal or command prompt.
 2. Navigate to the directory where you cloned the script.
@@ -38,19 +38,19 @@ To use the `superiso.py` script, follow these steps:
 ### Running the script
 
 ```sh
-python superiso.py <Ventoy Partition>
+python sisou.py <Ventoy Partition>
 ```
 
 #### Example on Windows
 
 ```sh
-python superiso.py E:
+python sisou.py E:
 ```
 
 #### Example on Linux
 
 ```sh
-python superiso.py /run/media/folfy/Ventoy/
+python sisou.py /run/media/folfy/Ventoy/
 ```
 
 ### Logging
@@ -60,18 +60,18 @@ The script generates logs during its execution. You can control the log level us
 To set a specific log level, use the `-l` option followed by the desired log level:
 
 ```sh
-python superiso.py <Ventoy Partition> -l DEBUG
+python sisou.py <Ventoy Partition> -l DEBUG
 ```
 
 You can also specify a log file using the `-f` or `--log-file` argument to save the logs to a file instead of displaying them in the console:
 
 ```sh
-python superiso.py <Ventoy Partition> -f /path/to/log_file.log
+python sisou.py <Ventoy Partition> -f /path/to/log_file.log
 ```
 
 ## Customization
 
-The `superiso.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
+The `sisou.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
 
 To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs by modifying the corresponding values in the configuration file.
 
@@ -80,7 +80,7 @@ _NOTE: Be cautious when modifying the configuration file, as incorrect changes m
 You can specify a custom configuration file using the `-c` or `--config-file` argument when running the script:
 
 ```sh
-python superiso.py <Ventoy Partition> -c /path/to/config.toml
+python sisou.py <Ventoy Partition> -c /path/to/config.toml
 ```
 
 ## Supported ISOs
