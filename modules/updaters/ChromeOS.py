@@ -28,7 +28,7 @@ class ChromeOS(GenericUpdater):
 
     def __init__(self, folder_path: str, edition: str) -> None:
         self.valid_editions = ["ltc", "ltr", "stable"]
-        self.edition = edition
+        self.edition = edition.lower()
 
         file_path = os.path.join(folder_path, FILE_NAME)
         super().__init__(file_path)
