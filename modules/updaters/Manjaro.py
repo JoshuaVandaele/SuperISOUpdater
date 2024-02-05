@@ -6,11 +6,16 @@ import requests
 
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import parse_hash, sha512_hash_check
+from modules.utils import (
+    md5_hash_check,
+    parse_hash,
+    sha512_hash_check,
+    sha256_hash_check,
+)
 
 DOMAIN = "https://gitlab.manjaro.org"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/web/iso-info/-/raw/master/file-info.json"
-FILE_NAME = "manjaro-[[EDITION]]-[[VER]]-linux61.iso"
+FILE_NAME = "manjaro-[[EDITION]]-[[VER]]-linux.iso"
 
 
 class Manjaro(GenericUpdater):
@@ -50,16 +55,29 @@ class Manjaro(GenericUpdater):
         return self.file_info_json["releases"][self.edition]["image"]
 
     def check_integrity(self) -> bool:
-        sha512_url = self.file_info_json["releases"][self.edition]["checksum"]
+        checksum_url = self.file_info_json["releases"][self.edition]["checksum"]
 
-        sha512_sums = requests.get(sha512_url).text
+        checksums = requests.get(checksum_url).text
 
-        sha512_sum = parse_hash(sha512_sums, [], 0)
+        checksum = parse_hash(checksums, [], 0)
 
-        return sha512_hash_check(
-            self._get_complete_normalized_file_path(absolute=True),
-            sha512_sum,
-        )
+        if checksum_url.endswith(".sha512"):
+            return sha512_hash_check(
+                self._get_complete_normalized_file_path(absolute=True),
+                checksum,
+            )
+        elif checksum_url.endswith(".sha256"):
+            return sha256_hash_check(
+                self._get_complete_normalized_file_path(absolute=True),
+                checksum,
+            )
+        elif checksum_url.endswith(".md5"):
+            return md5_hash_check(
+                self._get_complete_normalized_file_path(absolute=True),
+                checksum,
+            )
+        else:
+            raise ValueError("Unknown checksum type")
 
     @cache
     def _get_latest_version(self) -> list[str]:
