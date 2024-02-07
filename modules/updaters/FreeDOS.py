@@ -1,8 +1,8 @@
-from functools import cache
 import glob
 import os
 import re
 import zipfile
+from functools import cache
 
 import requests
 from bs4 import BeautifulSoup
@@ -132,7 +132,12 @@ class FreeDOS(GenericUpdater):
                 )
 
             extracted_file = z.extract(to_extract, path=os.path.dirname(new_file))
-        os.rename(extracted_file, new_file.replace("[[EXT]]", file_ext))
+        try:
+            os.rename(extracted_file, new_file.replace("[[EXT]]", file_ext))
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            os.remove(new_file)
+            os.rename(extracted_file, new_file.replace("[[EXT]]", file_ext))
 
         os.remove(archive_path)
         if local_file:
