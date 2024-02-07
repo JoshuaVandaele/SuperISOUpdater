@@ -1,4 +1,6 @@
+import logging
 from functools import cache
+
 import requests
 
 
@@ -13,11 +15,13 @@ def github_get_latest_version(owner: str, repo: str) -> dict:
     Returns:
         dict: the full release information
     """
-    res = {}
-
     api_url = f"https://api.github.com/repos/{owner}/{repo}"
 
+    logging.debug(f"Fetching latest release from {api_url}")
+
     release = requests.get(f"{api_url}/releases/latest").json()
+
+    logging.debug(f"GitHub release fetched from {api_url}: {release}")
 
     return release
 
@@ -40,5 +44,7 @@ def parse_github_release(release: dict) -> dict:
 
     for asset in release["assets"]:
         res["files"][asset["name"]] = asset["browser_download_url"]
+
+    logging.debug(f"GitHub release parsed: {res}")
 
     return res
