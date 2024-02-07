@@ -2,9 +2,10 @@
 https://raw.githubusercontent.com/pypa/sampleproject/db5806e0a3204034c51b1c00dde7d5eb3fa2532e/setup.py
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
 import pathlib
+
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
 
 here = pathlib.Path(__file__).parent.resolve()
 
@@ -13,7 +14,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="sisou",  # Required
-    version="1.1.2",  # Required
+    version="1.1.3",  # Required
     description="A powerful tool to conveniently update all of your ISO files!",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional
