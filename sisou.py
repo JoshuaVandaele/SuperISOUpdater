@@ -1,13 +1,13 @@
-from abc import ABCMeta
 import argparse
-from functools import cache
 import logging
 import os
+from abc import ABCMeta
+from functools import cache
 from typing import Type
 
 import modules.updaters
 from modules.updaters import GenericUpdater
-from modules.utils import logging_critical_exception, parse_config
+from modules.utils import parse_config
 
 
 @cache
