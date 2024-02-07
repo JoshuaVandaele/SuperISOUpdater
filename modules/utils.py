@@ -3,15 +3,14 @@ import logging
 import os
 import re
 import shutil
+import tomllib
 import traceback
 import uuid
 
 import requests
-import tomllib
 from bs4 import BeautifulSoup, Tag
-from tqdm import tqdm
-
 from pgpy import PGPKey, PGPSignature
+from tqdm import tqdm
 
 READ_CHUNK_SIZE = 524288
 
@@ -88,7 +87,7 @@ def md5_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[md5_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
+        f"[md5_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -111,7 +110,7 @@ def sha1_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -134,7 +133,7 @@ def sha256_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha256_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha256_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -157,7 +156,7 @@ def sha512_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is{"" if result else "n't"} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
@@ -193,10 +192,12 @@ def pgp_check(file_path: str, signature: str | bytes, public_key: str | bytes) -
 
     with open(file_path, "rb") as f:
         file_content = f.read()
-    
+
     result = bool(pub_key.verify(file_content, sig))
-    
-    print(f"[pgp_check] {os.path.abspath(file_path)}: Signature is{'' if result else "n't"} valid")
+
+    print(
+        f"[pgp_check] {os.path.abspath(file_path)}: Signature is {'' if result else 'not'} valid"
+    )
 
     return result
 
