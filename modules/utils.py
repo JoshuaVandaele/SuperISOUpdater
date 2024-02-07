@@ -1,11 +1,11 @@
 import hashlib
 import logging
-import os
 import re
 import shutil
 import tomllib
 import traceback
 import uuid
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -27,11 +27,11 @@ def logging_critical_exception(msg, *args, **kwargs):
     logging.critical(f"{msg}\n{traceback.format_exc()}", *args, **kwargs)
 
 
-def parse_config(toml_file: str) -> dict | None:
+def parse_config(toml_file: Path) -> dict | None:
     """Parse a TOML configuration file and return a dictionary representation.
 
     Args:
-        toml_file (str): The path to the TOML configuration file.
+        toml_file (Path): The path to the TOML configuration file.
 
     Returns:
         dict | None: The parsed configuration as a dictionary, or None if there was an error during parsing.
@@ -71,12 +71,12 @@ def parse_config_from_dict(input_dict: dict):
     return new_dict
 
 
-def md5_hash_check(file: str, hash: str) -> bool:
+def md5_hash_check(file: Path, hash: str) -> bool:
     """
     Calculate the MD5 hash of a given file and compare it with a provided hash value.
 
     Args:
-        file (str): The path to the file for which the hash is to be calculated.
+        file (Path): The path to the file for which the hash is to be calculated.
         hash (str): The MD5 hash value to compare against the calculated hash.
 
     Returns:
@@ -89,17 +89,17 @@ def md5_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[md5_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
+        f"[md5_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
 
-def sha1_hash_check(file: str, hash: str) -> bool:
+def sha1_hash_check(file: Path, hash: str) -> bool:
     """
     Calculate the SHA-1 hash of a given file and compare it with a provided hash value.
 
     Args:
-        file (str): The path to the file for which the hash is to be calculated.
+        file (Path): The path to the file for which the hash is to be calculated.
         hash (str): The SHA-1 hash value to compare against the calculated hash.
 
     Returns:
@@ -112,12 +112,12 @@ def sha1_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha1_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha1_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
 
-def sha256_hash_check(file: str, hash: str) -> bool:
+def sha256_hash_check(file: Path, hash: str) -> bool:
     """
     Calculate the SHA-256 hash of a given file and compare it with a provided hash value.
 
@@ -135,17 +135,17 @@ def sha256_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha256_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha256_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
 
-def sha512_hash_check(file: str, hash: str) -> bool:
+def sha512_hash_check(file: Path, hash: str) -> bool:
     """
     Calculate the SHA-512 hash of a given file and compare it with a provided hash value.
 
     Args:
-        file (str): The path to the file for which the hash is to be calculated.
+        file (Path): The path to the file for which the hash is to be calculated.
         hash (str): The SHA-512 hash value to compare against the calculated hash.
 
     Returns:
@@ -158,16 +158,16 @@ def sha512_hash_check(file: str, hash: str) -> bool:
     result = hash.lower() == file_hash.hexdigest()
 
     logging.debug(
-        f"[sha512_hash_check] {os.path.abspath(file)}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
+        f"[sha512_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
     )
     return result
 
 
-def pgp_check(file_path: str, signature: str | bytes, public_key: str | bytes) -> bool:
+def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) -> bool:
     """Verifies the signature of a file against a publick ey
 
     Args:
-        file_path (str): Path to the file to check
+        file_path (Path): Path to the file to check
         signature (str | bytes): Signature
         public_key (str | bytes): Public Key
 
@@ -198,7 +198,7 @@ def pgp_check(file_path: str, signature: str | bytes, public_key: str | bytes) -
     result = bool(pub_key.verify(file_content, sig))
 
     print(
-        f"[pgp_check] {os.path.abspath(file_path)}: Signature is {'' if result else 'not'} valid"
+        f"[pgp_check] {file_path.resolve()}: Signature is {'' if result else 'not'} valid"
     )
 
     return result
@@ -227,19 +227,19 @@ def parse_hash(
     )
 
 
-def download_file(url: str, local_file: str, progress_bar: bool = True) -> None:
+def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None:
     """
     Download a file from a given URL and save it to the local file system.
 
     Args:
         url (str): The URL of the file to download.
-        local_file (str): The path where the downloaded file will be saved on the local file system.
+        local_file (Path): The path where the downloaded file will be saved on the local file system.
         progress_bar (bool): Whether to show a progress bar during the download (default: True).
 
     Returns:
         None
     """
-    logging.debug(f"[download_file] Downloading {url} to {os.path.abspath(local_file)}")
+    logging.debug(f"[download_file] Downloading {url} to {local_file.resolve()}")
     with requests.get(url, stream=True) as r:
         total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
 
@@ -248,7 +248,7 @@ def download_file(url: str, local_file: str, progress_bar: bool = True) -> None:
                 with tqdm(
                     total=total_size,
                     unit="B",
-                    desc=os.path.basename(local_file),
+                    desc=local_file.name,
                 ) as pbar:
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
