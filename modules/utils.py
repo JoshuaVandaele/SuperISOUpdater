@@ -57,9 +57,11 @@ def parse_config_from_dict(input_dict: dict):
                 del value
                 continue
             if "directory" in value:
+                logging.debug(f"Found directory {value['directory']}")
                 new_key = value["directory"]
                 del value["directory"]
             else:
+                logging.debug(f"Found module {key}")
                 new_key = key
             new_dict[new_key] = parse_config_from_dict(value)
         elif key == "enabled":
@@ -215,6 +217,9 @@ def parse_hash(
     Returns:
         The extracted hash value.
     """
+    logging.debug(
+        f"[parse_hash] Parsing hashes with match strings `{match_strings_in_line}` and hash position {hash_position_in_line} in those hashes:\n{hashes}"
+    )
     return next(
         line.split()[hash_position_in_line]
         for line in hashes.strip().splitlines()

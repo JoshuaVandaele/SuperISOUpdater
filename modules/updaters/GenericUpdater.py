@@ -29,6 +29,9 @@ class GenericUpdater(ABC):
         self.version_splitter = "."
 
         if self.has_edition():
+            logging.debug(
+                f"[GenericUpdater.__init__] {self.__class__.__name__} has edition support"
+            )
             if self.edition.lower() not in (  # type: ignore
                 valid_edition.lower() for valid_edition in self.valid_editions  # type: ignore
             ):
@@ -37,6 +40,9 @@ class GenericUpdater(ABC):
                 )
 
         if self.has_lang():
+            logging.debug(
+                f"[GenericUpdater.__init__] {self.__class__.__name__} has language support"
+            )
             if self.lang.lower() not in (  # type: ignore
                 valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
             ):
@@ -77,6 +83,9 @@ class GenericUpdater(ABC):
             bool: True if updates are available, False if the local version is up to date.
         """
         if not (local_version := self._get_local_version()):
+            logging.debug(
+                f"[GenericUpdater.check_for_updates] No local version found for {self.__class__.__name__}"
+            )
             return True
 
         is_update_available = self._compare_version_numbers(
@@ -104,6 +113,9 @@ class GenericUpdater(ABC):
         if not versioning_flag:
             # If the file is being replaced, back it up
             if old_file:
+                logging.debug(
+                    f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
+                )
                 old_file += ".old"
                 os.replace(self.file_path, old_file)
 
@@ -132,6 +144,9 @@ class GenericUpdater(ABC):
 
         # If the installation was successful and we had a previous version installed, remove it
         if old_file:
+            logging.debug(
+                f"[GenericUpdater.install_latest_version] Removing old file: {old_file}"
+            )
             os.remove(old_file)
 
     def has_edition(self) -> bool:
@@ -178,6 +193,9 @@ class GenericUpdater(ABC):
 
         if local_files:
             return local_files[0]
+        logging.debug(
+            f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}"
+        )
         return None
 
     def _get_local_version(self) -> list[str] | None:
@@ -193,6 +211,9 @@ class GenericUpdater(ABC):
         local_file = self._get_local_file()
 
         if not local_file or "[[VER]]" not in self.file_path:
+            logging.debug(
+                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
+            )
             return None
 
         normalized_path_without_ext: str = os.path.splitext(
@@ -211,6 +232,11 @@ class GenericUpdater(ABC):
 
         if local_version_regex:
             local_version = self._str_to_version(local_version_regex.group(1))
+
+        if not local_version:
+            logging.debug(
+                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
+            )
 
         return local_version
 
