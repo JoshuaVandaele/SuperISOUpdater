@@ -176,6 +176,7 @@ def main():
                 with open(
                     Path(__file__).parent / "config" / "config.toml.default"
                 ) as default_config_file:
+                    config_file.parent.mkdir(parents=True, exist_ok=True)
                     with open(config_file, "w") as new_config_file:
                         new_config_file.write(default_config_file.read())
                 logging.info(
