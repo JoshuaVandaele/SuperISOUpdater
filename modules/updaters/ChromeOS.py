@@ -1,6 +1,6 @@
-from functools import cache
 import os
 import zipfile
+from functools import cache
 
 import requests
 
@@ -92,7 +92,12 @@ class ChromeOS(GenericUpdater):
             )
 
             extracted_file = z.extract(to_extract, path=os.path.dirname(new_file))
-        os.rename(extracted_file, new_file)
+        try:
+            os.rename(extracted_file, new_file)
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            os.remove(new_file)
+            os.rename(extracted_file, new_file)
 
         os.remove(archive_path)
         if local_file:

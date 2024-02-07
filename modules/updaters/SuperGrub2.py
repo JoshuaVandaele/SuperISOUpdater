@@ -1,6 +1,6 @@
-from functools import cache
 import os
 import zipfile
+from functools import cache
 
 import requests
 from bs4 import BeautifulSoup
@@ -105,7 +105,12 @@ class SuperGrub2(GenericUpdater):
             os.remove(local_file)  # type: ignore
         os.remove(archive_path)
 
-        os.rename(extracted_file, new_file)
+        try:
+            os.rename(extracted_file, new_file)
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            os.remove(new_file)
+            os.rename(extracted_file, new_file)
 
     @cache
     def _get_latest_version(self) -> list[str]:
