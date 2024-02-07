@@ -1,6 +1,6 @@
-from functools import cache
 import logging
-import os
+from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -27,7 +27,7 @@ class Windows10(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str, lang: str) -> None:
+    def __init__(self, folder_path: Path, lang: str) -> None:
         self.valid_langs = [
             "Arabic",
             "Brazilian Portuguese",
@@ -69,7 +69,7 @@ class Windows10(GenericUpdater):
             "Ukrainian",
         ]
         self.lang = lang
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
         # Make the parameter case insensitive, and find back the correct case using valid_editions
         self.lang = next(

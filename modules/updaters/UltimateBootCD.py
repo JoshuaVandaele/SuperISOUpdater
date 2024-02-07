@@ -1,5 +1,5 @@
 from functools import cache
-import os
+from pathlib import Path
 from random import shuffle
 
 import requests
@@ -34,8 +34,8 @@ class UltimateBootCD(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
-        file_path = os.path.join(folder_path, FILE_NAME)
+    def __init__(self, folder_path: Path) -> None:
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)

@@ -1,5 +1,6 @@
 from functools import cache
-import os
+from pathlib import Path
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -7,7 +8,6 @@ from bs4 import BeautifulSoup
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import parse_hash, sha256_hash_check
-from urllib.parse import urljoin
 
 DOMAIN = "https://cdimage.kali.org"
 DOWNLOAD_PAGE_URL = urljoin(DOMAIN, "current/")
@@ -28,7 +28,7 @@ class KaliLinux(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str, edition: str) -> None:
+    def __init__(self, folder_path: Path, edition: str) -> None:
         self.valid_editions = [
             "installer",
             "installer-netinst",
@@ -37,7 +37,7 @@ class KaliLinux(GenericUpdater):
         ]
         self.edition = edition.lower()
 
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -54,7 +54,8 @@ class KaliLinux(GenericUpdater):
     @cache
     def _get_download_link(self) -> str:
         return urljoin(
-            DOWNLOAD_PAGE_URL, self._get_complete_normalized_file_path(absolute=False)
+            DOWNLOAD_PAGE_URL,
+            str(self._get_complete_normalized_file_path(absolute=False)),
         )
 
     def check_integrity(self) -> bool:
@@ -63,7 +64,9 @@ class KaliLinux(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_complete_normalized_file_path(absolute=False)], 0
+            sha256_sums,
+            [str(self._get_complete_normalized_file_path(absolute=False))],
+            0,
         )
 
         return sha256_hash_check(
@@ -80,11 +83,13 @@ class KaliLinux(GenericUpdater):
         latest = next(
             href
             for a_tag in download_a_tags
-            if self._get_normalized_file_path(
-                absolute=False,
-                version=None,
-                edition=self.edition if self.has_edition() else None,  # type: ignore
-                lang=self.lang if self.has_lang() else None,  # type: ignore
+            if str(
+                self._get_normalized_file_path(
+                    absolute=False,
+                    version=None,
+                    edition=self.edition if self.has_edition() else None,  # type: ignore
+                    lang=self.lang if self.has_lang() else None,  # type: ignore
+                )
             ).split("[[VER]]")[-1]
             in (href := a_tag.get("href"))
         )

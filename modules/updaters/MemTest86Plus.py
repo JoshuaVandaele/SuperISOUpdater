@@ -1,6 +1,6 @@
-import os
 import zipfile
 from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,7 +32,7 @@ class MemTest86Plus(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
+    def __init__(self, folder_path: Path) -> None:
         """
         Initialize the MemTest86Plus updater.
 
@@ -43,7 +43,7 @@ class MemTest86Plus(GenericUpdater):
             ConnectionError: If the download page could not be fetched successfully.
             DownloadLinkNotFoundError: If the card containing download information is not found.
         """
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -85,7 +85,7 @@ class MemTest86Plus(GenericUpdater):
         sha_256_checksum: str = parse_hash(sha_256_checksums_str, ["64.iso"], 0)
 
         return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True) + ".zip",
+            self._get_complete_normalized_file_path(absolute=True).with_suffix(".zip"),
             sha_256_checksum,
         )
 
@@ -101,31 +101,31 @@ class MemTest86Plus(GenericUpdater):
 
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        archive_path = f"{new_file}.zip"
+        archive_path = new_file.with_suffix(".zip")
 
         download_file(download_link, archive_path)
 
         local_file = self._get_local_file()
 
         if not self.check_integrity():
-            os.remove(archive_path)
+            archive_path.unlink()
             raise IntegrityCheckError("Integrity check failed")
 
         with zipfile.ZipFile(archive_path) as z:
             file_list = z.namelist()
             iso = next(file for file in file_list if file.endswith(".iso"))
-            extracted_file = z.extract(iso, path=os.path.dirname(new_file))
+            extracted_file = Path(z.extract(iso, path=new_file.parent))
 
         if local_file:
-            os.remove(local_file)  # type: ignore
-        os.remove(archive_path)
+            local_file.unlink()
+        archive_path.unlink()
 
         try:
-            os.rename(extracted_file, new_file)
+            extracted_file.rename(new_file)
         except FileExistsError:
             # On Windows, files are not overwritten by default, so we need to remove the old file first
-            os.remove(new_file)
-            os.rename(extracted_file, new_file)
+            new_file.unlink()
+            extracted_file.rename(new_file)
 
     @cache
     def _get_latest_version(self) -> list[str]:
