@@ -1,13 +1,12 @@
 from functools import cache
-import os
+from pathlib import Path
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
 from modules.updaters.GenericUpdater import GenericUpdater
-from urllib.parse import urljoin
-
 from modules.utils import md5_hash_check, parse_hash
 
 DOMAIN = "https://www.hdat2.com"
@@ -29,7 +28,7 @@ class HDAT2(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str, edition: str) -> None:
+    def __init__(self, folder_path: Path, edition: str) -> None:
         self.valid_editions = ["full", "lite", "diskette"]
         self.edition = edition.lower()
 
@@ -40,7 +39,7 @@ class HDAT2(GenericUpdater):
 
         self.file_name = FILE_NAME.replace("[[EXT]]", extension)
 
-        file_path = os.path.join(folder_path, self.file_name)
+        file_path = folder_path / self.file_name
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)

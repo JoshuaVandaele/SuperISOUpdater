@@ -1,4 +1,5 @@
-import os
+from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -6,8 +7,6 @@ from bs4 import BeautifulSoup
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import pgp_check
-from functools import cache
-
 
 DOMAIN = "https://mirrors.edge.kernel.org"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/tails/stable"
@@ -28,8 +27,8 @@ class Tails(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
-        file_path = os.path.join(folder_path, FILE_NAME)
+    def __init__(self, folder_path: Path) -> None:
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)

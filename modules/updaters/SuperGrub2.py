@@ -1,6 +1,6 @@
-from functools import cache
-import os
 import zipfile
+from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -31,8 +31,8 @@ class SuperGrub2(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
-        file_path = os.path.join(folder_path, FILE_NAME)
+    def __init__(self, folder_path: Path) -> None:
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -69,7 +69,7 @@ class SuperGrub2(GenericUpdater):
         sourceforge_url = href_attributes[0].get("href")
         return sourceforge_url
 
-    def check_integrity(self, archive_to_check: str) -> bool:
+    def check_integrity(self, archive_to_check: Path) -> bool:
         sha256_sums_tag = self.soup_latest_download_article.find_all("pre")
         if not sha256_sums_tag:
             raise IntegrityCheckError("Couldn't find the SHA256 sum")
@@ -86,26 +86,31 @@ class SuperGrub2(GenericUpdater):
 
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        archive_path = f"{new_file}.zip"
+        archive_path = new_file.with_suffix(".zip")
 
         download_file(download_link, archive_path)
 
         local_file = self._get_local_file()
 
         if not self.check_integrity(archive_path):
-            os.remove(archive_path)
+            archive_path.unlink()
             raise IntegrityCheckError("Integrity check failed")
 
         with zipfile.ZipFile(archive_path) as z:
             file_list = z.namelist()
             iso = next(file for file in file_list if file.endswith(".img"))
-            extracted_file = z.extract(iso, path=os.path.dirname(new_file))
+            extracted_file = Path(z.extract(iso, path=new_file.parent))
 
         if local_file:
-            os.remove(local_file)  # type: ignore
-        os.remove(archive_path)
+            local_file.unlink()
+        archive_path.unlink()
 
-        os.rename(extracted_file, new_file)
+        try:
+            extracted_file.rename(new_file)
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            new_file.unlink()
+            extracted_file.rename(new_file)
 
     @cache
     def _get_latest_version(self) -> list[str]:
