@@ -1,13 +1,13 @@
-from abc import ABCMeta
 import argparse
-from functools import cache
 import logging
-import os
+from abc import ABCMeta
+from functools import cache
+from pathlib import Path
 from typing import Type
 
 import modules.updaters
 from modules.updaters import GenericUpdater
-from modules.utils import logging_critical_exception, parse_config
+from modules.utils import parse_config
 
 
 @cache
@@ -26,12 +26,12 @@ def get_available_updaters() -> list[Type[GenericUpdater]]:
     ]
 
 
-def setup_logging(log_level: str, log_file: str | None):
+def setup_logging(log_level: str, log_file: Path | None):
     """Set up logging configurations.
 
     Args:
         log_level (str): The log level. Valid choices: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
-        log_file (str | None): The path to the log file. If None, log to console.
+        log_file (Path | None): The path to the log file. If None, log to console.
 
     Raises:
         ValueError: If the log_level is invalid.
@@ -73,12 +73,12 @@ def run_updater(updater: GenericUpdater):
 
 
 def run_updaters(
-    install_path: str, config: dict, updater_list: list[Type[GenericUpdater]]
+    install_path: Path, config: dict, updater_list: list[Type[GenericUpdater]]
 ):
     """Run updaters based on the provided configuration.
 
     Args:
-        install_path (str): The installation path.
+        install_path (Path): The installation path.
         config (dict): The configuration dictionary.
         updater_list (list[Type[GenericUpdater]]): A list of available updater classes.
     """
@@ -120,7 +120,7 @@ def run_updaters(
                 run_updater(updater)
 
         else:
-            run_updaters(os.path.join(install_path, key), value, updater_list)
+            run_updaters(install_path / key, value, updater_list)
 
 
 def main():
@@ -151,30 +151,32 @@ def main():
 
     args = parser.parse_args()
 
-    setup_logging(args.log_level, args.log_file)
+    log_file = Path(args.log_file) if args.log_file else None
+    setup_logging(args.log_level, log_file)
 
-    config_file = args.config_file
+    ventoy_path = Path(args.ventoy_path).resolve()
+
+    config_file = Path(args.config_file) if args.config_file else None
     if not config_file:
         logging.info(
             "No config file specified. Trying to find config.toml in the current directory..."
         )
-        config_file = os.path.join(os.getcwd(), "config.toml")
+        config_file = Path() / "config.toml"
 
-        if not os.path.isfile(config_file):
+        if not config_file.is_file():
             logging.info(
                 "No config file specified. Trying to find config.toml in the ventoy drive..."
             )
-            config_file = os.path.join(args.ventoy_path, "config.toml")
+            config_file = ventoy_path / "config.toml"
 
-            if not os.path.isfile(config_file):
+            if not config_file.is_file():
                 logging.info(
                     "No config.toml found in the ventoy drive. Generating one from config.toml.default..."
                 )
                 with open(
-                    os.path.join(
-                        os.path.dirname(__file__), "config", "config.toml.default"
-                    )
+                    Path(__file__).parent / "config" / "config.toml.default"
                 ) as default_config_file:
+                    config_file.parent.mkdir(parents=True, exist_ok=True)
                     with open(config_file, "w") as new_config_file:
                         new_config_file.write(default_config_file.read())
                 logging.info(
@@ -188,7 +190,7 @@ def main():
 
     available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
 
-    run_updaters(args.ventoy_path, config, available_updaters)
+    run_updaters(ventoy_path, config, available_updaters)
 
     logging.debug("Finished execution")
 

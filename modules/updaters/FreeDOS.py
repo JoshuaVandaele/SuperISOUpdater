@@ -1,8 +1,9 @@
-from functools import cache
 import glob
-import os
+import logging
 import re
 import zipfile
+from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -28,7 +29,7 @@ class FreeDOS(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str, edition: str) -> None:
+    def __init__(self, folder_path: Path, edition: str) -> None:
         self.valid_editions = [
             "BonusCD",
             "FloppyEdition",
@@ -39,7 +40,7 @@ class FreeDOS(GenericUpdater):
         ]
 
         self.edition = edition
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         # Make the parameter case insensitive, and find back the correct case using valid_editions
@@ -85,7 +86,7 @@ class FreeDOS(GenericUpdater):
         return sha256_hash_check(
             self._get_normalized_file_path(
                 True, self._get_latest_version(), self.edition
-            ).replace("[[EXT]]", "zip"),
+            ).with_suffix(".zip"),
             sha256_sum,
         )
 
@@ -99,7 +100,7 @@ class FreeDOS(GenericUpdater):
         download_link = self._get_download_link()
 
         new_file = self._get_complete_normalized_file_path(absolute=True)
-        archive_path = new_file.replace("[[EXT]]", "zip")
+        archive_path = new_file.with_suffix(".zip")
 
         local_file = self._get_local_file()
 
@@ -115,7 +116,7 @@ class FreeDOS(GenericUpdater):
             ) from e
 
         if not integrity_check:
-            os.remove(archive_path)
+            archive_path.unlink()
             raise IntegrityCheckError("Integrity check failed: Hashes do not match")
 
         with zipfile.ZipFile(archive_path) as z:
@@ -131,26 +132,35 @@ class FreeDOS(GenericUpdater):
                     file for file in file_list if file.upper().endswith(file_ext)
                 )
 
-            extracted_file = z.extract(to_extract, path=os.path.dirname(new_file))
-        os.rename(extracted_file, new_file.replace("[[EXT]]", file_ext))
+            extracted_file = Path(z.extract(to_extract, path=new_file.parent))
+        try:
+            extracted_file.rename(new_file.with_suffix(file_ext))
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            new_file.unlink()
+            extracted_file.rename(new_file.with_suffix(file_ext))
 
-        os.remove(archive_path)
+        archive_path.unlink()
         if local_file:
             os.remove(local_file)  # type: ignore
 
-    def _get_local_file(self) -> str | None:
+    def _get_local_file(self) -> Path | None:
         file_path = self._get_normalized_file_path(
             absolute=True,
             version=None,
-            edition=self.edition,
+            edition=self.edition if self.has_edition() else None,  # type: ignore
+            lang=self.lang if self.has_lang() else None,  # type: ignore
         )
 
         local_files = glob.glob(
-            file_path.replace("[[VER]]", "*").replace("[[EXT]]", "*")
+            str(file_path.with_suffix(".*")).replace("[[VER]]", "*")
         )
 
         if local_files:
-            return local_files[0]
+            return Path(local_files[0])
+        logging.debug(
+            f"[FreeDOS._get_local_file] No local file found for {self.__class__.__name__}"
+        )
         return None
 
     @cache

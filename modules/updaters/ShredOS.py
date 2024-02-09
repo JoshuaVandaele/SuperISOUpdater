@@ -1,5 +1,5 @@
 from functools import cache
-import os
+from pathlib import Path
 
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.updaters.util_update_checker import (
@@ -23,8 +23,8 @@ class ShredOS(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
-        file_path = os.path.join(folder_path, FILE_NAME)
+    def __init__(self, folder_path: Path) -> None:
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         release = github_get_latest_version("PartialVolume", "shredos.x86_64")

@@ -1,8 +1,8 @@
 import glob
 import logging
-import os
 import re
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from modules.exceptions import IntegrityCheckError
 from modules.utils import download_file
@@ -13,22 +13,25 @@ class GenericUpdater(ABC):
     Abstract base class for a generic updater that manages software updates.
 
     Attributes:
-        file_path (str): The path to the file that needs to be updated.
+        file_path (Path): The path to the file that needs to be updated.
     """
 
-    def __init__(self, file_path: str, *args, **kwargs) -> None:
+    def __init__(self, file_path: Path, *args, **kwargs) -> None:
         """
         Initialize the GenericUpdater instance.
 
         Args:
-            file_path (str): The path to the file that needs to be updated.
+            file_path (Path): The path to the file that needs to be updated.
         """
-        self.file_path = os.path.abspath(file_path)
-        self.folder_path = os.path.dirname(file_path)
+        self.file_path = file_path.resolve()
+        self.folder_path = file_path.parent.resolve()
 
         self.version_splitter = "."
 
         if self.has_edition():
+            logging.debug(
+                f"[GenericUpdater.__init__] {self.__class__.__name__} has edition support"
+            )
             if self.edition.lower() not in (  # type: ignore
                 valid_edition.lower() for valid_edition in self.valid_editions  # type: ignore
             ):
@@ -37,6 +40,9 @@ class GenericUpdater(ABC):
                 )
 
         if self.has_lang():
+            logging.debug(
+                f"[GenericUpdater.__init__] {self.__class__.__name__} has language support"
+            )
             if self.lang.lower() not in (  # type: ignore
                 valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
             ):
@@ -44,7 +50,7 @@ class GenericUpdater(ABC):
                     f"Invalid language. The available languages are: {', '.join(self.valid_langs)}."  # type: ignore
                 )
 
-        os.makedirs(self.folder_path, exist_ok=True)
+        self.folder_path.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
     def _get_download_link(self) -> str:
@@ -77,6 +83,9 @@ class GenericUpdater(ABC):
             bool: True if updates are available, False if the local version is up to date.
         """
         if not (local_version := self._get_local_version()):
+            logging.debug(
+                f"[GenericUpdater.check_for_updates] No local version found for {self.__class__.__name__}"
+            )
             return True
 
         is_update_available = self._compare_version_numbers(
@@ -95,17 +104,18 @@ class GenericUpdater(ABC):
             IntegrityCheckError: If the integrity check of the downloaded file fails.
         """
         download_link = self._get_download_link()
-        versioning_flag: bool = "[[VER]]" in self.file_path
 
         # Determine the old and new file paths
         old_file = self._get_local_file()
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        if not versioning_flag:
+        if not self.has_version():
             # If the file is being replaced, back it up
             if old_file:
-                old_file += ".old"
-                os.replace(self.file_path, old_file)
+                logging.debug(
+                    f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
+                )
+                old_file.with_suffix(".old").replace(old_file)
 
         download_file(download_link, new_file)
 
@@ -114,25 +124,37 @@ class GenericUpdater(ABC):
             integrity_check = self.check_integrity()
         except Exception as e:
             # If integrity check failed, restore the old file or remove the new file
-            if versioning_flag or not old_file:
-                os.remove(new_file)
+            if self.has_version() or not old_file:
+                new_file.unlink()
             else:
-                os.replace(old_file, new_file)
+                old_file.replace(new_file)
             raise IntegrityCheckError(
                 "Integrity check failed: An error occurred"
             ) from e
 
         if not integrity_check:
             # If integrity check failed, restore the old file or remove the new file
-            if versioning_flag or not old_file:
-                os.remove(new_file)
+            if self.has_version() or not old_file:
+                new_file.unlink()
             else:
-                os.replace(old_file, new_file)
+                old_file.replace(new_file)
             raise IntegrityCheckError("Integrity check failed: Hashes do not match")
 
         # If the installation was successful and we had a previous version installed, remove it
         if old_file:
-            os.remove(old_file)
+            logging.debug(
+                f"[GenericUpdater.install_latest_version] Removing old file: {old_file}"
+            )
+            old_file.unlink()
+
+    def has_version(self) -> bool:
+        """
+        Check if the updater supports different versions.
+
+        Returns:
+            bool: True if different versions are supported, False otherwise.
+        """
+        return "[[VER]]" in str(self.file_path)
 
     def has_edition(self) -> bool:
         """
@@ -144,7 +166,7 @@ class GenericUpdater(ABC):
         return (
             hasattr(self, "edition")
             and hasattr(self, "valid_editions")
-            and "[[EDITION]]" in self.file_path
+            and "[[EDITION]]" in str(self.file_path)
         )
 
     def has_lang(self) -> bool:
@@ -157,10 +179,10 @@ class GenericUpdater(ABC):
         return (
             hasattr(self, "lang")
             and hasattr(self, "valid_langs")
-            and "[[LANG]]" in self.file_path
+            and "[[LANG]]" in str(self.file_path)
         )
 
-    def _get_local_file(self) -> str | None:
+    def _get_local_file(self) -> Path | None:
         """
         Get the path of the locally stored file that matches the filename pattern.
 
@@ -174,10 +196,13 @@ class GenericUpdater(ABC):
             lang=self.lang if self.has_lang() else None,  # type: ignore
         )
 
-        local_files = glob.glob(file_path.replace("[[VER]]", "*"))
+        local_files = glob.glob(str(file_path).replace("[[VER]]", "*"))
 
         if local_files:
-            return local_files[0]
+            return Path(local_files[0])
+        logging.debug(
+            f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}"
+        )
         return None
 
     def _get_local_version(self) -> list[str] | None:
@@ -192,25 +217,34 @@ class GenericUpdater(ABC):
 
         local_file = self._get_local_file()
 
-        if not local_file or "[[VER]]" not in self.file_path:
+        if not local_file or not self.has_version():
+            logging.debug(
+                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
+            )
             return None
 
-        normalized_path_without_ext: str = os.path.splitext(
+        normalized_path_without_ext = Path(
             self._get_normalized_file_path(
                 absolute=True,
                 version=None,
                 edition=self.edition if self.has_edition() else None,  # type: ignore
                 lang=self.lang if self.has_lang() else None,  # type: ignore
             )
-        )[0]
+        ).with_suffix("")
 
         version_regex: str = r"(.+)".join(
-            re.escape(part) for part in normalized_path_without_ext.split("[[VER]]")
+            re.escape(part)
+            for part in str(normalized_path_without_ext).split("[[VER]]")
         )
-        local_version_regex = re.search(version_regex, local_file)
+        local_version_regex = re.search(version_regex, str(local_file))
 
         if local_version_regex:
             local_version = self._str_to_version(local_version_regex.group(1))
+
+        if not local_version:
+            logging.debug(
+                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
+            )
 
         return local_version
 
@@ -234,7 +268,7 @@ class GenericUpdater(ABC):
         version: list[str] | None = None,
         edition: str | None = None,
         lang: str | None = None,
-    ) -> str:
+    ) -> Path:
         """
         Get the normalized file path with customizable version, edition, and language.
 
@@ -249,13 +283,13 @@ class GenericUpdater(ABC):
                                     Defaults to None.
 
         Returns:
-            str: The normalized file path.
+            Path: The normalized file path.
 
         Note:
             This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name
             with the specified version, edition, and language respectively. It also removes all spaces from the file name.
         """
-        file_name: str = os.path.basename(self.file_path)
+        file_name: str = self.file_path.name
 
         # Replace placeholders with the specified version, edition, and language
         if version is not None and "[[VER]]" in file_name:
@@ -271,9 +305,11 @@ class GenericUpdater(ABC):
         file_name = "".join(file_name.split())
 
         # Return the absolute or relative file path based on the 'absolute' parameter
-        return os.path.join(self.folder_path, file_name) if absolute else file_name
+        return self.folder_path / file_name if absolute else Path(file_name)
 
-    def _get_complete_normalized_file_path(self, absolute: bool, latest: bool = True):
+    def _get_complete_normalized_file_path(
+        self, absolute: bool, latest: bool = True
+    ) -> Path:
         """
         Get the complete normalized file path with customizable version, edition, and language.
 
@@ -284,7 +320,7 @@ class GenericUpdater(ABC):
                                     Defaults to True.
 
         Returns:
-            str: The normalized file path.
+            Path: The normalized file path.
 
         Note:
             This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name

@@ -1,6 +1,6 @@
-from functools import cache
-import os
 import zipfile
+from functools import cache
+from pathlib import Path
 
 import requests
 
@@ -26,11 +26,11 @@ class ChromeOS(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str, edition: str) -> None:
+    def __init__(self, folder_path: Path, edition: str) -> None:
         self.valid_editions = ["ltc", "ltr", "stable"]
         self.edition = edition.lower()
 
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = Path(folder_path) / FILE_NAME
         super().__init__(file_path)
 
         self.chromium_releases_info: list[dict] = requests.get(
@@ -51,7 +51,7 @@ class ChromeOS(GenericUpdater):
         sha1_sum = self.cur_edition_info["sha1"]
 
         return sha1_hash_check(
-            self._get_complete_normalized_file_path(absolute=True) + ".zip",
+            self._get_complete_normalized_file_path(absolute=True).with_suffix(".zip"),
             sha1_sum,
         )
 
@@ -66,7 +66,7 @@ class ChromeOS(GenericUpdater):
 
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        archive_path = f"{new_file}.zip"
+        archive_path = Path(new_file).with_suffix(".zip")
 
         local_file = self._get_local_file()
 
@@ -80,7 +80,7 @@ class ChromeOS(GenericUpdater):
             ) from e
 
         if not integrity_check:
-            os.remove(archive_path)
+            archive_path.unlink()
             raise IntegrityCheckError("Integrity check failed: Hashes do not match")
 
         with zipfile.ZipFile(archive_path) as z:
@@ -91,12 +91,17 @@ class ChromeOS(GenericUpdater):
                 file for file in file_list if file.lower().endswith(file_ext)
             )
 
-            extracted_file = z.extract(to_extract, path=os.path.dirname(new_file))
-        os.rename(extracted_file, new_file)
+            extracted_file = Path(z.extract(to_extract, path=new_file.parent))
+        try:
+            extracted_file.rename(new_file)
+        except FileExistsError:
+            # On Windows, files are not overwritten by default, so we need to remove the old file first
+            new_file.unlink()
+            extracted_file.rename(new_file)
 
-        os.remove(archive_path)
+        archive_path.unlink()
         if local_file:
-            os.remove(local_file)  # type: ignore
+            local_file.unlink()
 
     @cache
     def _get_latest_version(self) -> list[str]:

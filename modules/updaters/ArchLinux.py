@@ -1,5 +1,5 @@
 from functools import cache
-import os
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -25,8 +25,8 @@ class ArchLinux(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
-        file_path = os.path.join(folder_path, FILE_NAME)
+    def __init__(self, folder_path: Path) -> None:
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -51,7 +51,9 @@ class ArchLinux(GenericUpdater):
         sha256_sums = requests.get(sha256_url).text
 
         sha256_sum = parse_hash(
-            sha256_sums, [self._get_complete_normalized_file_path(absolute=False)], 0
+            sha256_sums,
+            [str(self._get_complete_normalized_file_path(absolute=False))],
+            0,
         )
 
         return sha256_hash_check(

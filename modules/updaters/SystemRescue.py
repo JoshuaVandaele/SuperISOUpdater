@@ -1,6 +1,6 @@
-from functools import cache
-import os
 import re
+from functools import cache
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -27,17 +27,17 @@ class SystemRescue(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: str) -> None:
+    def __init__(self, folder_path: Path) -> None:
         """
         Initialize a SystemRescue updater object.
 
         Args:
-            folder_path (str): The path to the folder where the SystemRescue file is stored.
+            folder_path (Path): The path to the folder where the SystemRescue file is stored.
 
         Raises:
             ConnectionError: If the download page cannot be fetched successfully.
         """
-        file_path = os.path.join(folder_path, FILE_NAME)
+        file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -73,7 +73,7 @@ class SystemRescue(GenericUpdater):
         r = requests.get(sha256_download_link)
         sha256_checksum = parse_hash(
             r.text,
-            [self._get_normalized_file_path(False, self._get_latest_version())],
+            [str(self._get_normalized_file_path(False, self._get_latest_version()))],
             0,
         )
 
