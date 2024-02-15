@@ -40,7 +40,7 @@ class Rescuezilla(GenericUpdater):
     @cache
     def _get_download_link(self) -> str:
         return self.release_info["files"][
-            self._get_complete_normalized_file_path(absolute=False)
+            str(self._get_complete_normalized_file_path(absolute=False))
         ]
 
     def check_integrity(self) -> bool:
