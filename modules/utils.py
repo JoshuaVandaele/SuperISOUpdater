@@ -239,23 +239,38 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
     Returns:
         None
     """
-    logging.debug(f"[download_file] Downloading {url} to {local_file.resolve()}")
-    with requests.get(url, stream=True) as r:
-        total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
+    part_file = local_file.with_suffix(".part")
+    logging.debug(f"[download_file] Downloading {url} to {part_file.resolve()}")
 
-        with open(local_file, "wb") as f:
-            if progress_bar:
-                with tqdm(
-                    total=total_size,
-                    unit="B",
-                    desc=local_file.name,
-                ) as pbar:
-                    for chunk in r.iter_content(chunk_size=1024):
-                        if chunk:
-                            f.write(chunk)
-                            pbar.update(len(chunk))
-            else:
-                shutil.copyfileobj(r.raw, f)
+    try:
+        with requests.get(url, stream=True) as r:
+            total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
+
+            with open(part_file, "wb") as f:
+                if progress_bar:
+                    with tqdm(
+                        total=total_size,
+                        unit="B",
+                        desc=part_file.name,
+                    ) as pbar:
+                        for chunk in r.iter_content(chunk_size=1024):
+                            if chunk:
+                                f.write(chunk)
+                                pbar.update(len(chunk))
+                else:
+                    shutil.copyfileobj(r.raw, f)
+    except requests.exceptions.RequestException:
+        logging.exception(f"Failed to download {url} to {part_file.resolve()}")
+        if part_file.exists():
+            part_file.unlink()
+        raise
+    except KeyboardInterrupt:
+        logging.info(f"Download of {url} to {part_file.resolve()} was cancelled")
+        if part_file.exists():
+            part_file.unlink()
+        raise
+
+    part_file.rename(local_file)
 
 
 def windows_consumer_download(
