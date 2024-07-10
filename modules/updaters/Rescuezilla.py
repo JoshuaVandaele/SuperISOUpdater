@@ -27,7 +27,7 @@ class Rescuezilla(GenericUpdater):
     """
 
     def __init__(self, folder_path: Path, edition: str) -> None:
-        self.valid_editions = ["focal", "jammy", "kinetic"]
+        self.valid_editions = ["bionic", "focal", "jammy", "lunar", "mantic", "noble"]
         self.edition = edition.lower()
 
         file_path = folder_path / FILE_NAME
