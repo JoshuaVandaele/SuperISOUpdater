@@ -36,10 +36,8 @@ class Manjaro(GenericUpdater):
             "plasma",
             "xfce",
             "gnome",
-            "budgie",
             "cinnamon",
             "i3",
-            "mate",
         ]
         self.edition = edition.lower()
         file_path = folder_path / FILE_NAME
