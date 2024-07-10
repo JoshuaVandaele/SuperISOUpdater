@@ -21,7 +21,7 @@ FILE_NAME = "SuperGrub2-[[VER]].img"
 
 class SuperGrub2(GenericUpdater):
     """
-    A class representing an updater for Hiren's Boot CD PE.
+    A class representing an updater for SuperGrub2.
 
     Attributes:
         download_page (requests.Response): The HTTP response containing the download page HTML.
@@ -76,7 +76,12 @@ class SuperGrub2(GenericUpdater):
         sha256_sums_tag = sha256_sums_tag[-1]
         sha256_checksums_str = sha256_sums_tag.getText()
         sha_256_checksum: str = parse_hash(
-            sha256_checksums_str, ["supergrub2", ".img.zip"], 0
+            sha256_checksums_str,
+            [
+                f"supergrub2-{self._get_latest_version()[0]}",
+                ".img.zip",
+            ],
+            0,
         )
 
         return sha256_hash_check(archive_to_check, sha_256_checksum)
