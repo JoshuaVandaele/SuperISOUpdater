@@ -197,7 +197,7 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
 
     result = bool(pub_key.verify(file_content, sig))
 
-    print(
+    logging.debug(
         f"[pgp_check] {file_path.resolve()}: Signature is {'' if result else 'not'} valid"
     )
 
