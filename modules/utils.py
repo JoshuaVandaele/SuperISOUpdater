@@ -197,7 +197,7 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
 
     result = bool(pub_key.verify(file_content, sig))
 
-    print(
+    logging.debug(
         f"[pgp_check] {file_path.resolve()}: Signature is {'' if result else 'not'} valid"
     )
 
@@ -220,11 +220,13 @@ def parse_hash(
     logging.debug(
         f"[parse_hash] Parsing hashes with match strings `{match_strings_in_line}` and hash position {hash_position_in_line} in those hashes:\n{hashes}"
     )
-    return next(
+    hash = next(
         line.split()[hash_position_in_line]
         for line in hashes.strip().splitlines()
         if all(match in line for match in match_strings_in_line)
     )
+    logging.debug(f"[parse_hash] Extracted hash: `{hash}`")
+    return hash
 
 
 def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None:

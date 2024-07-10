@@ -19,7 +19,7 @@ enabled = true
 [DiagnosticTools.Rescuezilla]
 enabled = true
 # Available editions:
-# "focal", "jammy", "kinetic"
+# "focal", "jammy", "lunar", "mantic", "noble"
 editions = ["jammy"]
 
 # Boot Repair
