@@ -99,7 +99,7 @@ editions = ["cinnamon"]
 [OperatingSystems.Linux.Manjaro]
 enabled = true
 # Available editions:
-# "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "mate"
+# "plasma", "xfce", "gnome", "cinnamon", "i3"
 editions = ["plasma"]
 
 [OperatingSystems.Linux.OpenSUSE]
