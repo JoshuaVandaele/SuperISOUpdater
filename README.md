@@ -1,31 +1,12 @@
 # Super ISO Updater
 
-Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is specifically designed to work with a Ventoy drive and supports a wide range of ISOs. This README will guide you on how to use this tool effectively.
-
-## Table of Contents
-
-- [Super ISO Updater](#super-iso-updater)
-  - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-      - [Using pip](#using-pip)
-      - [Using git](#using-git)
-  - [Usage](#usage)
-    - [Running the script](#running-the-script)
-      - [Example on Windows](#example-on-windows)
-      - [Example on Linux](#example-on-linux)
-    - [Logging](#logging)
-  - [Customization](#customization)
-  - [Supported ISOs](#supported-isos)
-  - [Contribute](#contribute)
-  - [License](#license)
+Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is specifically designed to work with a Ventoy drive and supports a wide range of ISOs.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.10+ installed on your system.
+- Python 3.12+ installed on your system.
 
 ### Installation
 
@@ -60,10 +41,7 @@ python -m pip install .
 
 ## Usage
 
-To use sisou, follow these steps:
-
-1. Open your terminal or command prompt.
-2. Navigate to the directory where you cloned the script.
+To use SISOU, follow these steps:
 
 ### Running the script
 
@@ -80,7 +58,7 @@ sisou E:
 #### Example on Linux
 
 ```sh
-sisou /run/media/folfy/Ventoy/
+sisou /run/media/joshua/Ventoy/
 ```
 
 ### Logging
@@ -107,6 +85,8 @@ To customize the ISOs, open the `config.toml` file and edit the relevant section
 
 _NOTE: Be cautious when modifying the configuration file, as incorrect changes may cause the script to malfunction._
 
+By default, the script uses the `config.toml` file located in the same directory as the Ventoy drive.
+
 You can specify a custom configuration file using the `-c` or `--config-file` argument when running the script:
 
 ```sh
@@ -122,7 +102,7 @@ The tool currently supports the following ISOs:
   - Memtest86+
   - SystemRescue
   - UltimateBootCD
-  - Rescuezilla (editions: "focal", "jammy", "kinetic")
+  - Rescuezilla (editions: "focal", "jammy", "lunar", "mantic", "noble")
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
