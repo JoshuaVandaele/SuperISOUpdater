@@ -7,7 +7,7 @@ from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import parse_hash, sha256_hash_check
 
 DOMAIN = "https://download.opensuse.org"
-DOWNLOAD_PAGE_URL = f"{DOMAIN}/download/distribution/leap"
+DOWNLOAD_PAGE_URL = f"{DOMAIN}/download/distribution/[[EDITION]]"
 FILE_NAME = "openSUSE-[[EDITION]]-[[VER]]-DVD-x86_64-Current.iso"
 
 
@@ -27,13 +27,28 @@ class OpenSUSE(GenericUpdater):
         self.valid_editions = ["leap", "leap-micro", "jump"]
         self.edition = edition.lower()
 
+        self.download_page_url = DOWNLOAD_PAGE_URL.replace("[[EDITION]]", self.edition)
+
         file_path = folder_path / FILE_NAME
         super().__init__(file_path)
+
+    def _capitalize_edition(self) -> str:
+        return "-".join([s.capitalize() for s in self.edition.split("-")])
 
     @cache
     def _get_download_link(self) -> str:
         latest_version_str = self._version_to_str(self._get_latest_version())
-        return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/iso/openSUSE-Leap-{latest_version_str}-NET-x86_64-Media.iso"
+        url = f"{self.download_page_url}/{latest_version_str}"
+
+        edition_page = requests.get(f"{url}?jsontable").json()["data"]
+
+        if any("product" in item["name"] for item in edition_page):
+            url += "/product"
+        
+        if self.edition != "leap-micro":
+            latest_version_str += "-NET"
+
+        return f"{url}/iso/openSUSE-{self._capitalize_edition()}-{latest_version_str}-x86_64{"-Current" if self.edition != "leap-micro" else ""}.iso"
 
     def check_integrity(self) -> bool:
         sha256_url = f"{self._get_download_link()}.sha256"
@@ -49,7 +64,7 @@ class OpenSUSE(GenericUpdater):
 
     @cache
     def _get_latest_version(self) -> list[str]:
-        r = requests.get(f"{DOWNLOAD_PAGE_URL}?jsontable")
+        r = requests.get(f"{self.download_page_url}?jsontable")
 
         data = r.json()["data"]
 
@@ -61,6 +76,11 @@ class OpenSUSE(GenericUpdater):
                 continue
             version_number = self._str_to_version(data[i]["name"][:-1])
             if self._compare_version_numbers(latest, version_number):
+                sub_r = requests.get(f"{self.download_page_url}/{self._version_to_str(version_number)}?jsontable")
+                sub_data = sub_r.json()["data"]
+                if not any("iso" in item["name"] or "product" in item["name"] for item in sub_data):
+                    continue
+                
                 latest = version_number
 
         return latest
