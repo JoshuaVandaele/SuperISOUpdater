@@ -54,6 +54,7 @@ def parse_config_from_dict(input_dict: dict):
     for key, value in input_dict.items():
         if isinstance(value, dict):
             if "enabled" in value and not value["enabled"]:
+                logging.debug(f"Skipping disabled module {key}")
                 del value
                 continue
             if "directory" in value:
@@ -67,6 +68,7 @@ def parse_config_from_dict(input_dict: dict):
         elif key == "enabled":
             continue
         else:
+            logging.debug(f"Found key {key}")
             new_dict[key] = value
     return new_dict
 

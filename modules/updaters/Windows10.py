@@ -21,7 +21,6 @@ class Windows10(GenericUpdater):
     Attributes:
         download_page (requests.Response): The HTTP response containing the download page HTML.
         soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
-        soup_main_content (Tag): The main contents of the page.
 
     Note:
         This class inherits from the abstract base class GenericUpdater.
@@ -96,13 +95,6 @@ class Windows10(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
-        self.soup_main_content: Tag = self.soup_download_page.find(
-            "main", attrs={"id": "mainContent"}
-        )  # type: ignore
-
-        if not self.soup_main_content:
-            raise ConnectionError("Failed to fetch the main content from the webpage")
-
         self.hash: str | None = None
 
     @cache
@@ -127,7 +119,7 @@ class Windows10(GenericUpdater):
 
     @cache
     def _get_latest_version(self) -> list[str]:
-        software_download_tag: Tag | None = self.soup_main_content.find("div", attrs={"id": "SoftwareDownload_EditionSelection"})  # type: ignore
+        software_download_tag: Tag | None = self.soup_download_page.find("div", attrs={"id": "SoftwareDownload_EditionSelection"})  # type: ignore
         if not software_download_tag:
             raise VersionNotFoundError(
                 "Could not find the software download section containing version information"

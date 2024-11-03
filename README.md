@@ -39,6 +39,14 @@ cd SuperISOUpdater
 python -m pip install .
 ```
 
+### Updating
+
+To update the package to the latest version, run the following command:
+
+```sh
+python -m pip install --upgrade sisou
+```
+
 ## Usage
 
 To use SISOU, follow these steps:
