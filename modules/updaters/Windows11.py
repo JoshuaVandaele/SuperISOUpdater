@@ -20,7 +20,6 @@ class Windows11(GenericUpdater):
     Attributes:
         download_page (requests.Response): The HTTP response containing the download page HTML.
         soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
-        soup_main_content (Tag): The main contents of the page.
 
     Note:
         This class inherits from the abstract base class GenericUpdater.
@@ -94,13 +93,6 @@ class Windows11(GenericUpdater):
             self.download_page.content, features="html.parser"
         )
 
-        self.soup_main_content: Tag = self.soup_download_page.find(
-            "main", attrs={"id": "mainContent"}
-        )  # type: ignore
-
-        if not self.soup_main_content:
-            raise ConnectionError("Failed to fetch the main content from the webpage")
-
         self.hash: str | None = None
 
     @cache
@@ -121,7 +113,7 @@ class Windows11(GenericUpdater):
 
     @cache
     def _get_latest_version(self) -> list[str]:
-        header: Tag | None = self.soup_main_content.find("header")  # type: ignore
+        header: Tag | None = self.soup_download_page.find("div", class_="row").find("div").find("p", string=lambda text: "Version" in text)  # type: ignore
         if not header:
             raise VersionNotFoundError(
                 "Could not find header containing version information"
