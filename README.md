@@ -24,7 +24,7 @@ python -m pip install sisou
 1. Clone this repository locally by running
 
 ```sh
-git clone https://github.com/FolfyBlue/SuperISOUpdater
+git clone https://github.com/JoshuaVandaele/SuperISOUpdater
 ```
 
 2. Navigate into the newly created directory by running
