@@ -9,7 +9,7 @@ from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.utils import md5_hash_check, parse_hash
 
-DOMAIN = "https://www.templeos.org"
+DOMAIN = "https://templeos.org"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/Downloads"
 FILE_NAME = "TempleOS_[[EDITION]]_[[VER]].ISO"
 
