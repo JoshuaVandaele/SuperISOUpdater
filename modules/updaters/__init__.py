@@ -13,6 +13,7 @@ from .LinuxMint import LinuxMint
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
 from .OpenSUSE import OpenSUSE
+from .OpenSUSERolling import OpenSUSERolling
 from .RockyLinux import RockyLinux
 from .Tails import Tails
 from .Rescuezilla import Rescuezilla
@@ -43,6 +44,7 @@ __all__ = [
     "Manjaro",
     "MemTest86Plus",
     "OpenSUSE",
+    "OpenSUSERolling",
     "RockyLinux",
     "Tails",
     "Rescuezilla",
