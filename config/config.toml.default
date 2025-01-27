@@ -108,6 +108,12 @@ enabled = true
 # "leap", "leap-micro", "jump"
 editions = ["leap"]
 
+[OperatingSystems.Linux.OpenSUSERolling]
+enabled = true
+# Available editions:
+# "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"
+editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
+
 [OperatingSystems.Linux.RockyLinux]
 enabled = true
 # Available editions:

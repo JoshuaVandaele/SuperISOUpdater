@@ -256,6 +256,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
                         total=total_size,
                         unit="B",
                         desc=part_file.name,
+                        unit_scale=True
                     ) as pbar:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
