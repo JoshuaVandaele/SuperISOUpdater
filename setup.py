@@ -14,7 +14,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="sisou",  # Required
-    version="1.1.9",  # Required
+    version="1.1.10",  # Required
     description="A powerful tool to conveniently update all of your ISO files!",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional
@@ -40,7 +40,7 @@ setup(
     py_modules=["sisou"],  # Required
     include_package_data=True,
     package_data={"": ["config.toml.default"]},
-    python_requires=">=3.10, <4",
+    python_requires=">=3.10, <3.13, <4",
     install_requires=[
         "beautifulsoup4==4.12.2",
         "requests==2.31.0",

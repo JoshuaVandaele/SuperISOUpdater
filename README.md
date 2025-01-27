@@ -6,7 +6,7 @@ Super ISO Updater is a powerful tool that provides a convenient way to check for
 
 ### Prerequisites
 
-- Python 3.12+ installed on your system.
+- Python 3.12 installed on your system.
 
 ### Installation
 
