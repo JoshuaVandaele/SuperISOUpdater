@@ -14,6 +14,7 @@ from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
 from .OpenSUSE import OpenSUSE
 from .OpenSUSERolling import OpenSUSERolling
+from .OPNsense import OPNsense
 from .RockyLinux import RockyLinux
 from .Tails import Tails
 from .Rescuezilla import Rescuezilla
@@ -45,6 +46,7 @@ __all__ = [
     "MemTest86Plus",
     "OpenSUSE",
     "OpenSUSERolling",
+    "OPNsense",
     "RockyLinux",
     "Tails",
     "Rescuezilla",
