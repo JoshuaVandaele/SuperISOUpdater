@@ -8,7 +8,6 @@ import uuid
 from pathlib import Path
 
 import requests
-from bs4 import BeautifulSoup, Tag
 from pgpy import PGPKey, PGPSignature
 from tqdm import tqdm
 
@@ -253,10 +252,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
             with open(part_file, "wb") as f:
                 if progress_bar:
                     with tqdm(
-                        total=total_size,
-                        unit="B",
-                        desc=part_file.name,
-                        unit_scale=True
+                        total=total_size, unit="B", desc=part_file.name, unit_scale=True
                     ) as pbar:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
@@ -307,88 +303,87 @@ def windows_consumer_download(
             )
 
     url = f"https://www.microsoft.com/en-us/software-download/{url_segment}"
+    PROFILE_ID = "606624d44113"
+    ORG_ID = "y6jn8c31"
 
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "referer": "localhost",
     }
     session_id = uuid.uuid4()
 
-    r = requests.get(url, headers=headers)
+    iso_download_link = requests.get(url, headers=headers)
 
-    matches = re.search(r'<option value="([0-9]+)">Windows', r.text)
+    matches = re.search(r'<option value="([0-9]+)">Windows', iso_download_link.text)
     if not matches or not matches.groups():
         raise LookupError("Could not find product edition id")
 
     product_edition_id = matches.group(1)
-
     logging.debug(
         f"[windows_consumer_download] Product edition id: `{product_edition_id}`"
     )
 
+    matches = re.search(
+        rf"FileHash(.+\n+)+?^<\/tr>.+{lang}.+\n<td>(.+)<",
+        iso_download_link.text,
+        re.MULTILINE,
+    )
+
+    if not matches or not matches.groups():
+        raise LookupError("Could not find SHA256 hash")
+
+    hash = matches.group(2)
+    logging.debug(f"[windows_consumer_download] Found hash: `{hash}`")
+
     # Permit Session ID
-    r = requests.get(
-        f"https://vlscppe.microsoft.com/tags?org_id=y6jn8c31&session_id={session_id}",
-        headers=headers,
+    requests.get(
+        f"https://vlscppe.microsoft.com/tags?org_id={ORG_ID}&session_id={session_id}"
     )
 
-    language_skuID_table_html_url = f"https://www.microsoft.com/en-US/api/controls/contentinclude/html?pageId=a8f8f489-4c7f-463a-9ca6-5cff94d8d041&host=www.microsoft.com&segments=software-download,{url_segment}&query=&action=getskuinformationbyproductedition&sessionId={session_id}&productEditionId={product_edition_id}&sdVersion=2"
-
-    language_skuID_table_html = requests.get(
-        language_skuID_table_html_url, headers=headers
+    language_skuID_table_url = (
+        "https://www.microsoft.com/software-download-connector/api/getskuinformationbyproductedition"
+        + f"?profile={PROFILE_ID}"
+        + f"&productEditionId={product_edition_id}"
+        + f"&SKU=undefined"
+        + f"&friendlyFileName=undefined"
+        + f"&Locale=en-US"
+        + f"&sessionID={session_id}"
     )
 
-    sku_id = "".join(
-        filter(
-            str.isdigit,
-            next(
-                table_line
-                for table_line in language_skuID_table_html.text.splitlines()
-                if lang in table_line
-            ),
-        )
-    )
+    language_skuID_table = requests.get(
+        language_skuID_table_url, headers=headers
+    ).json()
+
+    sku_id = None
+
+    for sku in language_skuID_table["Skus"]:
+        if sku["Language"] == lang:
+            sku_id = sku["Id"]
+
+    if not sku_id:
+        raise ValueError(f"The language '{lang}' for Windows could not be found!")
 
     logging.debug(f"[windows_consumer_download] Found SKU ID {sku_id} for {lang}")
 
     # Get ISO download link page
-    iso_download_link_page = f"https://www.microsoft.com/en-US/api/controls/contentinclude/html?pageId=6e2a1789-ef16-4f27-a296-74ef7ef5d96b&host=www.microsoft.com&segments=software-download,{url_segment}&query=&action=GetProductDownloadLinksBySku&sessionId={session_id}&skuId={sku_id}&language={lang}&sdVersion=2"
-    r = requests.get(iso_download_link_page, headers=headers)
+    iso_download_link_page = (
+        "https://www.microsoft.com/software-download-connector/api/GetProductDownloadLinksBySku"
+        + f"?profile={PROFILE_ID}"
+        + "&productEditionId=undefined"
+        + f"&SKU={sku_id}"
+        + "&friendlyFileName=undefined"
+        + f"&Locale=en-US"
+        + f"&sessionID={session_id}"
+    )
 
-    s = BeautifulSoup(r.content, features="html.parser")
+    iso_download_link_json = requests.get(
+        iso_download_link_page, headers=headers
+    ).json()
 
-    hash_table: Tag | None = s.find("table", "table-bordered")  # type: ignore
-    if not hash_table:
-        raise LookupError(
-            "Could not find table containing SHA256 hashes. (Are you being rate limited?)"
-        )
+    if "Errors" in iso_download_link_json:
+        raise RuntimeError(f"Errors from Microsoft: {iso_download_link_json["Errors"]}")
 
-    next_is_result = False
-    result: Tag | None = None
-    for tr in hash_table.find_all("tr"):
-        if result:
-            break
-        for td in tr.find_all("td"):
-            if next_is_result:
-                result = td
-                break
-            if lang in td.getText():
-                next_is_result = True
-    if not result:
-        raise LookupError(
-            "Could not find row containing SHA256 hashes. (Are you being rate limited?)"
-        )
-
-    hash = result.getText()
-
-    download_a_tag: Tag | None = s.find(
-        "a", href=True, attrs={"class": "button button-long button-flat button-purple"}
-    )  # type: ignore
-    if not download_a_tag:
-        raise LookupError(
-            "Could not find tag containing the download link. (Are you being rate limited?)"
-        )
-    download_link: str = download_a_tag.get("href")  # type: ignore
+    download_link = iso_download_link_json["ProductDownloadOptions"][0]["Uri"]
 
     return download_link, hash
