@@ -161,6 +161,12 @@ editions = ["core"]
 enabled = true
 directory = "Other"
 
+[OperatingSystems.Other.OPNsense]
+enabled = true
+# Available editions:
+# "dvd", "nano", "serial", "vga"
+editions = ["vga"]
+
 [OperatingSystems.Other.FreeDOS]
 enabled = true
 # Available editions:
