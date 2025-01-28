@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup, Tag
 
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import sha256_hash_check, windows_consumer_download
+from modules.utils import sha256_hash_check
+from modules.WindowsConsumerDownload import WindowsConsumerDownloader
 
 DOMAIN = "https://www.microsoft.com"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/en-us/software-download/windows10ISO"
@@ -99,22 +100,15 @@ class Windows10(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        download_link, self.hash = windows_consumer_download(
-            windows_version="10", lang=self.lang
-        )
-        return download_link
+        return WindowsConsumerDownloader.windows_consumer_download("10", self.lang)
 
     def check_integrity(self) -> bool:
         logging.warning(
             "The integrity check for Windows 10 is currently disabled due to a bug on Microsoft's end."
         )
-        return True  # Currently the integrity check is broken, because Microsoft gives us the Windows 11 hashes on the Windows 10 download page
-        if not self.hash:
-            return False
-
-        return sha256_hash_check(
+        return True or sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
-            self.hash,
+            WindowsConsumerDownloader.windows_consumer_file_hash("10", self.lang),
         )
 
     @cache

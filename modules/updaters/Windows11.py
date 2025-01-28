@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup, Tag
 
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import sha256_hash_check, windows_consumer_download
+from modules.utils import sha256_hash_check
+from modules.WindowsConsumerDownload import WindowsConsumerDownloader
 
 DOMAIN = "https://www.microsoft.com"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/en-us/software-download/windows11"
@@ -97,10 +98,7 @@ class Windows11(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        download_link, self.hash = windows_consumer_download(
-            windows_version="11", lang=self.lang
-        )
-        return download_link
+        return WindowsConsumerDownloader.windows_consumer_download("11", self.lang)
 
     def check_integrity(self) -> bool:
         if not self.hash:
@@ -108,7 +106,7 @@ class Windows11(GenericUpdater):
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
-            self.hash,
+            WindowsConsumerDownloader.windows_consumer_file_hash("11", self.lang),
         )
 
     @cache
