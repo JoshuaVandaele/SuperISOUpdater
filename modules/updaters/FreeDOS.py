@@ -68,7 +68,8 @@ class FreeDOS(GenericUpdater):
         return f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/official/FD{''.join(latest_version)}-{self.edition}.zip"
 
     def check_integrity(self) -> bool:
-        checksums_url = "https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.3/official/verify.txt"
+        latest_version_str = self._version_to_str(self._get_latest_version())
+        checksums_url = f"{DOWNLOAD_PAGE_URL}/{latest_version_str}/official/verify.txt"
 
         checksums = requests.get(checksums_url).text
 
@@ -122,12 +123,12 @@ class FreeDOS(GenericUpdater):
         with zipfile.ZipFile(archive_path) as z:
             file_list = z.namelist()
             try:
-                file_ext = "ISO"
+                file_ext = ".ISO"
                 to_extract = next(
                     file for file in file_list if file.upper().endswith(file_ext)
                 )
             except StopIteration:
-                file_ext = "IMG"
+                file_ext = ".IMG"
                 to_extract = next(
                     file for file in file_list if file.upper().endswith(file_ext)
                 )
