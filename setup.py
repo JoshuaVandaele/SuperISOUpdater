@@ -33,6 +33,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: 3 :: Only",
     ],
     keywords="ventoy, updater, os, iso, updater, sisou, cli",  # Optional
@@ -40,12 +41,12 @@ setup(
     py_modules=["sisou"],  # Required
     include_package_data=True,
     package_data={"": ["config.toml.default"]},
-    python_requires=">=3.10, <3.13, <4",
+    python_requires=">=3.10, <4",
     install_requires=[
         "beautifulsoup4==4.12.2",
         "requests==2.31.0",
         "tqdm==4.65.0",
-        "PGPy==0.6.0",
+        "PGPy13==0.6.1rc1",
     ],  # Optional
     # extras_require={
     #     "dev": [""],
