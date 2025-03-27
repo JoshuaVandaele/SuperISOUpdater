@@ -1,22 +1,18 @@
+import bz2
+import re
 from functools import cache
 from pathlib import Path
-
-import logging
-import re
-import glob
 
 import requests
 from bs4 import BeautifulSoup
 
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import sha256_hash_check
+from modules.utils import parse_hash, sha256_hash_check
 
-import bz2
-
-DOMAIN = "https://pkg.opnsense.org/releases/mirror"
-DOWNLOAD_PAGE_URL = f"{DOMAIN}"
-FILE_NAME = "OPNsense-[[VER]]-[[EDITION]]-amd64.[[FILE_TYPE]].bz2"
+DOMAIN = "https://pkg.opnsense.org"
+DOWNLOAD_PAGE_URL = f"{DOMAIN}/releases/mirror"
+FILE_NAME = "OPNsense-[[VER]]-[[EDITION]]-amd64.[[EXT]]"
 
 
 class OPNsense(GenericUpdater):
@@ -37,12 +33,9 @@ class OPNsense(GenericUpdater):
         self.valid_editions = ["dvd", "nano", "serial", "vga"]
         self.edition = edition.lower()
 
-        if self.edition == "dvd":
-            self.file_type = "iso"
-        else:
-            self.file_type = "img"
+        file_extension = "iso" if self.edition == "dvd" else "img"
 
-        file_path = folder_path / FILE_NAME.replace("[[FILE_TYPE]]", self.file_type)
+        file_path = folder_path / FILE_NAME.replace("[[EXT]]", file_extension)
         super().__init__(file_path)
 
         self.download_page = requests.get(DOWNLOAD_PAGE_URL)
@@ -58,17 +51,22 @@ class OPNsense(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        latest_version_str = self._version_to_str(self._get_latest_version())
-        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}"
+        return f"{DOWNLOAD_PAGE_URL}/{self._get_complete_normalized_file_path(absolute=False)}.bz2"
 
     def check_integrity(self) -> bool:
         latest_version_str = self._version_to_str(self._get_latest_version())
 
-        sha256_url = f"{DOMAIN}/OPNsense-{latest_version_str}-checksums-amd64.sha256"
+        sha256_url = (
+            f"{DOWNLOAD_PAGE_URL}/OPNsense-{latest_version_str}-checksums-amd64.sha256"
+        )
 
         sha256_sums = requests.get(sha256_url).text
 
-        sha256_sum = self._extract_hash(sha256_sums, str(self._get_complete_normalized_file_path(absolute=False)))
+        sha256_sum = parse_hash(
+            sha256_sums,
+            [self.edition],
+            -1,
+        )
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
@@ -77,24 +75,23 @@ class OPNsense(GenericUpdater):
 
     def install_latest_version(self) -> None:
         super().install_latest_version()
-        # extract bz2, taken from https://stackoverflow.com/questions/16963352/decompress-bz2-files
-        logging.info(f"Extracting {str(self._get_complete_normalized_file_path(absolute=False))}")
-        path = str(self._get_complete_normalized_file_path(absolute=True))
-        zipfile = bz2.BZ2File(path) # open the file
-        data = zipfile.read() # get the decompressed data
-        newfilepath = path[:-4] # assuming the filepath ends with .bz2
-        open(newfilepath, 'wb').write(data) # write a uncompressed file
-        logging.info("Extraction finished. Deleting the compressed file.")
-        Path.unlink(self._get_complete_normalized_file_path(absolute=True))
+        bz2_path = self._get_complete_normalized_file_path(absolute=True).with_suffix(
+            ".bz2"
+        )
 
+        if bz2_path.exists():
+            bz2_path.unlink()
 
-    def _extract_hash(self, sha256_sums: str, title: str):
-        lines = sha256_sums.splitlines()
-        for line in lines:
-            parts = line.split(" ")
-            if title == parts[1].replace('(', '').replace(')', ''):
-                return parts[-1]
-        return ""
+        self._get_complete_normalized_file_path(absolute=True).rename(bz2_path)
+
+        bz2_file = bz2.BZ2File(bz2_path)
+        data = bz2_file.read()
+
+        extracted_filepath = bz2_path.with_suffix(self.file_path.suffix)
+        with open(extracted_filepath, "wb") as new_file:
+            new_file.write(data)
+
+        bz2_path.unlink()
 
     @cache
     def _get_latest_version(self) -> list[str]:
@@ -107,68 +104,10 @@ class OPNsense(GenericUpdater):
 
         for a_tag in download_a_tags:
             href = a_tag.get("href")
-            if not "OPNsense" in href:
+            if not self.edition in href:
                 continue
-            version_number = self._str_to_version(href[:-1])
+            version_number = self._str_to_version(href.split("-")[1])
             if self._compare_version_numbers(latest, version_number):
                 latest = version_number
 
         return latest
-
-    def _get_local_file(self) -> Path | None:
-        """
-        Get the path of the locally stored file that matches the filename pattern.
-
-        Returns:
-            str | None: The path of the locally stored file if found, None if no file exists.
-        """
-        file_path = self._get_normalized_file_path(
-            absolute=True,
-            version=None,
-            edition=self.edition if self.has_edition() else None,  # type: ignore
-            lang=self.lang if self.has_lang() else None,  # type: ignore
-        )
-
-        local_files = glob.glob(str(file_path).replace("[[VER]]", "*").replace('.bz2',''))
-
-        if local_files:
-            return Path(local_files[0])
-        logging.debug(
-            f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}"
-        )
-        return None
-
-    def _str_to_version(self, version_str: str):
-        version = "0"
-        pattern = r'^(OPNsense-)?(\d+\.\d).*$'
-
-        match = re.search(pattern, version_str)
-        if match:
-            version = match.group(2)
-
-        return [version]
-
-    @staticmethod
-    def _compare_version_numbers(
-        old_version: list[str], new_version: list[str]
-    ) -> bool:
-        """
-        Compare version numbers to check if a new version is available.
-
-        Args:
-            old_version (list[str]): The old version as a list of version components.
-            new_version (list[str]): The new version as a list of version components.
-
-        Returns:
-            bool: True if the new version is greater than the old version, False otherwise.
-        """
-        for i in range(len(new_version)):
-            try:
-                if float(new_version[i]) > float(old_version[i]):
-                    return True
-            except ValueError:
-                if float(new_version[i]) > float(old_version[i]):
-                    return True
-            except IndexError:
-                return True
-        return False
