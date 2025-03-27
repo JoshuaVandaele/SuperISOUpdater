@@ -223,6 +223,7 @@ class GenericUpdater(ABC):
             )
             return None
 
+        local_file_without_ext = local_file.with_suffix("")
         normalized_path_without_ext = Path(
             self._get_normalized_file_path(
                 absolute=True,
@@ -236,7 +237,7 @@ class GenericUpdater(ABC):
             re.escape(part)
             for part in str(normalized_path_without_ext).split("[[VER]]")
         )
-        local_version_regex = re.search(version_regex, str(local_file))
+        local_version_regex = re.search(version_regex, str(local_file_without_ext))
 
         if local_version_regex:
             local_version = self._str_to_version(local_version_regex.group(1))
@@ -333,7 +334,7 @@ class GenericUpdater(ABC):
             lang=self.lang if self.has_lang() else None,  # type: ignore
         )
 
-    def _version_to_str(self, version: list[str]):
+    def _version_to_str(self, version: list[str]) -> str:
         """
         Convert a list of version components to a version string.
 
@@ -345,7 +346,7 @@ class GenericUpdater(ABC):
         """
         return self.version_splitter.join(str(i) for i in version)
 
-    def _str_to_version(self, version_str: str):
+    def _str_to_version(self, version_str: str) -> list[str]:
         """
         Convert a version string to a list of version components.
 
