@@ -107,7 +107,7 @@ The tool currently supports the following ISOs:
 
 - **Diagnostic Tools**
   - Hiren's BootCD PE
-  - Memtest86+
+  - MemTest86 Plus
   - SystemRescue
   - UltimateBootCD
   - Rescuezilla (editions: "focal", "jammy", "lunar", "mantic", "noble")
@@ -123,20 +123,21 @@ The tool currently supports the following ISOs:
     - Arch Linux
     - Debian (editions: "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce")
     - Ubuntu (editions: "LTS", "interim")
-    - Fedora (editions: "KDE", "Budgie", "Cinnamon", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
+    - Fedora (editions: "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
+    - Kali Linux (editions: "installer", "installer-netinst", "installer-purple", "live")
     - Linux Mint (editions: "cinnamon", "mate", "xfce")
-    - Manjaro (editions: "plasma", "xfce", "gnome", "budgie", "cinnamon", "i3", "mate")
-    - Kali Linux (editions: "installer", "live", "installer-netinst", "installer-purple")
-    - Rocky Linux (editions: "dvd", "boot", "minimal")
+    - Manjaro (editions: "plasma", "xfce", "gnome", "cinnamon", "i3")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
-    - TrueNAS (editions: "scale")
+    - OpenSUSE Rolling (editions: "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD")
+    - Proxmox (editions: "ve", "mail-gateway", "backup-server")
+    - Rocky Linux (editions: "dvd", "boot", "minimal")
     - Tails
     - ChromeOS (editions: "ltc", "ltr", "stable")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)
     - Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
-    - TrueNAS (editions: "core")
+    - TrueNAS (editions: "scale", "core")
   - **Other**
     - FreeDOS (editions: "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD")
     - TempleOS (editions: "Distro", "Lite")

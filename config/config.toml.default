@@ -114,6 +114,12 @@ enabled = true
 # "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"
 editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
 
+[OperatingSystems.Linux.Proxmox]
+enabled = true
+# Available editions:
+# "ve", "mail-gateway", "backup-server"
+editions = ["ve"]
+
 [OperatingSystems.Linux.RockyLinux]
 enabled = true
 # Available editions:

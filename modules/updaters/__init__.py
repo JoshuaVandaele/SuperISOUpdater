@@ -15,16 +15,17 @@ from .MemTest86Plus import MemTest86Plus
 from .OpenSUSE import OpenSUSE
 from .OpenSUSERolling import OpenSUSERolling
 from .OPNsense import OPNsense
-from .RockyLinux import RockyLinux
-from .Tails import Tails
+from .Proxmox import Proxmox
 from .Rescuezilla import Rescuezilla
+from .RockyLinux import RockyLinux
 from .ShredOS import ShredOS
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
+from .Tails import Tails
 from .TempleOS import TempleOS
+from .TrueNAS import TrueNAS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
-from .TrueNAS import TrueNAS
 from .Windows10 import Windows10
 from .Windows11 import Windows11
 
