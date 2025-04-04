@@ -129,6 +129,7 @@ The tool currently supports the following ISOs:
     - Manjaro (editions: "plasma", "xfce", "gnome", "cinnamon", "i3")
     - OpenSUSE (editions: "leap", "leap-micro", "jump")
     - OpenSUSE Rolling (editions: "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD")
+    - OPNsense (editions: "dvd", "nano", "serial", "vga")
     - Proxmox (editions: "ve", "mail-gateway", "backup-server")
     - Rocky Linux (editions: "dvd", "boot", "minimal")
     - Tails
