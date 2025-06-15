@@ -92,7 +92,7 @@ class GenericUpdater(ABC):
             local_version, self._get_latest_version()
         )
         logging.debug(
-            f"[GenericUpdater.check_for_updates] {self._version_to_str(local_version)} > {self._version_to_str(self._get_latest_version())}? {is_update_available}"
+            f"[GenericUpdater.check_for_updates] {self._version_to_str(local_version)} < {self._version_to_str(self._get_latest_version())}? {is_update_available}"
         )
         return is_update_available
 
