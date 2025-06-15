@@ -57,7 +57,7 @@ class Manjaro(GenericUpdater):
 
         checksums = requests.get(checksum_url).text
 
-        checksum = parse_hash(checksums, [], 0)
+        checksum = parse_hash(checksums, "", 0)
 
         if checksum_url.endswith(".sha512"):
             return sha512_hash_check(

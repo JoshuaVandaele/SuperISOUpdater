@@ -92,7 +92,7 @@ class HDAT2(GenericUpdater):
         if not tag_with_hash:
             raise LookupError("Could not find HTML tag containing MD5 hash")
 
-        md5_sum = parse_hash(tag_with_hash.text, ["MD5=", version_str], -1).replace(
+        md5_sum = parse_hash(tag_with_hash.text, f"{version_str}.+MD5=", -1).replace(
             "MD5=", ""
         )
 

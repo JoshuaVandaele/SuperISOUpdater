@@ -1,9 +1,8 @@
+import logging
+import re
 from functools import cache
 from pathlib import Path
 
-import logging
-
-import re
 import requests
 
 from modules.updaters.GenericUpdater import GenericUpdater
@@ -27,7 +26,15 @@ class OpenSUSERolling(GenericUpdater):
     """
 
     def __init__(self, folder_path: Path, edition: str) -> None:
-        self.valid_editions = ["MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"]
+        self.valid_editions = [
+            "MicroOS-DVD",
+            "Tumbleweed-DVD",
+            "Tumbleweed-NET",
+            "Tumbleweed-GNOME-Live",
+            "Tumbleweed-KDE-Live",
+            "Tumbleweed-XFCE-Live",
+            "Tumbleweed-Rescue-CD",
+        ]
         self.edition = edition
 
         self.download_page_url = DOWNLOAD_PAGE_URL
@@ -43,16 +50,17 @@ class OpenSUSERolling(GenericUpdater):
 
     @cache
     def _get_download_link(self) -> str:
-        isoFile = FILE_NAME.replace("[[EDITION]]", self._capitalize_edition()).replace("[[VER]]","Current")
+        isoFile = FILE_NAME.replace("[[EDITION]]", self._capitalize_edition()).replace(
+            "[[VER]]", "Current"
+        )
         return f"{self.download_page_url}/{isoFile}"
-
 
     def check_integrity(self) -> bool:
         sha256_url = f"{self._get_download_link()}.sha256"
 
         sha256_sums = requests.get(sha256_url).text
 
-        sha256_sum = parse_hash(sha256_sums, [], 0)
+        sha256_sum = parse_hash(sha256_sums, "", 0)
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
@@ -66,7 +74,7 @@ class OpenSUSERolling(GenericUpdater):
 
     def _str_to_version(self, version_str: str):
         version = "0"
-        pattern = r'^.*Snapshot(\d*)-.*$'
+        pattern = r"^.*Snapshot(\d*)-.*$"
 
         match = re.search(pattern, version_str)
         if match:

@@ -67,7 +67,7 @@ class TempleOS(GenericUpdater):
 
         md5_sums = requests.get(md5_url).text
 
-        md5_sum = parse_hash(md5_sums, [self.server_file_name], 0)
+        md5_sum = parse_hash(md5_sums, self.server_file_name, 0)
 
         return md5_hash_check(
             self._get_complete_normalized_file_path(absolute=True),

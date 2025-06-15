@@ -69,7 +69,7 @@ class Proxmox(GenericUpdater):
 
         sha256_sum = parse_hash(
             sha256_sums,
-            [str(self._get_complete_normalized_file_path(absolute=False))],
+            str(self._get_complete_normalized_file_path(absolute=False)),
             0,
         )
 

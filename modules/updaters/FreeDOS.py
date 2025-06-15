@@ -82,7 +82,7 @@ class FreeDOS(GenericUpdater):
                 "Could not find the sha256 hash in the hash list file"
             ) from e
 
-        sha256_sum = parse_hash(sha256_sums, [self.edition], 0)
+        sha256_sum = parse_hash(sha256_sums, self.edition, 0)
 
         return sha256_hash_check(
             self._get_normalized_file_path(

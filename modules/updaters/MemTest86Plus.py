@@ -82,7 +82,7 @@ class MemTest86Plus(GenericUpdater):
         version_str = self._version_to_str(self._get_latest_version())
         sha_256_url = f"{DOWNLOAD_PAGE_URL}/download/v{version_str}/sha256sum.txt"
         sha_256_checksums_str: str = requests.get(sha_256_url).text
-        sha_256_checksum: str = parse_hash(sha_256_checksums_str, ["64.iso"], 0)
+        sha_256_checksum: str = parse_hash(sha_256_checksums_str, "64.iso", 0)
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True).with_suffix(".zip"),

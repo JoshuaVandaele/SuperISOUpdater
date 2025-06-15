@@ -64,7 +64,7 @@ class OPNsense(GenericUpdater):
 
         sha256_sum = parse_hash(
             sha256_sums,
-            [self.edition],
+            self.edition,
             -1,
         )
 

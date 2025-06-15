@@ -205,9 +205,7 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
     return result
 
 
-def parse_hash(
-    hashes: str, match_strings_in_line: list[str], hash_position_in_line: int
-):
+def parse_hash(hashes: str, match_regex: str, hash_position_in_line: int):
     """Parse a list of hashes and extract a specific hash based on matching strings.
 
     Args:
@@ -219,12 +217,12 @@ def parse_hash(
         The extracted hash value.
     """
     logging.debug(
-        f"[parse_hash] Parsing hashes with match strings `{match_strings_in_line}` and hash position {hash_position_in_line} in those hashes:\n{hashes}"
+        f"[parse_hash] Parsing hashes with match strings `{match_regex}` and hash position {hash_position_in_line} in those hashes:\n{hashes}"
     )
     hash = next(
         line.split()[hash_position_in_line]
         for line in hashes.strip().splitlines()
-        if all(match in line for match in match_strings_in_line)
+        if re.search(match_regex, line)
     )
     logging.debug(f"[parse_hash] Extracted hash: `{hash}`")
     return hash

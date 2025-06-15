@@ -44,12 +44,7 @@ class ShredOS(GenericUpdater):
 
         sha1_sum = parse_hash(
             sha1_sums,
-            [
-                "sha1",
-                self._version_to_str(self._get_latest_version()),
-                "x86-64",
-                ".img",
-            ],
+            f"sha1.+{self._version_to_str(self._get_latest_version())}.+x86-64.+img",
             1,
         )
 
