@@ -73,7 +73,7 @@ class SystemRescue(GenericUpdater):
         r = requests.get(sha256_download_link)
         sha256_checksum = parse_hash(
             r.text,
-            [str(self._get_normalized_file_path(False, self._get_latest_version()))],
+            str(self._get_normalized_file_path(False, self._get_latest_version())),
             0,
         )
 

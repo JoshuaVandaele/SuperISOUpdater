@@ -44,7 +44,7 @@ class OpenSUSE(GenericUpdater):
 
         if any("product" in item["name"] for item in edition_page):
             url += "/product"
-        
+
         if self.edition != "leap-micro":
             latest_version_str += "-NET"
 
@@ -55,7 +55,7 @@ class OpenSUSE(GenericUpdater):
 
         sha256_sums = requests.get(sha256_url).text
 
-        sha256_sum = parse_hash(sha256_sums, [], 0)
+        sha256_sum = parse_hash(sha256_sums, "", 0)
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
@@ -76,11 +76,16 @@ class OpenSUSE(GenericUpdater):
                 continue
             version_number = self._str_to_version(data[i]["name"][:-1])
             if self._compare_version_numbers(latest, version_number):
-                sub_r = requests.get(f"{self.download_page_url}/{self._version_to_str(version_number)}?jsontable")
+                sub_r = requests.get(
+                    f"{self.download_page_url}/{self._version_to_str(version_number)}?jsontable"
+                )
                 sub_data = sub_r.json()["data"]
-                if not any("iso" in item["name"] or "product" in item["name"] for item in sub_data):
+                if not any(
+                    "iso" in item["name"] or "product" in item["name"]
+                    for item in sub_data
+                ):
                     continue
-                
+
                 latest = version_number
 
         return latest

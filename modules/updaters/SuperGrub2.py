@@ -77,10 +77,7 @@ class SuperGrub2(GenericUpdater):
         sha256_checksums_str = sha256_sums_tag.getText()
         sha_256_checksum: str = parse_hash(
             sha256_checksums_str,
-            [
-                f"supergrub2-{self._get_latest_version()[0]}",
-                ".img.zip",
-            ],
+            f"supergrub2-{self._get_latest_version()[0]}",
             0,
         )
 

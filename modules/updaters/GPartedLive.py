@@ -41,7 +41,7 @@ class GPartedLive(GenericUpdater):
         else:
             raise IntegrityCheckError("Could not find SHA256 sum")
 
-        sha256_hash = parse_hash(sha256_sums, ["amd64.iso"], 0)
+        sha256_hash = parse_hash(sha256_sums, "amd64.iso", 0)
 
         return sha256_hash_check(
             self._get_complete_normalized_file_path(absolute=True), sha256_hash
