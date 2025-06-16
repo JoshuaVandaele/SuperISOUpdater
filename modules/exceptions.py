@@ -33,3 +33,9 @@ class IntegrityCheckError(Exception):
     """
 
     pass
+
+
+class NoMirrorsError(Exception):
+    """Custom exception to represent an error when no mirrors are available for downloading files."""
+
+    pass

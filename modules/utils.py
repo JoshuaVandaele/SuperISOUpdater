@@ -245,6 +245,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
 
     try:
         with requests.get(url, stream=True) as r:
+            r.raise_for_status()
             total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
 
             with open(part_file, "wb") as f:

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from modules.exceptions import IntegrityCheckError
 from modules.utils import download_file
+from modules.Version import Version
 
 
 class GenericUpdater(ABC):
@@ -52,7 +53,7 @@ class GenericUpdater(ABC):
 
         self.folder_path.mkdir(parents=True, exist_ok=True)
 
-    @abstractmethod
+    # @abstractmethod
     def _get_download_link(self) -> str:
         """
         (Protected) Get the download link for the latest version of the software.
@@ -65,7 +66,7 @@ class GenericUpdater(ABC):
         """
         pass
 
-    @abstractmethod
+    # @abstractmethod
     def check_integrity(self) -> bool:
         """
         Check the integrity of the downloaded software.
@@ -88,11 +89,10 @@ class GenericUpdater(ABC):
             )
             return True
 
-        is_update_available = self._compare_version_numbers(
-            local_version, self._get_latest_version()
-        )
+        is_update_available = local_version < self._get_latest_version()
+
         logging.debug(
-            f"[GenericUpdater.check_for_updates] {self._version_to_str(local_version)} < {self._version_to_str(self._get_latest_version())}? {is_update_available}"
+            f"[GenericUpdater.check_for_updates] {local_version} < {self._get_latest_version()}? {is_update_available}"
         )
         return is_update_available
 
@@ -205,7 +205,7 @@ class GenericUpdater(ABC):
         )
         return None
 
-    def _get_local_version(self) -> list[str] | None:
+    def _get_local_version(self) -> Version | None:
         """
         Get the version of the locally stored file by extracting the version number from the filename.
 
@@ -213,7 +213,7 @@ class GenericUpdater(ABC):
             list[str] | None: A list of integers representing the version number if found,
                             None if the version cannot be determined or no local file exists.
         """
-        local_version: list[str] | None = None
+        local_version: Version | None = None
 
         local_file = self._get_local_file()
 
@@ -240,7 +240,7 @@ class GenericUpdater(ABC):
         local_version_regex = re.search(version_regex, str(local_file_without_ext))
 
         if local_version_regex:
-            local_version = self._str_to_version(local_version_regex.group(1))
+            local_version = Version(local_version_regex.group(1), self.version_splitter)
 
         if not local_version:
             logging.debug(
@@ -249,7 +249,7 @@ class GenericUpdater(ABC):
 
         return local_version
 
-    def _get_latest_version(self) -> list[str]:
+    def _get_latest_version(self) -> Version:
         """
         Get the latest version of the software from the download page.
 
@@ -266,7 +266,7 @@ class GenericUpdater(ABC):
     def _get_normalized_file_path(
         self,
         absolute: bool,
-        version: list[str] | None = None,
+        version: Version | None,
         edition: str | None = None,
         lang: str | None = None,
     ) -> Path:
@@ -275,9 +275,7 @@ class GenericUpdater(ABC):
 
         Args:
             absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
-            version (list[str], optional): The version as a list of version components.
-                                    If provided, it replaces '[[VER]]' in the file name.
-                                    Defaults to None.
+            version (Version): The version as a list of version components.
             edition (str, optional): The edition of the file. If provided, it replaces '[[EDITION]]' in the file name.
                                     Defaults to None.
             lang (str, optional): The language of the file. If provided, it replaces '[[LANG]]' in the file name.
@@ -294,7 +292,7 @@ class GenericUpdater(ABC):
 
         # Replace placeholders with the specified version, edition, and language
         if version is not None and "[[VER]]" in file_name:
-            file_name = file_name.replace("[[VER]]", self._version_to_str(version))
+            file_name = file_name.replace("[[VER]]", str(version))
 
         if edition is not None and "[[EDITION]]" in file_name:
             file_name = file_name.replace("[[EDITION]]", edition)
@@ -333,55 +331,3 @@ class GenericUpdater(ABC):
             edition=self.edition if self.has_edition() else None,  # type: ignore
             lang=self.lang if self.has_lang() else None,  # type: ignore
         )
-
-    def _version_to_str(self, version: list[str]) -> str:
-        """
-        Convert a list of version components to a version string.
-
-        Args:
-            version (list[str]): The version as a list of version components.
-
-        Returns:
-            str: The version as a string with components joined by the version splitter.
-        """
-        return self.version_splitter.join(str(i) for i in version)
-
-    def _str_to_version(self, version_str: str) -> list[str]:
-        """
-        Convert a version string to a list of version components.
-
-        Args:
-            version_str (str): The version as a string.
-
-        Returns:
-            list[str]: The version as a list of version components.
-        """
-        return [
-            version_number.strip()
-            for version_number in version_str.split(self.version_splitter)
-        ]
-
-    @staticmethod
-    def _compare_version_numbers(
-        old_version: list[str], new_version: list[str]
-    ) -> bool:
-        """
-        Compare version numbers to check if a new version is available.
-
-        Args:
-            old_version (list[str]): The old version as a list of version components.
-            new_version (list[str]): The new version as a list of version components.
-
-        Returns:
-            bool: True if the new version is greater than the old version, False otherwise.
-        """
-        for i in range(len(new_version)):
-            try:
-                if int(new_version[i]) > int(old_version[i]):
-                    return True
-            except ValueError:
-                if int(new_version[i], 32) > int(old_version[i], 32):
-                    return True
-            except IndexError:
-                return True
-        return False
