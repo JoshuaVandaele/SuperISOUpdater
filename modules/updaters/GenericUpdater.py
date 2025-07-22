@@ -1,23 +1,22 @@
 import glob
 import logging
 import re
-from abc import ABC, abstractmethod
+from abc import ABC
 from pathlib import Path
 
-from modules.exceptions import IntegrityCheckError
-from modules.utils import download_file
+from modules.exceptions import NoMirrorsError
+from modules.mirrors.GenericMirrorManager import GenericMirrorManager
 from modules.Version import Version
 
 
 class GenericUpdater(ABC):
     """
     Abstract base class for a generic updater that manages software updates.
-
-    Attributes:
-        file_path (Path): The path to the file that needs to be updated.
     """
 
-    def __init__(self, file_path: Path, *args, **kwargs) -> None:
+    def __init__(
+        self, file_path: Path, mirror_mgr: GenericMirrorManager, *args, **kwargs
+    ) -> None:
         """
         Initialize the GenericUpdater instance.
 
@@ -25,14 +24,11 @@ class GenericUpdater(ABC):
             file_path (Path): The path to the file that needs to be updated.
         """
         self.file_path = file_path.resolve()
-        self.folder_path = file_path.parent.resolve()
-
-        self.version_splitter = "."
+        self.folder_path = self.file_path.parent
+        self.mirror_mgr = mirror_mgr
+        self.version_separator = mirror_mgr.current_mirror.version_separator
 
         if self.has_edition():
-            logging.debug(
-                f"[GenericUpdater.__init__] {self.__class__.__name__} has edition support"
-            )
             if self.edition.lower() not in (  # type: ignore
                 valid_edition.lower() for valid_edition in self.valid_editions  # type: ignore
             ):
@@ -41,9 +37,6 @@ class GenericUpdater(ABC):
                 )
 
         if self.has_lang():
-            logging.debug(
-                f"[GenericUpdater.__init__] {self.__class__.__name__} has language support"
-            )
             if self.lang.lower() not in (  # type: ignore
                 valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
             ):
@@ -52,29 +45,6 @@ class GenericUpdater(ABC):
                 )
 
         self.folder_path.mkdir(parents=True, exist_ok=True)
-
-    # @abstractmethod
-    def _get_download_link(self) -> str:
-        """
-        (Protected) Get the download link for the latest version of the software.
-
-        Returns:
-            str: The download link for the latest version of the software.
-
-        Raises:
-            DownloadLinkNotFoundError: If the download link is not found.
-        """
-        pass
-
-    # @abstractmethod
-    def check_integrity(self) -> bool:
-        """
-        Check the integrity of the downloaded software.
-
-        Returns:
-            bool: True if the downloaded software is valid, otherwise False.
-        """
-        pass
 
     def check_for_updates(self) -> bool:
         """
@@ -103,42 +73,22 @@ class GenericUpdater(ABC):
         Raises:
             IntegrityCheckError: If the integrity check of the downloaded file fails.
         """
-        download_link = self._get_download_link()
-
-        # Determine the old and new file paths
         old_file = self._get_local_file()
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        if not self.has_version():
-            # If the file is being replaced, back it up
-            if old_file:
-                logging.debug(
-                    f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
-                )
-                old_file.with_suffix(".old").replace(old_file)
+        if old_file:
+            logging.debug(
+                f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
+            )
+            old_file.with_suffix(".old").replace(old_file)
 
-        download_file(download_link, new_file)
-
-        # Check the integrity of the downloaded file
         try:
-            integrity_check = self.check_integrity()
-        except Exception as e:
-            # If integrity check failed, restore the old file or remove the new file
-            if self.has_version() or not old_file:
-                new_file.unlink()
-            else:
+            self.mirror_mgr.attempt_download(new_file)
+        except NoMirrorsError as e:
+            if old_file:
                 old_file.replace(new_file)
-            raise IntegrityCheckError(
-                "Integrity check failed: An error occurred"
-            ) from e
-
-        if not integrity_check:
-            # If integrity check failed, restore the old file or remove the new file
-            if self.has_version() or not old_file:
-                new_file.unlink()
-            else:
-                old_file.replace(new_file)
-            raise IntegrityCheckError("Integrity check failed: Hashes do not match")
+            new_file.unlink(missing_ok=True)
+            raise RuntimeError from e
 
         # If the installation was successful and we had a previous version installed, remove it
         if old_file:
@@ -240,7 +190,10 @@ class GenericUpdater(ABC):
         local_version_regex = re.search(version_regex, str(local_file_without_ext))
 
         if local_version_regex:
-            local_version = Version(local_version_regex.group(1), self.version_splitter)
+            local_version = Version(
+                local_version_regex.group(1),
+                self.version_separator,
+            )
 
         if not local_version:
             logging.debug(
@@ -250,18 +203,7 @@ class GenericUpdater(ABC):
         return local_version
 
     def _get_latest_version(self) -> Version:
-        """
-        Get the latest version of the software from the download page.
-
-        Returns:
-            list[str]: A list of integers representing the latest version number.
-
-        Raises:
-            VersionNotFoundError: If the latest version cannot be found on the download page.
-        """
-        raise NotImplementedError(
-            f"{self.__class__.__name__} has not been implemented yet."
-        )
+        return self.mirror_mgr.current_mirror.version
 
     def _get_normalized_file_path(
         self,

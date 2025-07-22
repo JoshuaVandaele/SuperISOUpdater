@@ -6,17 +6,21 @@ from modules.ParsedTokens import ParsedTokens, Token
 class Version:
     _token_regex = re.compile(r"\d+|[A-Za-z]+")
 
-    def __init__(self, version_string: str, separator: str = ".") -> None:
+    def __init__(
+        self, version_string: str, separator: str = ".", zero_pad: int = 0
+    ) -> None:
         """
         Initializes a Version object with major, minor, and patch components.
 
         Args:
             version_string (str):
             separator (str): The separator used to join the components. Defaults to '.'.
+            zero_pad (int): The number of digits to zero-pad each component. Defaults to 0.
         """
         if not version_string:
             raise ValueError("The version string cannot be empty.")
         self.separator = separator
+        self.zero_pad = zero_pad
         components: list[str] = (
             version_string.split(self.separator)
             if self.separator
@@ -74,7 +78,10 @@ class Version:
         )
 
     def __str__(self) -> str:
-        return self.separator.join(map(str, self._parsed_components))
+        return self.separator.join(
+            "".join(f"{tok:0{self.zero_pad}d}" for tok in comp)
+            for comp in self._parsed_components
+        )
 
     def __repr__(self) -> str:
         return self.separator.join(map(str, self._parsed_components))
