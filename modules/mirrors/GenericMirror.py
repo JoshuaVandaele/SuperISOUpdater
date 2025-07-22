@@ -82,20 +82,16 @@ class GenericMirror(ABC):
         self._soup_page: BeautifulSoup = soup
         self._text_page: str = text
 
-        print(r"self._determine_version(self._version_regex)")
         self.version: Version = (
             self._determine_version(self._version_regex)
             if self._version_regex
             else self._version
         )  # type: ignore
 
-        print(r"types, sums = self._determine_sums()")
         types, sums = self._determine_sums()
         self.sum_types: list[SumType] = types
         self.sums: list[str] = sums
-        print(r"self.download_link: str = self._get_download_link()")
         self.download_link: str = self._get_download_link()
-        print(r"self.speed: float = self._determine_speed()")
         self.speed: float = self._determine_speed()
 
     def checksum_file(self, file: Path) -> bool:
@@ -145,6 +141,15 @@ class GenericMirror(ABC):
         response.raise_for_status()
         return response.text, BeautifulSoup(response.content, features="html.parser")
 
+    def _determine_version_from_search(self, regex, string) -> Version | None:
+        version_match = re.search(regex, string)
+        if not version_match:
+            return None
+
+        return Version(
+            version_match.group(1), self._version_separator, self._version_padding
+        )
+
     def _determine_version(self, version_regex: str) -> Version:
         """
         (Protected) Determine the version from the page using the provided regex.
@@ -161,14 +166,8 @@ class GenericMirror(ABC):
         latest_version = Version("0")
         for url in self._urls_with_regex():
             logging.debug(f"Checking URL for version: {url} with regex {version_regex}")
-            version_match = re.search(version_regex, url)
-            if not version_match:
-                continue
-
-            current_version = Version(
-                version_match.group(1), self._version_separator, self._version_padding
-            )
-            if current_version > latest_version:
+            current_version = self._determine_version_from_search(version_regex, url)
+            if current_version and current_version > latest_version:
                 latest_version = current_version
 
         if latest_version == Version("0"):
