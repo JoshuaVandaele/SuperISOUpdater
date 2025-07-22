@@ -1,4 +1,5 @@
 import logging
+import traceback
 from abc import ABC
 from pathlib import Path
 from typing import Callable
@@ -72,8 +73,12 @@ class GenericMirrorManager(ABC):
                 logging.debug(f"Error with mirror {mirror._url}: {e}")
 
         if not self._mirrors:
+            err_details = [
+                f"{m._url}: {''.join(traceback.format_exception(type(e), e, e.__traceback__))}"
+                for m, e in failed_mirrors
+            ]
             raise NoMirrorsError(
-                f"All mirrors failed to run {func.__name__}. Errors: {[f'{m.url}: {e}' for m,e in failed_mirrors]}"
+                f"All mirrors failed to run {func.__name__}. Errors: {'\n'.join(err_details)}"
             )
 
     def _initialize_all_mirrors(self) -> None:

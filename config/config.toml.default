@@ -53,7 +53,10 @@ name = "gparted-live-[[VER]]-amd64.iso"
 
 [DiskUtils.ShredOS]
 enabled = true
-name = "shredos-[[VER]].img"
+# Available editions:
+# "vanilla", "nomodeset"
+editions = ["vanilla"]
+name = "shredos_[[VER]]_[[EDITION]].iso"
 
 [DiskUtils.HDAT2]
 enabled = true

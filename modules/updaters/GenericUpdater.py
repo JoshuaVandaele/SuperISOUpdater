@@ -29,6 +29,8 @@ class GenericUpdater(ABC):
         self.version_separator = mirror_mgr.current_mirror.version_separator
 
         if self.has_edition():
+            if not "[[EDITION]]" in str(self.file_path):
+                raise ValueError("Invalid name. The name needs a [[EDITION]] tag.")
             if self.edition.lower() not in (  # type: ignore
                 valid_edition.lower() for valid_edition in self.valid_editions  # type: ignore
             ):
@@ -37,12 +39,17 @@ class GenericUpdater(ABC):
                 )
 
         if self.has_lang():
+            if not "[[LANG]]" in str(self.file_path):
+                raise ValueError("Invalid name. The name needs a [[LANG]] tag.")
             if self.lang.lower() not in (  # type: ignore
                 valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
             ):
                 raise ValueError(
                     f"Invalid language. The available languages are: {', '.join(self.valid_langs)}."  # type: ignore
                 )
+
+        if not self.has_version():
+            raise ValueError("Invalid name. The name needs a [[VER]] tag.")
 
         self.folder_path.mkdir(parents=True, exist_ok=True)
 
@@ -113,11 +120,7 @@ class GenericUpdater(ABC):
         Returns:
             bool: True if different editions are supported, False otherwise.
         """
-        return (
-            hasattr(self, "edition")
-            and hasattr(self, "valid_editions")
-            and "[[EDITION]]" in str(self.file_path)
-        )
+        return hasattr(self, "edition") and hasattr(self, "valid_editions")
 
     def has_lang(self) -> bool:
         """
@@ -126,11 +129,7 @@ class GenericUpdater(ABC):
         Returns:
             bool: True if different languages are supported, False otherwise.
         """
-        return (
-            hasattr(self, "lang")
-            and hasattr(self, "valid_langs")
-            and "[[LANG]]" in str(self.file_path)
-        )
+        return hasattr(self, "lang") and hasattr(self, "valid_langs")
 
     def _get_local_file(self) -> Path | None:
         """
