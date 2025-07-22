@@ -73,7 +73,10 @@ def run_updater(updater: GenericUpdater):
 
 
 def run_updaters(
-    install_path: Path, config: dict, updater_list: list[Type[GenericUpdater]]
+    install_path: Path,
+    config: dict,
+    updater_list: list[Type[GenericUpdater]],
+    default_config: dict,
 ):
     """Run updaters based on the provided configuration.
 
@@ -81,6 +84,7 @@ def run_updaters(
         install_path (Path): The installation path.
         config (dict): The configuration dictionary.
         updater_list (list[Type[GenericUpdater]]): A list of available updater classes.
+        default_config (dict): The default configuration dictionary.
     """
     for key, value in config.items():
         # If the key's name is the name of an updater, run said updater using the values as argument, otherwise assume it's a folder's name
@@ -107,7 +111,14 @@ def run_updaters(
             elif langs:
                 params = [{"lang": lang} for lang in langs]
 
+            name = value.get("name")
+            if not name:
+                default_value = default_config.get(key, {})
+                name = default_value.get("name")
+                logging.debug(f"No name specified for {key}, using default name {name}")
+
             for param in params:
+                param["file_name"] = name
                 try:
                     updaters.append(updater_class(install_path, **param))
                 except Exception:
@@ -120,7 +131,9 @@ def run_updaters(
                 run_updater(updater)
 
         else:
-            run_updaters(install_path / key, value, updater_list)
+            run_updaters(
+                install_path / key, value, updater_list, default_config.get(key, {})
+            )
 
 
 def main():
@@ -156,41 +169,46 @@ def main():
 
     ventoy_path = Path(args.ventoy_path).resolve()
 
-    config_file = Path(args.config_file) if args.config_file else None
-    if not config_file:
+    default_config_path = Path(__file__).parent / "config" / "config.toml.default"
+    config_path = Path(args.config_file) if args.config_file else None
+    if not config_path:
         logging.info(
             "No config file specified. Trying to find config.toml in the current directory..."
         )
-        config_file = Path() / "config.toml"
+        config_path = Path() / "config.toml"
 
-        if not config_file.is_file():
+        if not config_path.is_file():
             logging.info(
                 "No config file specified. Trying to find config.toml in the ventoy drive..."
             )
-            config_file = ventoy_path / "config.toml"
+            config_path = ventoy_path / "config.toml"
 
-            if not config_file.is_file():
+            if not config_path.is_file():
                 logging.info(
                     "No config.toml found in the ventoy drive. Generating one from config.toml.default..."
                 )
-                with open(
-                    Path(__file__).parent / "config" / "config.toml.default"
-                ) as default_config_file:
-                    config_file.parent.mkdir(parents=True, exist_ok=True)
-                    with open(config_file, "w") as new_config_file:
-                        new_config_file.write(default_config_file.read())
+                with open(default_config_path) as default_config_file:
+                    config_path.parent.mkdir(parents=True, exist_ok=True)
+                    with open(config_path, "w") as config_file:
+                        config_file.write(default_config_file.read())
                 logging.info(
                     "Generated config.toml in the ventoy drive. Please edit it to your liking and run sisou again."
                 )
                 return
 
-    config = parse_config(config_file)
+    logging.info(f"Using config file: {config_path}")
+
+    config = parse_config(config_path)
     if not config:
         raise ValueError("Configuration file could not be parsed or is empty")
 
+    default_config: dict = (
+        parse_config(default_config_path) if default_config_path.is_file() else {}
+    )  # type: ignore
+
     available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
 
-    run_updaters(ventoy_path, config, available_updaters)
+    run_updaters(ventoy_path, config, available_updaters, default_config)
 
     logging.debug("Finished execution")
 

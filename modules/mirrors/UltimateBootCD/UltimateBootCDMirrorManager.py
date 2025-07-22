@@ -8,11 +8,5 @@ class UltimateBootCDMirrorManager(GenericMirrorManager):
     def __init__(
         self,
     ) -> None:
-        """
-        Initializes the GenericMirrorManager with a list of mirrors.
-
-        Args:
-            mirrors (list[GenericMirror]): A list of GenericMirror instances.
-        """
         mirrors = [RNL(), Koddos(), ClientVPS()]
         super().__init__(mirrors)

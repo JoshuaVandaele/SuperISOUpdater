@@ -6,21 +6,26 @@ directory = "Diagnostic_Tools"
 
 [DiagnosticTools.HirensBootCDPE]
 enabled = true
+name = "HBCD_PE_[[VER]]_x64.iso"
 
 [DiagnosticTools.MemTest86Plus]
 enabled = true
+name = "Memtest86plus-[[VER]].iso"
 
 [DiagnosticTools.SystemRescue]
 enabled = true
+name = "systemrescue-[[VER]]-amd64.iso"
 
 [DiagnosticTools.UltimateBootCD]
 enabled = true
+name = "ubcd[[VER]].iso"
 
 [DiagnosticTools.Rescuezilla]
 enabled = true
 # Available editions:
 # "bionic", "focal", "jammy", "noble"
 editions = ["noble"]
+name = "rescuezilla-[[VER]]-64bit.[[EDITION]].iso"
 
 # Boot Repair
 
@@ -30,6 +35,7 @@ directory = "Boot_Repair"
 
 [BootRepair.SuperGrub2]
 enabled = true
+name = "SuperGrub2-[[VER]].img"
 
 # Disk Utilities
 
@@ -39,18 +45,22 @@ directory = "Disk_Utilities"
 
 [DiskUtils.Clonezilla]
 enabled = true
+name = "clonezilla-live-[[VER]]-amd64.iso"
 
 [DiskUtils.GPartedLive]
 enabled = true
+name = "gparted-live-[[VER]]-amd64.iso"
 
 [DiskUtils.ShredOS]
 enabled = true
+name = "shredos-[[VER]].img"
 
 [DiskUtils.HDAT2]
 enabled = true
 # Available editions:
 # "full", "lite", "diskette"
 editions = ["full"]
+name = "HDAT2_[[EDITION]]_[[VER]].[[EXT]]"
 
 # Operating Systems
 
@@ -65,75 +75,88 @@ directory = "Linux"
 
 [OperatingSystems.Linux.ArchLinux]
 enabled = true
+name = "archlinux-[[VER]]-x86_64.iso"
 
 [OperatingSystems.Linux.Debian]
 enabled = true
 # Available editions:
 # "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce"
 editions = ["kde"]
+name = "debian-live-[[VER]]-amd64-[[EDITION]].iso"
 
 [OperatingSystems.Linux.Ubuntu]
 enabled = true
 # Available editions:
 # "LTS", "interim"
 editions = ["LTS"]
+name = "ubuntu-[[EDITION]]-[[VER]]-desktop-amd64.iso"
 
 [OperatingSystems.Linux.Fedora]
 enabled = true
 # Available editions:
 # "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3"
 editions = ["KDE"]
+name = "Fedora-[[EDITION]]-Live-x86_64-[[VER]].iso"
 
 [OperatingSystems.Linux.KaliLinux]
 enabled = true
 # Available editions:
 # "installer", "installer-netinst", "installer-purple", "live"
 editions = ["installer", "live"]
+name = "kali-linux-[[VER]]-[[EDITION]]-amd64.iso"
 
 [OperatingSystems.Linux.LinuxMint]
 enabled = true
 # Available editions:
 # "cinnamon", "mate", "xfce"
 editions = ["cinnamon"]
+name = "linuxmint-[[VER]]-[[EDITION]]-64bit.iso"
 
 [OperatingSystems.Linux.Manjaro]
 enabled = true
 # Available editions:
 # "plasma", "xfce", "gnome", "cinnamon", "i3"
 editions = ["plasma"]
+name = "manjaro-[[EDITION]]-[[VER]]-linux.iso"
 
 [OperatingSystems.Linux.OpenSUSE]
 enabled = true
 # Available editions:
 # "leap", "leap-micro", "jump"
 editions = ["leap"]
+name = "openSUSE-[[EDITION]]-[[VER]]-DVD-x86_64-Current.iso"
 
 [OperatingSystems.Linux.OpenSUSERolling]
 enabled = true
 # Available editions:
 # "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"
 editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
+name = "openSUSE-[[EDITION]]-x86_64-[[VER]].iso"
 
 [OperatingSystems.Linux.Proxmox]
 enabled = true
 # Available editions:
 # "ve", "mail-gateway", "backup-server"
 editions = ["ve"]
+name = "proxmox-[[EDITION]]_[[VER]].iso"
 
 [OperatingSystems.Linux.RockyLinux]
 enabled = true
 # Available editions:
 # "dvd", "boot", "minimal"
 editions = ["dvd"]
+name = "Rocky-[[VER]]-x86_64-[[EDITION]].iso"
 
 [OperatingSystems.Linux.Tails]
 enabled = true
+name = "tails-amd64-[[VER]].iso"
 
 [OperatingSystems.Linux.ChromeOS]
 enabled = true
 # Available editions:
 # "ltc", "ltr", "stable"
 editions = ["stable"]
+name = "chromeos_[[VER]]_[[EDITION]].img"
 
 # Windows
 [OperatingSystems.Windows]
@@ -145,12 +168,14 @@ enabled = true
 # Available languages:
 # "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
 langs = ["English International"]
+name = "Win11_[[VER]]_[[LANG]]_x64.iso"
 
 [OperatingSystems.Windows.Windows10]
 enabled = true
 # Available languages:
 # "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
 langs = ["English International"]
+name = "Win10_[[VER]]_[[LANG]]_x64.iso"
 
 [OperatingSystems.BSD]
 enabled = true
@@ -161,6 +186,7 @@ enabled = true
 # Available editions:
 # Scale, CORE
 editions = ["core"]
+name = "TrueNAS-[[EDITION]]-[[VER]].iso"
 
 # Other
 [OperatingSystems.Other]
@@ -172,15 +198,18 @@ enabled = true
 # Available editions:
 # "dvd", "nano", "serial", "vga"
 editions = ["vga"]
+name = "OPNsense-[[VER]]-[[EDITION]]-amd64.[[ext]]"
 
 [OperatingSystems.Other.FreeDOS]
 enabled = true
 # Available editions:
 # "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD"
 editions = ["LiveCD"]
+name = "FreeDOS-[[VER]]-[[EDITION]].iso"
 
 [OperatingSystems.Other.TempleOS]
 enabled = true
 # Available editions:
 # "Distro", "Lite"
 editions = ["Distro"]
+name = "TempleOS_[[EDITION]]_[[VER]].ISO"

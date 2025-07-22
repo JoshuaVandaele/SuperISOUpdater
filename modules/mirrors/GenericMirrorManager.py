@@ -35,7 +35,7 @@ class GenericMirrorManager(ABC):
 
     @property
     def current_mirror(self):
-        return self._mirrors[0] if len(self._mirrors) > 0 else None
+        return self._mirrors[0]
 
     def try_for_all_mirrors(
         self,
