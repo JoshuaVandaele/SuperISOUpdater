@@ -83,17 +83,9 @@ class GenericUpdater(ABC):
         old_file = self._get_local_file()
         new_file = self._get_complete_normalized_file_path(absolute=True)
 
-        if old_file:
-            logging.debug(
-                f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
-            )
-            old_file.with_suffix(".old").replace(old_file)
-
         try:
             self.mirror_mgr.attempt_download(new_file)
         except NoMirrorsError as e:
-            if old_file:
-                old_file.replace(new_file)
             new_file.unlink(missing_ok=True)
             raise RuntimeError from e
 
