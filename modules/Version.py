@@ -79,7 +79,14 @@ class Version:
 
     def __str__(self) -> str:
         return self.separator.join(
-            "".join(f"{tok:0{self.zero_pad}d}" for tok in comp)
+            "".join(
+                (
+                    f"{tok:0{self.zero_pad}d}"
+                    if isinstance(tok, int) and self.zero_pad > 0
+                    else str(tok)
+                )
+                for tok in comp
+            )
             for comp in self._parsed_components
         )
 
