@@ -150,6 +150,10 @@ enabled = true
 editions = ["dvd"]
 name = "Rocky-[[VER]]-x86_64-[[EDITION]].iso"
 
+[OperatingSystems.Linux.TrueNAS]
+enabled = true
+name = "TrueNAS-SCALE-[[VER]].iso"
+
 [OperatingSystems.Linux.Tails]
 enabled = true
 name = "tails-amd64-[[VER]].iso"
@@ -183,13 +187,6 @@ name = "Win10_[[VER]]_[[LANG]]_x64.iso"
 [OperatingSystems.BSD]
 enabled = true
 directory = "BSD"
-
-[OperatingSystems.BSD.TrueNAS]
-enabled = true
-# Available editions:
-# Scale, CORE
-editions = ["core"]
-name = "TrueNAS-[[EDITION]]-[[VER]].iso"
 
 # Other
 [OperatingSystems.Other]

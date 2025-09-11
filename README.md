@@ -132,13 +132,13 @@ The tool currently supports the following ISOs:
     - OPNsense (editions: "dvd", "nano", "serial", "vga")
     - Proxmox (editions: "ve", "mail-gateway", "backup-server")
     - Rocky Linux (editions: "dvd", "boot", "minimal")
+    - TrueNAS
     - Tails
     - ChromeOS (editions: "ltc", "ltr", "stable")
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)
     - Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
-    - TrueNAS (editions: "scale", "core")
   - **Other**
     - FreeDOS (editions: "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD")
     - TempleOS (editions: "Distro", "Lite")

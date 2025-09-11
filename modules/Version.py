@@ -21,13 +21,13 @@ class Version:
             raise ValueError("The version string cannot be empty.")
         self.separator = separator
         self.zero_pad = zero_pad
-        components: list[str] = (
+        self.components: list[str] = (
             version_string.split(self.separator)
             if self.separator
             else list(version_string)
         )
         self._parsed_components: list[ParsedTokens] = [
-            self._parse_component(c) for c in components
+            self._parse_component(c) for c in self.components
         ]
 
     @staticmethod
@@ -87,11 +87,11 @@ class Version:
                 )
                 for tok in comp
             )
-            for comp in self._parsed_components
+            for comp in self.components
         )
 
     def __repr__(self) -> str:
-        return self.separator.join(map(str, self._parsed_components))
+        return str(self)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Version):
