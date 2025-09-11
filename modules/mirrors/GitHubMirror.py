@@ -1,6 +1,6 @@
 import re
 
-import requests
+import requests_cache
 
 from modules.GitHubVersion import GitHubVersion
 from modules.mirrors.GenericMirror import GenericMirror
@@ -35,7 +35,7 @@ class GitHubMirror(GenericMirror):
         self.determine_version_using = determine_version_using
 
     def initialize(self) -> None:
-        github_data = requests.get(self.url)
+        github_data = self.session.get(self.url)
         github_data.raise_for_status()
         self.github_info = github_data.json()
 
@@ -92,7 +92,7 @@ class GitHubMirror(GenericMirror):
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
         def fetch_and_parse_sum() -> tuple[str, int]:
-            sum_file = requests.get(url)
+            sum_file = self.session.get(url)
             sum_file.raise_for_status()
 
             sum_file_text = sum_file.text.strip()

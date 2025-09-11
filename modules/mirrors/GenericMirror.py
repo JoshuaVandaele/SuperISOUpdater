@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
+import requests_cache
 from bs4 import BeautifulSoup
 
 from modules.exceptions import DownloadLinkNotFoundError
@@ -29,30 +30,10 @@ class GenericMirror(ABC):
     """
 
     CHECKSUM_FILENAMES = {
-        SumType.SHA1: [
-            "SHA1SUMS",
-            "SHA1SUM",
-            "sha1sums.txt",
-            "sha1sum.txt",
-        ],
-        SumType.SHA256: [
-            "SHA256SUMS",
-            "SHA256SUM",
-            "sha256sums.txt",
-            "sha256sum.txt",
-        ],
-        SumType.SHA512: [
-            "SHA512SUMS",
-            "SHA512SUM",
-            "sha512sums.txt",
-            "sha512sum.txt",
-        ],
-        SumType.MD5: [
-            "MD5SUMS",
-            "MD5SUM",
-            "md5sums.txt",
-            "md5sum.txt",
-        ],
+        SumType.SHA1: ["sha1"],
+        SumType.SHA256: ["sha256"],
+        SumType.SHA512: ["sha512"],
+        SumType.MD5: ["md5"],
     }
 
     def __init__(
@@ -63,6 +44,7 @@ class GenericMirror(ABC):
         version_separator: str = ".",
         version_padding: int = 0,
         version: Version | None = None,
+        version_class=Version,
     ) -> None:
         """
         Initializes the GenericMirror with a URL and a search regex.
@@ -84,6 +66,8 @@ class GenericMirror(ABC):
         self._version_separator: str = version_separator
         self._version_padding: int = version_padding
         self._version: Version | None = version
+        self._VersionClass = version_class
+        self.session = requests_cache.CachedSession(backend="memory")
 
     @property
     def url(self) -> str:
@@ -94,7 +78,7 @@ class GenericMirror(ABC):
         return self._version_separator
 
     def initialize(self) -> None:
-        text, soup = self._fetch_page()
+        text, soup = self._fetch_page(self._url)
         self._soup_page: BeautifulSoup = soup
         self._text_page: str = text
 
@@ -104,10 +88,10 @@ class GenericMirror(ABC):
             else self._version
         )  # type: ignore
 
+        self.download_link: str = self._get_download_link()
         types, sums = self._determine_sums()
         self.sum_types: list[SumType] = types
         self.sums: list[str] = sums
-        self.download_link: str = self._get_download_link()
         self.speed: float = self._determine_speed()
 
     def checksum_file(self, file: Path) -> bool:
@@ -161,8 +145,8 @@ class GenericMirror(ABC):
         """
         return [url for url in self._urls() if str(self.version) in url]
 
-    def _fetch_page(self) -> tuple[str, BeautifulSoup]:
-        response = requests.get(self._url)
+    def _fetch_page(self, url) -> tuple[str, BeautifulSoup]:
+        response = self.session.get(url)
         response.raise_for_status()
         return response.text, BeautifulSoup(response.content, features="html.parser")
 
@@ -171,7 +155,7 @@ class GenericMirror(ABC):
         if not version_match:
             return None
 
-        return Version(
+        return self._VersionClass(
             version_match.group(1), self._version_separator, self._version_padding
         )
 
@@ -188,14 +172,14 @@ class GenericMirror(ABC):
         Raises:
             ValueError: If no version is found on the page.
         """
-        latest_version = Version("0")
+        latest_version = self._VersionClass("0")
         for url in self._urls_with_file_regex():
             logging.debug(f"Checking URL for version: {url} with regex {version_regex}")
             current_version = self._determine_version_from_search(version_regex, url)
             if current_version and current_version > latest_version:
                 latest_version = current_version
 
-        if latest_version == Version("0"):
+        if latest_version == self._VersionClass("0"):
             raise ValueError(
                 f"No version found on the page '{self._url}' using regex '{version_regex}'"
             )
@@ -203,11 +187,13 @@ class GenericMirror(ABC):
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
         def fetch_and_parse_sum() -> tuple[str, int]:
-            sum_file = requests.get(url)
+            sum_file = self.session.get(url)
             sum_file.raise_for_status()
 
             sum_file_text = sum_file.text.strip()
             if not re.search(self._file_regex, sum_file_text):
+                if not re.search(r"\s", sum_file_text) and len(sum_file_text) > 0:
+                    return sum_file_text, 0
                 raise ValueError(
                     f"File regex '{self._file_regex}' did not match in sum file text: '{sum_file_text}'"
                 )
@@ -225,7 +211,6 @@ class GenericMirror(ABC):
             for sum_type in SumType:
                 if not re.search(rf"{sum_type.value}", url):
                     continue
-
                 try:
                     sum_file_text, sum_pos = fetch_and_parse_sum()
                 except Exception as e:
@@ -234,7 +219,10 @@ class GenericMirror(ABC):
                     )
                     continue
 
-                sums.append(parse_hash(sum_file_text, self._file_regex, sum_pos))
+                if not re.search(r"\s", sum_file_text):
+                    sums.append(sum_file_text)
+                else:
+                    sums.append(parse_hash(sum_file_text, self._file_regex, sum_pos))
                 sum_types.append(sum_type)
         if sum_types and sums:
             return sum_types, sums
