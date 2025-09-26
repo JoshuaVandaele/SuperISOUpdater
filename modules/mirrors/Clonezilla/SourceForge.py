@@ -8,13 +8,9 @@ class SourceForge(GenericComplexMirror):
     def __init__(self) -> None:
         super().__init__(
             url=f"https://clonezilla.org/downloads/stable/data/CHECKSUMS.TXT",
-            file_regex=r"clonezilla-live-(.+)-amd64.iso",
             version_regex=r"clonezilla-live-(.+)-amd64.iso",
             version_class=ClonezillaVersion,
         )
-
-    def mid_init(self) -> None:
-        self._file_url = self._get_download_link()
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
         cur_sum_type: SumType | None = None

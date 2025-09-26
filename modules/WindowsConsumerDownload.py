@@ -41,15 +41,15 @@ class WindowsConsumerDownloader:
             str: Download link for the given Windows version and language
         """
         matches = re.search(
-            rf"FileHash(.+\n+)+?^<\/tr>.+{lang}.+\n<td>(.+)<",
+            rf"colgroup.+?{lang} 64.+?([A-F0-9]{{64}})",
             WindowsConsumerDownloader._get_download_page(windows_version),
-            re.MULTILINE,
+            re.DOTALL,
         )
 
         if not matches or not matches.groups():
             raise LookupError("Could not find SHA256 hash")
 
-        file_hash = matches.group(2)
+        file_hash = matches.group(1)
         return file_hash
 
     @staticmethod
@@ -138,11 +138,10 @@ class WindowsConsumerDownloader:
             product_edition_id
         ]
 
-        sku_id = None
-
-        for sku in language_skuIDs["Skus"]:
-            if sku["Language"] == lang:
-                sku_id = sku["Id"]
+        sku_id = next(
+            (sku["Id"] for sku in language_skuIDs["Skus"] if sku["Language"] == lang),
+            None,
+        )
 
         if not sku_id:
             raise ValueError(f"The language '{lang}' for Windows could not be found!")
@@ -173,12 +172,19 @@ class WindowsConsumerDownloader:
                 raise RuntimeError(
                     f"Errors from Microsoft: {iso_download_link_json['Errors']}"
                 )
+            uri = ""
+            for download_option in iso_download_link_json["ProductDownloadOptions"]:
+                if "x64" in download_option["Uri"]:
+                    uri = download_option["Uri"]
+                    break
+            if not uri:
+                raise RuntimeError("Could not find a 64 bit download.")
             WindowsConsumerDownloader._download_link_cache[sku_id] = {
                 "expires": datetime.strptime(
                     iso_download_link_json["DownloadExpirationDatetime"][:-2],
                     "%Y-%m-%dT%H:%M:%S.%f",
                 ),
-                "link": iso_download_link_json["ProductDownloadOptions"][0]["Uri"],
+                "link": uri,
             }
 
         download_link = WindowsConsumerDownloader._download_link_cache[sku_id]["link"]
