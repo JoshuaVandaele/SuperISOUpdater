@@ -1,3 +1,5 @@
+.vscode/
+
 # ISO/Image files
 *.iso
 *.img

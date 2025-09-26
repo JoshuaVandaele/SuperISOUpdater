@@ -22,6 +22,8 @@ class GenericUpdater(ABC):
 
         Args:
             file_path (Path): The path to the file that needs to be updated.
+            edition (str, optional): Edition of image to download. Requires `self.valid_edition: list[str]`.
+            lang (str, optional): Language of image to download. Requires `self.valid_lang: list[str]`.
         """
         self.file_path = file_path.resolve()
         self.folder_path = self.file_path.parent
@@ -37,6 +39,11 @@ class GenericUpdater(ABC):
                 raise ValueError(
                     f"Invalid edition. The available editions are: {', '.join(self.valid_editions)}."  # type: ignore
                 )
+            self.edition = next(
+                valid_edition
+                for valid_edition in self.valid_editions  # type: ignore
+                if valid_edition.lower() == self.edition.lower()
+            )
 
         if self.has_lang():
             if not "[[LANG]]" in str(self.file_path):
@@ -47,6 +54,11 @@ class GenericUpdater(ABC):
                 raise ValueError(
                     f"Invalid language. The available languages are: {', '.join(self.valid_langs)}."  # type: ignore
                 )
+            self.lang = next(
+                valid_lang
+                for valid_lang in self.valid_langs  # type: ignore
+                if valid_lang.lower() == self.lang.lower()
+            )
 
         if not self.has_version():
             raise ValueError("Invalid name. The name needs a [[VER]] tag.")

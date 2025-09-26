@@ -45,6 +45,7 @@ class GenericMirror(ABC):
         version_padding: int = 0,
         version: Version | None = None,
         version_class=Version,
+        headers: dict[str, str] | None = None,
     ) -> None:
         """
         Initializes the GenericMirror with a URL and a search regex.
@@ -55,6 +56,7 @@ class GenericMirror(ABC):
             version_regex (str, optional): A regex pattern to search for the version on the page. If not provided, the version must be specified with the `version` parameter.
             version_separator (str, optional): The version separator for each component of a version. Used with `version_regex`. Defaults to "."
             version (Version, optional): The version of the file to download. If not provided, it will be determined from the page using `version_regex`.
+            headers (dict[str, str], optional): Headers to pass along for all requests.
         """
         if not version_regex and not version:
             raise ValueError(
@@ -67,6 +69,7 @@ class GenericMirror(ABC):
         self._version_padding: int = version_padding
         self._version: Version | None = version
         self._VersionClass = version_class
+        self.headers: dict[str, str] | None = headers
         self.session = requests_cache.CachedSession(backend="memory")
 
     @property
@@ -146,7 +149,7 @@ class GenericMirror(ABC):
         return [url for url in self._urls() if str(self.version) in url]
 
     def _fetch_page(self, url) -> tuple[str, BeautifulSoup]:
-        response = self.session.get(url)
+        response = self.session.get(url, headers=self.headers, allow_redirects=True)
         response.raise_for_status()
         return response.text, BeautifulSoup(response.content, features="html.parser")
 
@@ -187,7 +190,7 @@ class GenericMirror(ABC):
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
         def fetch_and_parse_sum() -> tuple[str, int]:
-            sum_file = self.session.get(url)
+            sum_file = self.session.get(url, headers=self.headers)
             sum_file.raise_for_status()
 
             sum_file_text = sum_file.text.strip()
@@ -281,7 +284,9 @@ class GenericMirror(ABC):
         Returns:
             float: The download speed.
         """
-        with requests.get(self.download_link, stream=True, timeout=10) as response:
+        with requests.get(
+            self.download_link, stream=True, timeout=10, headers=self.headers
+        ) as response:
             response.raise_for_status()
             start = time.time_ns()
             total_size = 0
