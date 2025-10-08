@@ -25,13 +25,13 @@ class DirectMirrorUpdater(GenericUpdater):
     mirrors: list[str]
     iso_pattern: str
     
-    def __init__(self, folder_path: Path, *args, **kwargs) -> None:
+    def __init__(self, file_path: Path, *args, **kwargs) -> None:
         if not hasattr(self, 'mirrors'):
             raise NotImplementedError("Subclass must define 'mirrors'")
         if not hasattr(self, 'iso_pattern'):
             raise NotImplementedError("Subclass must define 'iso_pattern'")
             
-        super().__init__(folder_path, *args, **kwargs)
+        super().__init__(file_path, *args, **kwargs)
         
         # Find working mirror and latest ISO
         self.mirror = None

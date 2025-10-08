@@ -18,12 +18,12 @@ class PuppyLinux(DirectMirrorUpdater):
     """
     
     mirrors = [
-        "http://distro.ibiblio.org/puppylinux/puppy-bionic/",
-        "https://mirrors.dotsrc.org/puppylinux/puppy-bionic/",
+        "http://distro.ibiblio.org/puppylinux/puppy-bionic/bionicpup64/",
+        "https://mirrors.dotsrc.org/puppylinux/puppy-bionic/bionicpup64/",
     ]
     
-    iso_pattern = r"bionicpup64.*\.iso$"
+    iso_pattern = r"bionicpup64-[\d.]+-uefi\.iso$"
     
     def __init__(self, folder_path: Path) -> None:
-        self.file_path = folder_path / FILE_NAME
-        super().__init__(folder_path)
+        file_path = folder_path / FILE_NAME
+        super().__init__(file_path)
