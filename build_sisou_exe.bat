@@ -5,6 +5,15 @@ set PYTHON312=C:\Python312\python.exe
 REM Change to the project directory
 cd /d %~dp0
 
+REM Detect if Python 3.12 is installed
+if not exist "%PYTHON312%" (
+	echo ERROR: Python 3.12 was not found at %PYTHON312%.
+	echo Please install Python 3.12 and try again.
+    echo chocolatey.org is one option
+    echo choco install python312
+	pause
+	exit /b 1
+)
 
 REM Install requirements if requirements.txt exists
 if exist requirements.txt %PYTHON312% -m pip install -r requirements.txt
