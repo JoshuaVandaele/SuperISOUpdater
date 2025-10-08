@@ -3,16 +3,13 @@ import re
 from modules.ParsedTokens import ParsedTokens
 from modules.Version import Version
 
+"""
+Clonezilla's versioning consists of x.y.z-a
+"""
+
 
 class ClonezillaVersion(Version):
     def __init__(self, version_string: str, separator=".", zero_pad=0) -> None:
-        """
-        Initializes a Version object with major, minor, and patch components.
-
-        Args:
-            version_string (str):
-            zero_pad (int): The number of digits to zero-pad each component. Defaults to 0.
-        """
         if not version_string:
             raise ValueError("The version string cannot be empty.")
         self.zero_pad = zero_pad
