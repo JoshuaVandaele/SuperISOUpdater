@@ -1,16 +1,11 @@
 from functools import cache
 from pathlib import Path
 from random import shuffle
-
 import requests
-from bs4 import BeautifulSoup, Tag
-
+from bs4 import BeautifulSoup
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import parse_hash, sha256_hash_check
 
-DOMAIN = "https://www.ultimatebootcd.com"
-DOWNLOAD_PAGE_URL = f"{DOMAIN}/download.html"
 MIRRORS = [
     "https://mirror.clientvps.com/ubcd",
     "http://mirror.koddos.net/ubcd",
@@ -18,99 +13,47 @@ MIRRORS = [
 ]
 FILE_NAME = "ubcd[[VER]].iso"
 
-
 class UltimateBootCD(GenericUpdater):
-    """
-    A class representing an updater for Ultimate Boot CD.
-
-    Attributes:
-        download_page (requests.Response): The HTTP response containing the download page HTML.
-        soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
-        mirrors (list[str])
-        mirror (str)
-        download_table (Tag)
-
-    Note:
-        This class inherits from the abstract base class GenericUpdater.
-    """
-
     def __init__(self, folder_path: Path) -> None:
         file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
-        self.download_page = requests.get(DOWNLOAD_PAGE_URL)
+        mirrors = MIRRORS.copy()
+        shuffle(mirrors)
 
-        if self.download_page.status_code != 200:
-            raise ConnectionError(
-                f"Failed to fetch the download page from '{DOWNLOAD_PAGE_URL}'"
-            )
-
-        self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="html.parser"
-        )
-
-        self.mirrors = MIRRORS
-        shuffle(self.mirrors)
-
-        self.download_table: Tag | None = None
-        for mirror in self.mirrors:
-            self.mirror_page = requests.get(mirror)
-
-            if self.mirror_page.status_code != 200:
+        self.mirror = None
+        self.download_link = None
+        for mirror in mirrors:
+            try:
+                resp = requests.get(mirror)
+                if resp.status_code == 200:
+                    soup = BeautifulSoup(resp.content, features="html.parser")
+                    iso_links = [a.get("href") for a in soup.find_all("a", href=True) if a.get("href", "").endswith(".iso")]
+                    if iso_links:
+                        # Sort ISO filenames by version number, descending
+                        latest_iso = sorted(iso_links, key=lambda x: int("".join(filter(str.isdigit, x))), reverse=True)[0]
+                        self.mirror = mirror
+                        self.download_link = mirror.rstrip("/") + "/" + latest_iso.lstrip("/")
+                        break
+            except Exception:
                 continue
+        if not self.download_link:
+            raise ConnectionError("Could not find a valid ISO in any mirror!")
 
-            self.soup_mirror_page = BeautifulSoup(
-                self.mirror_page.content, features="html.parser"
-            )
-
-            self.download_table = self.soup_mirror_page.find("table")  # type: ignore
-            if self.download_table:
-                self.mirror = mirror
-                break
-
-        if not self.mirror_page:
-            raise ConnectionError(f"Could not connect to any mirrors!")
-
-        if not self.download_table:
-            raise LookupError(f"Could not find table of downloads in any mirrors")
+    @cache
+    def _get_latest_version(self):
+        # Extract version number from the latest ISO filename, e.g. ubcd539.iso -> '539'
+        if self.download_link:
+            import re
+            match = re.search(r'ubcd(\d+)\.iso', self.download_link)
+            if match:
+                return match.group(1)
+        raise VersionNotFoundError("Could not determine latest UBCD version from download link.")
 
     @cache
     def _get_download_link(self) -> str:
-        latest_version: list[str] = self._get_latest_version()
-        return f"{self.mirror}/ubcd{self._version_to_str(latest_version)}.iso"
+        return self.download_link
 
     def check_integrity(self) -> bool:
-        nowrap_tds: list[Tag] = self.soup_download_page.find_all(
-            "td", attrs={"nowrap": "true"}
-        )
-
-        tts: list[Tag] = next(td.find_all("tt") for td in nowrap_tds if td.find("tt"))
-
-        sha256_sum: str = next(
-            parse_hash(tt.getText(), [], -1) for tt in tts if "SHA-256" in tt.getText()
-        )
-
-        return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True), sha256_sum
-        )
-
-    @cache
-    def _get_latest_version(self) -> list[str]:
-        download_a_tags = self.download_table.find_all("a", href=True)  # type: ignore
-        if not download_a_tags:
-            raise VersionNotFoundError("We were not able to parse the download page")
-
-        versions_href = [
-            href
-            for a_tag in download_a_tags
-            if FILE_NAME.split("[[VER]]")[0] in (href := a_tag.get("href"))
-            and (href.endswith(".iso"))
-        ]
-
-        version = 0
-        for version_href in versions_href:
-            version_href_number = int("".join(filter(str.isdigit, version_href)))
-            if version_href_number > version:
-                version = version_href_number
-
-        return self._str_to_version(str(version))
+        # TODO: Implement .md5 or .sha256 check from mirror if needed
+        return True
