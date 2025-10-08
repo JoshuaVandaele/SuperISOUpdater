@@ -2,65 +2,96 @@
 Parrot Security OS Updater
 
 Parrot is a popular security and forensics Linux distribution.
-Downloads from SourceForge mirrors.
+Downloads from Parrot's official ISO mirror.
 """
-from functools import cache
 from pathlib import Path
-import requests
-from bs4 import BeautifulSoup
-from modules.exceptions import VersionNotFoundError
-from modules.updaters.GenericUpdater import GenericUpdater
+from modules.updaters.base.DirectMirrorUpdater import DirectMirrorUpdater
 
-DOWNLOAD_PAGE_URL = "https://www.parrotsec.org/download/"
 FILE_NAME = "Parrot-security-[[VER]]_amd64.iso"
 
 
-class ParrotSecurity(GenericUpdater):
+class ParrotSecurity(DirectMirrorUpdater):
     """
     Updater for Parrot Security OS.
     
-    Parrot provides ISO downloads via their download page and mirrors.
+    Parrot provides ISO downloads via their official Debian mirror.
     """
+    
+    mirrors = [
+        "https://deb.parrot.sh/parrot/iso/",
+    ]
+    
+    iso_pattern = r"Parrot-security-[\d.]+_amd64\.iso$"
     
     def __init__(self, folder_path: Path) -> None:
         file_path = folder_path / FILE_NAME
         super().__init__(file_path)
-        
-        self.download_page = requests.get(DOWNLOAD_PAGE_URL)
-        if self.download_page.status_code != 200:
-            raise ConnectionError(
-                f"Failed to fetch download page from '{DOWNLOAD_PAGE_URL}'"
-            )
-        
-        self.soup = BeautifulSoup(self.download_page.content, features="html.parser")
     
-    @cache
-    def _get_latest_version(self) -> list[str]:
-        """Extract the latest version from the download page."""
-        # Look for version in page text or links
+    def _scan_mirrors(self) -> None:
+        """
+        Override to handle Parrot's version-based directory structure.
+        Need to find latest version directory first, then scan for ISO.
+        """
         import re
-        text = self.soup.get_text()
-        # Parrot versions typically look like "5.3" or "6.0"
-        match = re.search(r'Parrot\s+(?:OS\s+)?(\d+\.\d+)', text, re.IGNORECASE)
-        if match:
-            return self._str_to_version(match.group(1))
-        raise VersionNotFoundError("Could not find Parrot version on download page")
-    
-    @cache
-    def _get_download_link(self) -> str:
-        """Find the security edition download link."""
-        # Parrot typically has direct download links or redirects to SourceForge
-        links = self.soup.find_all("a", href=True)
-        for link in links:
-            href = link.get("href", "")
-            if "security" in href.lower() and href.endswith(".iso"):
-                return href
-            # SourceForge pattern
-            if "sourceforge.net" in href and "security" in href.lower():
-                return href
+        from random import shuffle
+        import requests
+        from bs4 import BeautifulSoup
         
-        raise VersionNotFoundError("Could not find download link for Parrot Security")
+        mirrors = self.mirrors.copy()
+        shuffle(mirrors)
+        
+        for mirror in mirrors:
+            try:
+                response = requests.get(mirror, timeout=10)
+                if response.status_code != 200:
+                    continue
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Find version directories (e.g., "6.4/")
+                version_dirs = []
+                for link in soup.find_all('a', href=True):
+                    href = link.get('href', '')
+                    # Match version pattern like "6.4/"
+                    if re.match(r'^\d+\.\d+/$', href):
+                        version_dirs.append(href.rstrip('/'))
+                
+                if not version_dirs:
+                    continue
+                
+                # Sort to get latest version
+                latest_version = sorted(
+                    version_dirs,
+                    key=lambda v: [int(x) for x in v.split('.')],
+                    reverse=True
+                )[0]
+                
+                # Now scan the version directory for ISOs
+                version_url = f"{mirror}{latest_version}/"
+                response = requests.get(version_url, timeout=10)
+                if response.status_code != 200:
+                    continue
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                iso_links = []
+                
+                for link in soup.find_all('a', href=True):
+                    href = link.get('href', '')
+                    if re.search(self.iso_pattern, href):
+                        iso_links.append(href)
+                
+                if iso_links:
+                    latest_iso = self._select_latest_iso(iso_links)
+                    self.mirror = mirror
+                    self.download_link = f"{version_url}{latest_iso}"
+                    return
+                    
+            except Exception:
+                continue
+        
+        raise ConnectionError("Could not find a valid ISO in any mirror!")
     
     def check_integrity(self) -> bool:
-        # TODO: Implement SHA256 check from Parrot's checksums page
+        """Parrot provides .hashes file with checksums."""
+        # TODO: Implement hash verification from .hashes file
         return True
