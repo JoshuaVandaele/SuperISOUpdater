@@ -17,7 +17,6 @@ from .OpenSUSE import OpenSUSE
 from .OpenSUSERolling import OpenSUSERolling
 from .OPNsense import OPNsense
 from .ParrotSecurity import ParrotSecurity
-from .PfSense import PfSense
 from .PopOS import PopOS
 from .Proxmox import Proxmox
 from .PuppyLinux import PuppyLinux
@@ -37,15 +36,14 @@ from .Windows11 import Windows11
 
 __all__ = [
     "ArchLinux",
-    "Debian",
     "ChromeOS",
     "Clonezilla",
+    "Debian",
     "Fedora",
     "FreeDOS",
     "GenericUpdater",
     "GPartedLive",
     "HDAT2",
-    "ShredOS",
     "HirensBootCDPE",
     "KaliLinux",
     "LinuxMint",
@@ -56,18 +54,19 @@ __all__ = [
     "OpenSUSERolling",
     "OPNsense",
     "ParrotSecurity",
-    "PfSense",
     "PopOS",
+    "Proxmox",
     "PuppyLinux",
-    "RockyLinux",
-    "Tails",
     "Rescuezilla",
+    "RockyLinux",
+    "ShredOS",
     "SuperGrub2",
     "SystemRescue",
+    "Tails",
     "TempleOS",
+    "TrueNAS",
     "Ubuntu",
     "UltimateBootCD",
-    "TrueNAS",
     "Ventoy",
     "Windows10",
     "Windows11",
