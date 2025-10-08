@@ -84,8 +84,9 @@ class OPNsense(GenericUpdater):
 
         self._get_complete_normalized_file_path(absolute=True).rename(bz2_path)
 
-        bz2_file = bz2.BZ2File(bz2_path)
-        data = bz2_file.read()
+        # Use context manager to ensure file is properly closed
+        with bz2.BZ2File(bz2_path) as bz2_file:
+            data = bz2_file.read()
 
         extracted_filepath = bz2_path.with_suffix(self.file_path.suffix)
         with open(extracted_filepath, "wb") as new_file:
