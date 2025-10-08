@@ -2,10 +2,12 @@ import hashlib
 import logging
 import re
 import shutil
+import tempfile
 import tomllib
 import traceback
-import uuid
+import zipfile
 from pathlib import Path
+from typing import Generator
 
 import requests
 from pgpy import PGPKey, PGPSignature
@@ -271,3 +273,34 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
         raise
 
     part_file.rename(local_file)
+
+
+def extract_matching_file(zip_path: Path, pattern: str) -> Generator[Path, None, None]:
+    """
+    Context manager that extracts a single file from a ZIP archive if its name matches
+    a given regex pattern, using a temporary directory for extraction.
+
+    Args:
+        zip_path (Path): Path to the ZIP archive.
+        pattern (str): Regex pattern to match against filenames in the archive.
+
+    Yields:
+        Path: Path to the extracted file inside the temporary directory.
+
+    Example:
+        with extract_matching_file(Path("archive.zip"), r"\\.iso$") as extracted:
+            print(f"Extracted to: {extracted}")
+    """
+    regex = re.compile(pattern)
+
+    with tempfile.TemporaryDirectory(prefix=f"sisou_{zip_path.name}_") as tmp_dir:
+        tmp_path = Path(tmp_dir)
+
+        with zipfile.ZipFile(zip_path, "r") as z:
+            for name in z.namelist():
+                if regex.search(name):
+                    extracted_path = Path(z.extract(name, path=tmp_path))
+                    yield extracted_path
+                    break
+            else:
+                return

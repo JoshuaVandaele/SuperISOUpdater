@@ -246,6 +246,8 @@ class GenericMirror(ABC):
 
                     sums.append(parse_hash(sum_file_text, self._file_regex, sum_pos))
                     sum_types.append(sum_type)
+        if sum_types and sums:
+            return sum_types, sums
 
         raise ValueError(
             f"Could not determine the sum type from the page at '{self._url}'."
