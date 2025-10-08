@@ -115,7 +115,7 @@ class GenericUpdater(ABC):
                 logging.debug(
                     f"[GenericUpdater.install_latest_version] Renaming old file: {old_file}"
                 )
-                old_file.with_suffix(".old").replace(old_file)
+                old_file.replace(old_file.with_suffix(".old"))
 
         download_file(download_link, new_file)
 
@@ -394,6 +394,7 @@ class GenericUpdater(ABC):
         return [
             version_number.strip()
             for version_number in version_str.split(self.version_splitter)
+            if version_number.strip()  # Filter out empty strings from multiple consecutive splitters
         ]
 
     @staticmethod

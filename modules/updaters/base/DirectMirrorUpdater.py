@@ -86,7 +86,7 @@ class DirectMirrorUpdater(GenericUpdater):
         if self.download_link:
             match = re.search(r'(\d+(?:\.\d+)*)', self.download_link)
             if match:
-                return match.group(1)
+                return self._str_to_version(match.group(1))
         raise VersionNotFoundError("Could not determine version from download link.")
     
     @cache

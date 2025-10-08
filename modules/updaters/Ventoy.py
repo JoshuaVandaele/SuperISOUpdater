@@ -22,5 +22,5 @@ class Ventoy(GitHubReleaseUpdater):
     asset_pattern = r"ventoy-.*-linux\.tar\.gz$"
     
     def __init__(self, folder_path: Path) -> None:
-        self.file_path = folder_path / FILE_NAME
-        super().__init__(folder_path)
+        file_path = folder_path / FILE_NAME
+        super().__init__(file_path)
