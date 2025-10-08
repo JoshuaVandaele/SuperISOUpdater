@@ -199,7 +199,42 @@ class GenericUpdater(ABC):
         local_files = glob.glob(str(file_path).replace("[[VER]]", "*"))
 
         if local_files:
+            # Return the file with the highest version number, not just the first one
+            if len(local_files) == 1:
+                return Path(local_files[0])
+            
+            # Extract versions from all found files and return the one with highest version
+            latest_file = None
+            latest_version = None
+            
+            for file in local_files:
+                file_without_ext = Path(file).with_suffix("")
+                normalized_path_without_ext = Path(
+                    self._get_normalized_file_path(
+                        absolute=True,
+                        version=None,
+                        edition=self.edition if self.has_edition() else None,  # type: ignore
+                        lang=self.lang if self.has_lang() else None,  # type: ignore
+                    )
+                ).with_suffix("")
+
+                version_regex: str = r"(.+)".join(
+                    re.escape(part)
+                    for part in str(normalized_path_without_ext).split("[[VER]]")
+                )
+                local_version_regex = re.search(version_regex, str(file_without_ext))
+
+                if local_version_regex:
+                    file_version = self._str_to_version(local_version_regex.group(1))
+                    if latest_version is None or self._compare_version_numbers(latest_version, file_version):
+                        latest_version = file_version
+                        latest_file = file
+            
+            if latest_file:
+                return Path(latest_file)
+                
             return Path(local_files[0])
+            
         logging.debug(
             f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}"
         )

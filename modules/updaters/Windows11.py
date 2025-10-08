@@ -11,7 +11,7 @@ from modules.WindowsConsumerDownload import WindowsConsumerDownloader
 
 DOMAIN = "https://www.microsoft.com"
 DOWNLOAD_PAGE_URL = f"{DOMAIN}/en-us/software-download/windows11"
-FILE_NAME = "Win11_[[VER]]_EnglishInternational_x64v2.iso"
+FILE_NAME = "Win11_[[VER]]_[[LANG]]_x64v2.iso"
 
 
 class Windows11(GenericUpdater):

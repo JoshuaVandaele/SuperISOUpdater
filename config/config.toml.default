@@ -162,16 +162,21 @@ enabled = true
 # Scale, CORE
 editions = ["core"]
 
+# Network
+[OperatingSystems.Network]
+enabled = true
+directory = "Network"
+
+[OperatingSystems.Network.OPNsense]
+enabled = true
+# Available editions:
+# "dvd", "nano", "serial", "vga"
+editions = ["dvd"]
+
 # Other
 [OperatingSystems.Other]
 enabled = true
 directory = "Other"
-
-[OperatingSystems.Other.OPNsense]
-enabled = true
-# Available editions:
-# "dvd", "nano", "serial", "vga"
-editions = ["vga"]
 
 [OperatingSystems.Other.FreeDOS]
 enabled = true
