@@ -242,6 +242,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
     Returns:
         None
     """
+    import time
     part_file = local_file.with_suffix(".part")
     logging.debug(f"[download_file] Downloading {url} to {part_file.resolve()}")
 
@@ -271,4 +272,15 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
             part_file.unlink()
         raise
 
-    part_file.rename(local_file)
+    # Retry rename operation on Windows to handle file locks from antivirus/indexing
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            part_file.rename(local_file)
+            break
+        except PermissionError as e:
+            if attempt < max_retries - 1:
+                logging.debug(f"Rename failed (attempt {attempt + 1}/{max_retries}), retrying in 1 second...")
+                time.sleep(1)
+            else:
+                raise
