@@ -12,10 +12,15 @@ from .KaliLinux import KaliLinux
 from .LinuxMint import LinuxMint
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
+from .MXLinux import MXLinux
 from .OpenSUSE import OpenSUSE
 from .OpenSUSERolling import OpenSUSERolling
 from .OPNsense import OPNsense
+from .ParrotSecurity import ParrotSecurity
+from .PfSense import PfSense
+from .PopOS import PopOS
 from .Proxmox import Proxmox
+from .PuppyLinux import PuppyLinux
 from .Rescuezilla import Rescuezilla
 from .RockyLinux import RockyLinux
 from .ShredOS import ShredOS
@@ -26,6 +31,7 @@ from .TempleOS import TempleOS
 from .TrueNAS import TrueNAS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
+from .Ventoy import Ventoy
 from .Windows10 import Windows10
 from .Windows11 import Windows11
 
@@ -45,9 +51,14 @@ __all__ = [
     "LinuxMint",
     "Manjaro",
     "MemTest86Plus",
+    "MXLinux",
     "OpenSUSE",
     "OpenSUSERolling",
     "OPNsense",
+    "ParrotSecurity",
+    "PfSense",
+    "PopOS",
+    "PuppyLinux",
     "RockyLinux",
     "Tails",
     "Rescuezilla",
@@ -57,6 +68,7 @@ __all__ = [
     "Ubuntu",
     "UltimateBootCD",
     "TrueNAS",
+    "Ventoy",
     "Windows10",
     "Windows11",
 ]
