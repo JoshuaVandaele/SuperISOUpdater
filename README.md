@@ -1,12 +1,21 @@
 # Super ISO Updater
 
-Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is specifically designed to work with a Ventoy drive and supports a wide range of ISOs.
+Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is primarily designed to work with a Ventoy drive and supports a wide range of ISOs.
+
+## Features
+
+- **Automatic ISO Updates:** Automatically check for and download the latest ISO versions from official sources using the fastest available mirrors.
+- **Checksum Verification:** Automatically verifies the integrity of downloaded ISOs using checksums to ensure they are not corrupted.
+- **Signature Verification:** Supports verifying digital signatures (GPG/PGP) for ISOs when available.
+- **Flexible Organization & Configuration:** Keep your ISOs structured exactly how you want on your Ventoy drive and easily enable, disable, or add ISOs using the configuration file. (We recommend using [TreeView Mode](https://www.ventoy.net/en/doc_treeview.html))
+- **Wide ISO Support:** Compatible with numerous operating systems, utilities, and diagnostic tools (See [Supported ISOs](#supported-isos)).
 
 ## Getting Started
 
 ### Prerequisites
 
 - Python 3.12 installed on your system.
+- GnuPG for signature verification. (Optional)
 
 ### Installation
 

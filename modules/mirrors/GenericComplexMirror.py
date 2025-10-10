@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 from bs4 import BeautifulSoup
 
@@ -17,6 +18,8 @@ class GenericComplexMirror(GenericMirror):
         version_padding: int = 0,
         version: Version | None = None,
         version_class=Version,
+        has_signature: bool = True,
+        signature_file: Path | None = None,
         headers: dict[str, str] | None = None,
     ) -> None:
         """
@@ -41,6 +44,8 @@ class GenericComplexMirror(GenericMirror):
             version_padding,
             version,
             version_class,
+            has_signature,
+            signature_file,
             headers,
         )
 

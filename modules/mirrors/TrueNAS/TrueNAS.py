@@ -1,5 +1,4 @@
 from modules.mirrors.GenericMirror import GenericMirror
-from modules.SumType import SumType
 
 
 class TrueNAS(GenericMirror):
@@ -9,3 +8,8 @@ class TrueNAS(GenericMirror):
             file_regex=r"TrueNAS-SCALE-.+\.iso",
             version_regex=r"TrueNAS-SCALE-([\d\.]+)\.iso",
         )
+
+    def _get_public_key(self) -> bytes | None:
+        r = self.session.get("https://security.truenas.com/secteam.pgp")
+        r.raise_for_status()
+        return r.content

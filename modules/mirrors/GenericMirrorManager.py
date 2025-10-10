@@ -4,9 +4,8 @@ from abc import ABC
 from pathlib import Path
 from typing import Callable
 
-from modules.exceptions import IntegrityCheckError, NoMirrorsError
+from modules.exceptions import NoMirrorsError
 from modules.mirrors.GenericMirror import GenericMirror
-from modules.utils import download_file
 from modules.Version import Version
 
 
@@ -100,23 +99,7 @@ class GenericMirrorManager(ABC):
 
     def attempt_download(self, local_file: Path) -> None:
         self.try_for_all_mirrors(
-            GenericMirrorManager._download_and_checksum,
-            args=(local_file,),
+            lambda m: m.download_and_verify(local_file),
             check_bool_output=True,
             stop_after_success=True,
         )
-
-    @staticmethod
-    def _download_and_checksum(mirror: "GenericMirror", file: Path) -> bool:
-        download_file(mirror.download_link, file)
-        checksum_success: bool
-        try:
-            checksum_success = mirror.checksum_file(file)
-        except Exception:
-            checksum_success = False
-
-        if not checksum_success:
-            if file:
-                file.unlink()
-            raise IntegrityCheckError("Integrity check failed!")
-        return checksum_success

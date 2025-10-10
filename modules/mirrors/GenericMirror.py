@@ -9,11 +9,14 @@ import requests
 import requests_cache
 from bs4 import BeautifulSoup
 
-from modules.exceptions import DownloadLinkNotFoundError
+from modules.exceptions import DownloadLinkNotFoundError, IntegrityCheckError
 from modules.SumType import SumType
 from modules.utils import (
+    blake2b_hash_check,
+    download_file,
     md5_hash_check,
     parse_hash,
+    pgp_check,
     sha1_hash_check,
     sha256_hash_check,
     sha512_hash_check,
@@ -33,8 +36,12 @@ class GenericMirror(ABC):
         SumType.SHA1: ["sha1"],
         SumType.SHA256: ["sha256"],
         SumType.SHA512: ["sha512"],
+        SumType.BLAKE2b: ["b2sum", "blake2"],
         SumType.MD5: ["md5"],
     }
+
+    SIGNATURE_EXTENSIONS = ["asc", "sig", "gpg"]
+    PUBKEY_EXTENSIONS = ["pub", "pem"]
 
     def __init__(
         self,
@@ -45,6 +52,8 @@ class GenericMirror(ABC):
         version_padding: int = 0,
         version: Version | None = None,
         version_class=Version,
+        has_signature: bool = True,
+        signature_file: Path | None = None,
         headers: dict[str, str] | None = None,
     ) -> None:
         """
@@ -56,6 +65,8 @@ class GenericMirror(ABC):
             version_regex (str, optional): A regex pattern to search for the version on the page. If not provided, the version must be specified with the `version` parameter.
             version_separator (str, optional): The version separator for each component of a version. Used with `version_regex`. Defaults to "."
             version (Version, optional): The version of the file to download. If not provided, it will be determined from the page using `version_regex`.
+            has_signature (bool, optional): AAAAAAAAAAAAAAAAAAAAAAAAA. Defaults to True.
+            signature_file (Path, optional): File who's signature to check. Defaults to the downloaded file.
             headers (dict[str, str], optional): Headers to pass along for all requests.
         """
         if not version_regex and not version:
@@ -69,6 +80,8 @@ class GenericMirror(ABC):
         self._version_padding: int = version_padding
         self._version: Version | None = version
         self._VersionClass = version_class
+        self._has_signature = has_signature
+        self._signature_file: Path | None = signature_file
         self.headers: dict[str, str] | None = headers
         self.session = requests_cache.CachedSession(backend="memory")
 
@@ -95,9 +108,14 @@ class GenericMirror(ABC):
         types, sums = self._determine_sums()
         self.sum_types: list[SumType] = types
         self.sums: list[str] = sums
+
+        if self._has_signature:
+            self.public_key = self._get_public_key()
+            self.signature = self._get_signature()
+
         self.speed: float = self._determine_speed()
 
-    def checksum_file(self, file: Path) -> bool:
+    def _checksum_file(self, file: Path) -> bool:
         for sum, sum_type in zip(self.sums, self.sum_types):
             match sum_type:
                 case SumType.MD5:
@@ -112,7 +130,42 @@ class GenericMirror(ABC):
                 case SumType.SHA512:
                     if not sha512_hash_check(file, sum):
                         return False
+                case SumType.BLAKE2b:
+                    if not blake2b_hash_check(file, sum):
+                        return False
         return True
+
+    def _get_public_key(self) -> bytes:
+        for url in self._urls():
+            if any(url.endswith(ext) for ext in self.PUBKEY_EXTENSIONS):
+                r = self.session.get(url)
+                r.raise_for_status()
+                return r.content
+        raise RuntimeError("Could not find a public key")
+
+    def _get_signature(self) -> bytes:
+        candidates: list[str] = []
+        for url in self._urls():
+            if any(url.endswith(ext) for ext in self.SIGNATURE_EXTENSIONS):
+                candidates.append(url)
+
+        if not candidates:
+            raise RuntimeError("Could not find a signature")
+
+        chosen_url: str = candidates[0]
+
+        urls_with_file_regex = self._urls_with_file_regex()
+        for url in candidates:
+            if url in urls_with_file_regex:
+                chosen_url = url
+                break
+
+        r = self.session.get(chosen_url)
+        r.raise_for_status()
+        return r.content
+
+    def _signature_check(self, file: Path) -> bool:
+        return pgp_check(file, signature=self.signature, public_key=self.public_key)
 
     def _urls(self) -> list[str]:
         """
@@ -302,3 +355,35 @@ class GenericMirror(ABC):
         if elapsed_time == 0:
             return float("inf")
         return total_size / elapsed_time
+
+    def _download_file(self, file: Path) -> None:
+        download_file(self.download_link, file)
+
+    def download_and_verify(self, file: Path) -> bool:
+        self._download_file(file)
+        # TODO: Better error handling
+        checksum_success: bool
+        try:
+            checksum_success = self._checksum_file(file)
+        except Exception:
+            checksum_success = False
+
+        if self._has_signature:
+            file_to_verify = file if not self._signature_file else self._signature_file
+            signature_success: bool
+            try:
+                signature_success = self._signature_check(file_to_verify)
+            except Exception:
+                signature_success = False
+
+            if not signature_success:
+                if file:
+                    file.unlink()
+                raise IntegrityCheckError("Integrity check failed! (Signature)")
+
+        if not checksum_success:
+            if file:
+                file.unlink()
+            raise IntegrityCheckError("Integrity check failed! (Checksum)")
+
+        return True
