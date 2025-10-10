@@ -55,13 +55,13 @@ class WindowsConsumerDownloader:
     @staticmethod
     def _get_download_page(windows_version: str) -> str:
         match windows_version:
-            case "11":
+            case "11" | "11arm64":
                 url_segment = f"windows{windows_version}"
             case "10" | "8":
                 url_segment = f"windows{windows_version}ISO"
             case _:
                 raise NotImplementedError(
-                    "The valid Windows versions are '11', '10', or '8'."
+                    "The valid Windows versions are '11', '11arm64', '10', or '8'."
                 )
 
         if not url_segment in WindowsConsumerDownloader._download_page_cache:
@@ -173,12 +173,13 @@ class WindowsConsumerDownloader:
                     f"Errors from Microsoft: {iso_download_link_json['Errors']}"
                 )
             uri = ""
+            arch = "rm64" if "arm64" in windows_version.lower() else "x64"
             for download_option in iso_download_link_json["ProductDownloadOptions"]:
-                if "x64" in download_option["Uri"]:
+                if arch in download_option["Uri"]:
                     uri = download_option["Uri"]
                     break
             if not uri:
-                raise RuntimeError("Could not find a 64 bit download.")
+                raise RuntimeError(f"Could not find a {arch} download.")
             WindowsConsumerDownloader._download_link_cache[sku_id] = {
                 "expires": datetime.strptime(
                     iso_download_link_json["DownloadExpirationDatetime"][:-2],
