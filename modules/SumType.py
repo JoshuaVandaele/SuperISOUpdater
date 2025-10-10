@@ -2,6 +2,7 @@ from enum import StrEnum
 
 
 class SumType(StrEnum):
+    BLAKE2b = "blake2b"
     SHA512 = "sha512"
     SHA256 = "sha256"
     SHA1 = "sha1"

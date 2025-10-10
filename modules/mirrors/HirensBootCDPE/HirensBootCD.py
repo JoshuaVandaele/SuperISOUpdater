@@ -1,7 +1,8 @@
+import re
+
 from modules.mirrors.GenericComplexMirror import GenericComplexMirror
 from modules.SumType import SumType
 from modules.Version import Version
-import re
 
 
 class HirensBootCD(GenericComplexMirror):
@@ -10,6 +11,7 @@ class HirensBootCD(GenericComplexMirror):
             url="https://www.hirensbootcd.org/download/",
             # Match (v1.0.0)
             version_regex=r"\(v((\d+\.?)+)\)",
+            has_signature=False,
         )
 
     def _determine_version(self, version_regex: str) -> Version:
@@ -18,7 +20,9 @@ class HirensBootCD(GenericComplexMirror):
         version = version_pattern.search(self._text_page)
         if version:
             return Version(version.group(1))
-        return None
+        raise ValueError(
+            f"No version found on the page '{self._url}' using regex '{version_regex}'"
+        )
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
         sha256_pattern = re.compile(r"\b[a-fA-F0-9]{64}\b")

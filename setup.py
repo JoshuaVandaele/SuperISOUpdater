@@ -46,7 +46,8 @@ setup(
         "beautifulsoup4==4.12.2",
         "requests==2.31.0",
         "tqdm==4.65.0",
-        "PGPy13==0.6.1rc1",
+        "requests-cache==1.2.1",
+        "python-gnupg==0.5.5",
     ],  # Optional
     # extras_require={
     #     "dev": [""],

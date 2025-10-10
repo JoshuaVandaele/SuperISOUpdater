@@ -6,11 +6,13 @@ import tempfile
 import tomllib
 import traceback
 import zipfile
+from contextlib import contextmanager
+from io import BytesIO
 from pathlib import Path
 from typing import Generator
 
+import gnupg
 import requests
-from pgpy import PGPKey, PGPSignature
 from tqdm import tqdm
 
 READ_CHUNK_SIZE = 524288
@@ -166,6 +168,29 @@ def sha512_hash_check(file: Path, hash: str) -> bool:
     return result
 
 
+def blake2b_hash_check(file: Path, hash: str) -> bool:
+    """
+    Calculate the blake2b hash of a given file and compare it with a provided hash value.
+
+    Args:
+        file (Path): The path to the file for which the hash is to be calculated.
+        hash (str): The blake2b hash value to compare against the calculated hash.
+
+    Returns:
+        bool: True if the calculated blake2b hash matches the provided hash; otherwise, False.
+    """
+    with open(file, "rb") as f:
+        file_hash = hashlib.blake2b()
+        while chunk := f.read(READ_CHUNK_SIZE):
+            file_hash.update(chunk)
+    result = hash.lower() == file_hash.hexdigest()
+
+    logging.debug(
+        f"[blake2b_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
+    )
+    return result
+
+
 def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) -> bool:
     """Verifies the signature of a file against a publick ey
 
@@ -175,36 +200,67 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
         public_key (str | bytes): Public Key
 
     Raises:
-        ValueError: If the supplied public key is invalid
-        ValueError: If the supplied signature is invalid
+        ValueError: If the supplied public key could not be imported.
 
     Returns:
-        bool: Weither the check was successful or not
+        bool: Whether the check was successful or not
     """
-    pub_key = PGPKey.from_blob(public_key)
-    sig = PGPSignature.from_blob(signature)
+    try:
+        gpg = gnupg.GPG()
+    except OSError:
+        logging.warning(
+            "GnuPG check skipped because GnuPG is not installed. Consider installing it: https://www.gnupg.org/download/#binary"
+        )
+        return True
 
-    if not pub_key:
-        raise ValueError(f"Invalid pub_key: {public_key}")
-    elif not sig:
-        raise ValueError(f"Invalid signature: {signature}")
+    if isinstance(public_key, str):
+        public_key = public_key.encode()
+    if isinstance(signature, str):
+        signature = signature.encode()
 
-    # For some reason, from_blob can return either a tuple with either [ThingIwant, Literally Nothing] or directly ThingIWant
-    if isinstance(pub_key, tuple):
-        pub_key = pub_key[0]
-    if isinstance(sig, tuple):
-        sig = sig[0]
+    import_result = gpg.import_keys(public_key)
+    if not import_result.count:
+        raise ValueError("Public key could not be imported.")
+
+    sig_filelike = BytesIO(signature)
 
     with open(file_path, "rb") as f:
-        file_content = f.read()
+        verify_result = gpg.verify_file(sig_filelike, f.name)
 
-    result = bool(pub_key.verify(file_content, sig))
+    result = verify_result.valid
 
     logging.debug(
-        f"[pgp_check] {file_path.resolve()}: Signature is {'' if result else 'not'} valid"
+        f"[pgp_check] {file_path.resolve()}: Signature is{' ' if result else ' not '}valid"
     )
 
     return result
+
+
+def pgp_receive_key(key_id: str, keyserver: str) -> bytes | None:
+    """
+    Receive a PGP key from a keyserver and import it into the local GPG keyring.
+
+    Args:
+        key_id (str): The key ID, fingerprint, or short key of the public key to retrieve.
+        keyserver (str): The keyserver to use.
+
+    Returns:
+        bytes | None: The key in bytes if successful.
+    """
+    try:
+        gpg = gnupg.GPG()
+    except OSError:
+        # gpp is not installed
+        return None
+    logging.debug(f"[pgp_receive_key] Receiving key {key_id} from {keyserver}")
+    import_result = gpg.recv_keys(keyserver, key_id)
+    if import_result.count > 0:
+        key_ascii = gpg.export_keys(key_id)
+        if key_ascii:
+            logging.info(f"[pgp_receive_key_bytes] Successfully imported key {key_id}")
+            return key_ascii.encode("utf-8")
+
+    logging.warning(f"[pgp_receive_key] Key {key_id} could not be found or imported")
 
 
 def parse_hash(hashes: str, match_regex: str, hash_position_in_line: int):
@@ -275,6 +331,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
     part_file.rename(local_file)
 
 
+@contextmanager
 def extract_matching_file(zip_path: Path, pattern: str) -> Generator[Path, None, None]:
     """
     Context manager that extracts a single file from a ZIP archive if its name matches
