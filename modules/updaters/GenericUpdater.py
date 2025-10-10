@@ -60,6 +60,21 @@ class GenericUpdater(ABC):
                 if valid_lang.lower() == self.lang.lower()
             )
 
+        if self.has_arch():
+            if not "[[ARCH]]" in str(self.file_path):
+                raise ValueError("Invalid name. The name needs a [[ARCH]] tag.")
+            if self.arch.lower() not in (  # type: ignore
+                valid_arch.lower() for valid_arch in self.valid_archs  # type: ignore
+            ):
+                raise ValueError(
+                    f"Invalid architecture. The available architectures are: {', '.join(self.valid_archs)}."  # type: ignore
+                )
+            self.arch = next(
+                valid_arch
+                for valid_arch in self.valid_archs  # type: ignore
+                if valid_arch.lower() == self.arch.lower()
+            )
+
         if not self.has_version():
             raise ValueError("Invalid name. The name needs a [[VER]] tag.")
 
@@ -134,6 +149,15 @@ class GenericUpdater(ABC):
             bool: True if different languages are supported, False otherwise.
         """
         return hasattr(self, "lang") and hasattr(self, "valid_langs")
+
+    def has_arch(self) -> bool:
+        """
+        Check if the updater supports different architectures.
+
+        Returns:
+            bool: True if different architectures are supported, False otherwise.
+        """
+        return hasattr(self, "arch") and hasattr(self, "valid_archs")
 
     def _get_local_file(self) -> Path | None:
         """

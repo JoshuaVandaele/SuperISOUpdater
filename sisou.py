@@ -2,6 +2,7 @@ import argparse
 import logging
 from abc import ABCMeta
 from functools import cache
+from itertools import product
 from pathlib import Path
 from typing import Type
 
@@ -99,17 +100,18 @@ def run_updaters(
 
             editions = value.get("editions", [])
             langs = value.get("langs", [])
+            archs = value.get("archs", [])
 
-            if editions and langs:
+            fields = {"edition": editions, "lang": langs, "arch": archs}
+            fields = {k: v for k, v in fields.items() if v}
+
+            params = []
+
+            if fields:
+                keys, values = zip(*fields.items())
                 params = [
-                    {"edition": edition, "lang": lang}
-                    for edition in editions
-                    for lang in langs
+                    dict(zip(keys, combination)) for combination in product(*values)
                 ]
-            elif editions:
-                params = [{"edition": edition} for edition in editions]
-            elif langs:
-                params = [{"lang": lang} for lang in langs]
 
             name = value.get("name")
             if not name:

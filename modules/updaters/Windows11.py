@@ -16,7 +16,7 @@ class Windows11(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: Path, lang: str, file_name: str) -> None:
+    def __init__(self, folder_path: Path, lang: str, file_name: str, arch: str) -> None:
         self.valid_langs = [
             "Arabic",
             "Brazilian Portuguese",
@@ -58,5 +58,6 @@ class Windows11(GenericUpdater):
             "Ukrainian",
         ]
         self.lang = lang
-        mirror_mgr = Windows11MirrorManager(lang)
+        self.valid_archs = ["x64", "Arm64"]
+        mirror_mgr = Windows11MirrorManager(lang, arch)
         super().__init__(folder_path / file_name, mirror_mgr)

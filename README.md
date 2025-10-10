@@ -130,22 +130,22 @@ The tool currently supports the following ISOs:
 - **Operating Systems**
   - **Linux**
     - Arch Linux
-    - Debian (editions: "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce")
+    - Debian (architectures: "amd64", "arm64", "armhf", "ppc64el", "riscv64", "s390x")
     - Ubuntu (editions: "LTS", "interim")
-    - Fedora (editions: "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
+    - Fedora (editions: "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3") (architectures: "x86_64", "aarch64")
     - Kali Linux (editions: "installer", "installer-netinst", "installer-purple", "live")
     - Linux Mint (editions: "cinnamon", "mate", "xfce")
-    - Manjaro (editions: "plasma", "xfce", "gnome", "cinnamon", "i3")
-    - OpenSUSE (editions: "leap", "leap-micro", "jump")
+    - Manjaro (editions: "plasma", "xfce", "gnome", "cinnamon", "i3") (Architectures: "amd64", "ARM")
+    - OpenSUSE (editions: "leap", "leap-micro", "jump") (Architectures: "aarch64", "ppc64le", "s390x", "x86_64")
     - OpenSUSE Rolling (editions: "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD")
     - OPNsense (editions: "dvd", "nano", "serial", "vga")
     - Proxmox (editions: "ve", "mail-gateway", "backup-server")
-    - Rocky Linux (editions: "dvd", "boot", "minimal")
+    - Rocky Linux (editions: "dvd", "boot", "minimal") (Architectures: "aarch64", "ppc64le", "s390x", "x86_64")
     - TrueNAS
     - Tails
     - ChromeOS (editions: "ltc", "ltr", "stable")
   - **Windows**
-    - Windows 11 (Multi-edition ISO, Any language)
+    - Windows 11 (Multi-edition ISO, Any language) (architectures: "x64", "arm64")
     - Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
   - **Other**

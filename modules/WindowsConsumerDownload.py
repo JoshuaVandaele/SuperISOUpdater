@@ -55,13 +55,13 @@ class WindowsConsumerDownloader:
     @staticmethod
     def _get_download_page(windows_version: str) -> str:
         match windows_version:
-            case "11":
+            case "11" | "11arm64":
                 url_segment = f"windows{windows_version}"
             case "10" | "8":
                 url_segment = f"windows{windows_version}ISO"
             case _:
                 raise NotImplementedError(
-                    "The valid Windows versions are '11', '10', or '8'."
+                    "The valid Windows versions are '11', '11arm64', '10', or '8'."
                 )
 
         if not url_segment in WindowsConsumerDownloader._download_page_cache:
@@ -174,7 +174,7 @@ class WindowsConsumerDownloader:
                 )
             uri = ""
             for download_option in iso_download_link_json["ProductDownloadOptions"]:
-                if "x64" in download_option["Uri"]:
+                if "64" in download_option["Uri"]:
                     uri = download_option["Uri"]
                     break
             if not uri:
