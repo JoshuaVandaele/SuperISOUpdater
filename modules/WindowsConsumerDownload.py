@@ -173,12 +173,13 @@ class WindowsConsumerDownloader:
                     f"Errors from Microsoft: {iso_download_link_json['Errors']}"
                 )
             uri = ""
+            arch = "rm64" if "arm64" in windows_version.lower() else "x64"
             for download_option in iso_download_link_json["ProductDownloadOptions"]:
-                if "64" in download_option["Uri"]:
+                if arch in download_option["Uri"]:
                     uri = download_option["Uri"]
                     break
             if not uri:
-                raise RuntimeError("Could not find a 64 bit download.")
+                raise RuntimeError(f"Could not find a {arch} download.")
             WindowsConsumerDownloader._download_link_cache[sku_id] = {
                 "expires": datetime.strptime(
                     iso_download_link_json["DownloadExpirationDatetime"][:-2],
