@@ -44,29 +44,34 @@ class UbuntuVariantUpdater(GenericUpdater):
     
     @cache
     def _get_latest_version(self) -> list[str]:
-        """Find the latest LTS or stable release version."""
+        """Find the latest LTS release version."""
         # Look for version directories like "22.04/", "24.04/", etc.
-        version_pattern = re.compile(r'^(\d+\.\d+)/$')
+        version_pattern = re.compile(r'^(\d+)\.(\d+)/$')
         versions = []
         
         for link in self.soup.find_all('a', href=True):
             href = link.get('href', '')
             match = version_pattern.match(href)
             if match:
-                version_str = match.group(1)
-                # Check if the release actually has files by trying to access it
-                release_url = f"{self.releases_url}{version_str}/release/"
-                try:
-                    response = requests.head(release_url, timeout=5)
-                    if response.status_code == 200:
-                        versions.append(self._str_to_version(version_str))
-                except:
-                    continue
+                year = int(match.group(1))
+                month = int(match.group(2))
+                
+                # LTS versions are released in April (.04) of even-numbered years
+                if year % 2 == 0 and month == 4:
+                    version_str = f"{year}.{month:02d}"
+                    # Check if the release actually has files by trying to access it
+                    release_url = f"{self.releases_url}{version_str}/release/"
+                    try:
+                        response = requests.head(release_url, timeout=5)
+                        if response.status_code == 200:
+                            versions.append(self._str_to_version(version_str))
+                    except:
+                        continue
         
         if not versions:
-            raise VersionNotFoundError(f"Could not find any {self.variant_name} versions")
+            raise VersionNotFoundError(f"Could not find any LTS {self.variant_name} versions")
         
-        # Return the latest version
+        # Return the latest LTS version
         return sorted(versions, reverse=True)[0]
     
     @cache
