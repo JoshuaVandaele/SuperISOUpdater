@@ -11,6 +11,7 @@ class GitHub(GitHubMirror):
             repository="PartialVolume/shredos.x86_64",
             file_regex=rf"shredos-.+x86-64.+{edition}\.iso",
             determine_version_using=GitHubVersion.NAME,
+            has_signature=False,
             version_regex=r"v.+?_(.+)?_x86-64_.+",
         )
 
