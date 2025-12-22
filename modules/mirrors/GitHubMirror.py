@@ -18,6 +18,7 @@ class GitHubMirror(GenericMirror):
         file_regex: str,
         version_regex: str,
         version_padding: int = 0,
+        has_signature=True,
         determine_version_using: GitHubVersion = GitHubVersion.TAG,
     ) -> None:
         """Initialize the GitHubMirror.
@@ -31,6 +32,7 @@ class GitHubMirror(GenericMirror):
             file_regex=file_regex,
             version_regex=version_regex,
             version_padding=version_padding,
+            has_signature=has_signature,
         )
         self.determine_version_using = determine_version_using
 
@@ -133,7 +135,7 @@ class GitHubMirror(GenericMirror):
             if found_for_url:
                 continue
             for sum_type in SumType:
-                if not re.search(rf"{sum_type.value}", url):
+                if not re.search(rf"{sum_type.value}", url.lower()):
                     continue
 
                 try:
