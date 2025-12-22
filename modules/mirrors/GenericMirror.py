@@ -286,7 +286,7 @@ class GenericMirror(ABC):
         for sum_type, filenames in self.CHECKSUM_FILENAMES.items():
             for url in self._urls():
                 for filename in filenames:
-                    if filename not in url:
+                    if filename not in url.lower():
                         continue
 
                     try:
@@ -304,9 +304,7 @@ class GenericMirror(ABC):
 
         raise ValueError(
             f"Could not determine the sum type from the page at '{self._url}'."
-            + f" Errors: {', '.join(errors)}"
-            if errors
-            else ""
+            + (f" Errors: {', '.join(errors)}" if errors else "")
         )
 
     def _get_download_link(self) -> str:

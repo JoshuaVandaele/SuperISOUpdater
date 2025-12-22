@@ -139,7 +139,10 @@ class GenericUpdater(ABC):
         Returns:
             bool: True if different editions are supported, False otherwise.
         """
-        return hasattr(self, "edition") and hasattr(self, "valid_editions")
+        if hasattr(self, "edition"):
+            assert hasattr(self, "valid_editions")
+            return True
+        return False
 
     def has_lang(self) -> bool:
         """
@@ -148,7 +151,10 @@ class GenericUpdater(ABC):
         Returns:
             bool: True if different languages are supported, False otherwise.
         """
-        return hasattr(self, "lang") and hasattr(self, "valid_langs")
+        if hasattr(self, "lang"):
+            assert hasattr(self, "valid_langs")
+            return True
+        return False
 
     def has_arch(self) -> bool:
         """
@@ -157,7 +163,10 @@ class GenericUpdater(ABC):
         Returns:
             bool: True if different architectures are supported, False otherwise.
         """
-        return hasattr(self, "arch") and hasattr(self, "valid_archs")
+        if hasattr(self, "arch"):
+            assert hasattr(self, "valid_archs")
+            return True
+        return False
 
     def _get_local_file(self) -> Path | None:
         """
@@ -171,6 +180,7 @@ class GenericUpdater(ABC):
             version=None,
             edition=self.edition if self.has_edition() else None,  # type: ignore
             lang=self.lang if self.has_lang() else None,  # type: ignore
+            arch=self.arch if self.has_arch() else None,  # type: ignore
         )
 
         local_files = glob.glob(str(file_path).replace("[[VER]]", "*"))
@@ -207,6 +217,7 @@ class GenericUpdater(ABC):
                 version=None,
                 edition=self.edition if self.has_edition() else None,  # type: ignore
                 lang=self.lang if self.has_lang() else None,  # type: ignore
+                arch=self.arch if self.has_arch() else None,  # type: ignore
             )
         ).with_suffix("")
 
@@ -238,6 +249,7 @@ class GenericUpdater(ABC):
         version: Version | None,
         edition: str | None = None,
         lang: str | None = None,
+        arch: str | None = None,
     ) -> Path:
         """
         Get the normalized file path with customizable version, edition, and language.
@@ -248,6 +260,8 @@ class GenericUpdater(ABC):
             edition (str, optional): The edition of the file. If provided, it replaces '[[EDITION]]' in the file name.
                                     Defaults to None.
             lang (str, optional): The language of the file. If provided, it replaces '[[LANG]]' in the file name.
+                                    Defaults to None.
+            arch (str, optional): The architecture of the file. If provided, it replaces '[[ARCH]]' in the file name.
                                     Defaults to None.
 
         Returns:
@@ -268,6 +282,9 @@ class GenericUpdater(ABC):
 
         if lang is not None and "[[LANG]]" in file_name:
             file_name = file_name.replace("[[LANG]]", lang)
+
+        if arch is not None and "[[ARCH]]" in file_name:
+            file_name = file_name.replace("[[ARCH]]", arch)
 
         # Remove all spaces from the file name
         file_name = "".join(file_name.split())
@@ -299,4 +316,5 @@ class GenericUpdater(ABC):
             version=self._get_latest_version() if latest else self._get_local_version(),
             edition=self.edition if self.has_edition() else None,  # type: ignore
             lang=self.lang if self.has_lang() else None,  # type: ignore
+            arch=self.arch if self.has_arch() else None,  # type: ignore
         )

@@ -59,5 +59,6 @@ class Windows11(GenericUpdater):
         ]
         self.lang = lang
         self.valid_archs = ["x64", "Arm64"]
+        self.arch = arch
         mirror_mgr = Windows11MirrorManager(lang, arch)
         super().__init__(folder_path / file_name, mirror_mgr)
