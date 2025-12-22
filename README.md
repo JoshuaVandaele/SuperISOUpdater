@@ -98,7 +98,7 @@ sisou <Ventoy Partition> -f /path/to/log_file.log
 
 The `sisou.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
 
-To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs by modifying the corresponding values in the configuration file.
+To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs, select editions, or architectures you want to download by modifying the corresponding values in the configuration file.
 
 _NOTE: Be cautious when modifying the configuration file, as incorrect changes may cause the script to malfunction._
 
