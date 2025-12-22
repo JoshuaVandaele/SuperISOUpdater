@@ -65,7 +65,7 @@ enabled = true
 # Available editions:
 # "full", "lite", "diskette"
 editions = ["full"]
-name = "HDAT2_[[EDITION]]_[[VER]].[[EXT]]"
+name = "hdat2_[[EDITION]]_[[VER]].[[EXT]]"
 
 # Operating Systems
 
