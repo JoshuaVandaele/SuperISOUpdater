@@ -32,10 +32,8 @@ class WindowsConsumerDownloader:
         Obtain a Windows ISO download URL for a specific Windows version and language.
 
         Args:
-            windows_version (str): The desired Windows version. Valid options are '11', '10', or '8'.
-                                Default is '11'.
-            lang (str): The desired language for the Windows ISO. Default is 'English International'.
-                See https://www.microsoft.com/en-us/software-download/windows11 for a list of available languages
+            windows_version (str): The desired Windows version.
+            lang (str): The desired language for the Windows ISO.
 
         Returns:
             str: Download link for the given Windows version and language

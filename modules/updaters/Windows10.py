@@ -5,17 +5,6 @@ from modules.updaters.GenericUpdater import GenericUpdater
 
 
 class Windows10(GenericUpdater):
-    """
-    A class representing an updater for Windows 10.
-
-    Attributes:
-        download_page (requests.Response): The HTTP response containing the download page HTML.
-        soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
-
-    Note:
-        This class inherits from the abstract base class GenericUpdater.
-    """
-
     def __init__(self, folder_path: Path, lang: str, file_name: str) -> None:
         self.valid_langs = [
             "Arabic",

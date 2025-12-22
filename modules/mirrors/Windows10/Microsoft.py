@@ -9,6 +9,7 @@ class Microsoft(GenericComplexMirror):
             url="https://www.microsoft.com/en-us/software-download/windows10ISO",
             version_regex=r"Version (.+)<",
             version_separator="H",
+            has_signature=False,
             headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Encoding": "deflate, gzip",

@@ -84,7 +84,8 @@ name = "archlinux-[[VER]]-x86_64.iso"
 enabled = true
 # Available architectures:
 # "amd64", "arm64", "armhf", "ppc64el", "riscv64", "s390x"
-name = "debian-live-[[VER]]-[[ARCH]]-[[EDITION]].iso"
+archs = ["amd64"]
+name = "debian-live-[[VER]]-[[ARCH]]-netinst.iso"
 
 [OperatingSystems.Linux.Ubuntu]
 enabled = true
@@ -175,7 +176,7 @@ enabled = true
 # "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
 langs = ["English International"]
 # Available architectures:
-# "x64", "Amd64"
+# "x64", "Arm64"
 archs = ["x64"]
 name = "Win11_[[VER]]_[[LANG]]_[[ARCH]].iso"
 
