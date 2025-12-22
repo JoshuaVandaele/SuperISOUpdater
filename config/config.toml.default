@@ -25,7 +25,9 @@ enabled = true
 # Available editions:
 # "bionic", "focal", "jammy", "noble"
 editions = ["noble"]
-name = "rescuezilla-[[VER]]-64bit.[[EDITION]].iso"
+# The architecture is selected automatically
+# depending on the edition.
+name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]].iso"
 
 # Boot Repair
 
