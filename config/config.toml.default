@@ -99,9 +99,13 @@ name = "ubuntu-[[EDITION]]-[[VER]]-desktop-amd64.iso"
 [OperatingSystems.Linux.Fedora]
 enabled = true
 # Available editions:
-# "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3"
+# "Everything", "KDE", "Kinoite", "Server", "Silverblue", "Workstation",
+# "Spins/COSMIC", "Spins/KDE-Mobile", "Spins/LXQt", "Spins/MiracleWM", "Spins/SoaS", "Spins/Xfce", "Spins/i3"
 editions = ["KDE"]
-name = "Fedora-[[EDITION]]-Live-x86_64-[[VER]].iso"
+# Available architectures:
+# "aarch64", "x86_64"
+archs = ["x86_64"]
+name = "Fedora-[[EDITION]]-Live-[[VER]].[[ARCH]].iso"
 
 [OperatingSystems.Linux.KaliLinux]
 enabled = true

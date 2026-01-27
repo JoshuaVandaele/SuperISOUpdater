@@ -61,11 +61,11 @@ class GenericMirror(ABC):
 
         Args:
             url (str): The URL of the mirror page.
-            file_regex (str): A regex pattern to search for the file to download. The regex MUST include the very start and end of the file name.
+            file_regex (str): A regex pattern to search for the file to download. The regex MUST include the very start and end of the filename.
             version_regex (str, optional): A regex pattern to search for the version on the page. If not provided, the version must be specified with the `version` parameter.
             version_separator (str, optional): The version separator for each component of a version. Used with `version_regex`. Defaults to "."
             version (Version, optional): The version of the file to download. If not provided, it will be determined from the page using `version_regex`.
-            has_signature (bool, optional): AAAAAAAAAAAAAAAAAAAAAAAAA. Defaults to True.
+            has_signature (bool, optional): Should we check for a cryptographic signature. Defaults to True.
             signature_file (Path, optional): File who's signature to check. Defaults to the downloaded file.
             headers (dict[str, str], optional): Headers to pass along for all requests.
         """
