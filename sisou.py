@@ -101,8 +101,19 @@ def run_updaters(
             editions = value.get("editions", [])
             langs = value.get("langs", [])
             archs = value.get("archs", [])
+            name = value.get("name")
 
-            fields = {"edition": editions, "lang": langs, "arch": archs}
+            if not name:
+                default_value = default_config.get(key, {})
+                name = default_value.get("name")
+                logging.debug(f"No name specified for {key}, using default name {name}")
+
+            fields = {
+                "file_name": [name],
+                "edition": editions,
+                "lang": langs,
+                "arch": archs,
+            }
             fields = {k: v for k, v in fields.items() if v}
 
             params = []
@@ -113,14 +124,7 @@ def run_updaters(
                     dict(zip(keys, combination)) for combination in product(*values)
                 ]
 
-            name = value.get("name")
-            if not name:
-                default_value = default_config.get(key, {})
-                name = default_value.get("name")
-                logging.debug(f"No name specified for {key}, using default name {name}")
-
             for param in params:
-                param["file_name"] = name
                 try:
                     updaters.append(updater_class(install_path, **param))
                 except Exception:
