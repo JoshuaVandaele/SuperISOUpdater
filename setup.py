@@ -43,11 +43,11 @@ setup(
     package_data={"": ["config.toml.default"]},
     python_requires=">=3.10, <4",
     install_requires=[
-        "beautifulsoup4==4.12.2",
-        "requests==2.31.0",
-        "tqdm==4.65.0",
+        "beautifulsoup4==4.14.3",
+        "requests==2.32.5",
+        "tqdm==4.67.1",
         "requests-cache==1.2.1",
-        "python-gnupg==0.5.5",
+        "python-gnupg==0.5.6",
     ],  # Optional
     # extras_require={
     #     "dev": [""],
