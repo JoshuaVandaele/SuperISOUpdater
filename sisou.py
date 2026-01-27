@@ -54,7 +54,7 @@ def run_updater(updater: GenericUpdater):
     Args:
         updater (GenericUpdater): The updater instance to run.
     """
-    installer_for = f"{updater.__class__.__name__}{' '+updater.edition if updater.has_edition() else ''}"  # type: ignore
+    installer_for = f"{updater.__class__.__name__}{' '+updater.edition if updater.has_edition() else ''}{' '+updater.lang if updater.has_lang() else ''}{' '+updater.arch if updater.has_arch() else ''}"  # type: ignore
 
     logging.info(f"[{installer_for}] Checking for updates...")
 
