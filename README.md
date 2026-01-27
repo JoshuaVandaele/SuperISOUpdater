@@ -121,6 +121,7 @@ The tool currently supports the following ISOs:
 - **Operating Systems**
   - **Linux**
     - Arch Linux
+    - Alpine Linux (editions: "standard", "extended", "virt", "xen")
     - Debian (editions: "standard", "cinnamon", "kde", "gnome", "lxde", "lxqt", "mate", "xfce")
     - Ubuntu (editions: "LTS", "interim")
     - Fedora (editions: "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3")
