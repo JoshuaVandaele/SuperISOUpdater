@@ -14,7 +14,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="sisou",  # Required
-    version="1.4.1",  # Required
+    version="1.5.0",  # Required
     description="A powerful tool to conveniently update all of your ISO files!",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional
@@ -34,6 +34,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "Programming Language :: Python :: 3 :: Only",
     ],
     keywords="ventoy, updater, os, iso, updater, sisou, cli",  # Optional
