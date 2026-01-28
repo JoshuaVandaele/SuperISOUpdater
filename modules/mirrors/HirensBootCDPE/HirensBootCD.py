@@ -6,7 +6,8 @@ from modules.Version import Version
 
 
 class HirensBootCD(GenericComplexMirror):
-    def __init__(self) -> None:
+    def __init__(self, arch: str) -> None:
+        self.arch = arch
         super().__init__(
             url="https://www.hirensbootcd.org/download/",
             # Match (v1.0.0)
@@ -34,4 +35,4 @@ class HirensBootCD(GenericComplexMirror):
         return sum_types, matches
 
     def _get_download_link(self) -> str:
-        return "https://www.hirensbootcd.org/files/HBCD_PE_x64.iso"
+        return f"https://www.hirensbootcd.org/files/HBCD_PE_{self.arch}.iso"

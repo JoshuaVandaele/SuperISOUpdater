@@ -6,15 +6,24 @@ directory = "Diagnostic_Tools"
 
 [DiagnosticTools.HirensBootCDPE]
 enabled = true
-name = "HBCD_PE_[[VER]]_x64.iso"
+# Available architectures:
+# "x64"
+archs = ["x64"]
+name = "HBCD_PE_[[VER]]_[[ARCH]].iso"
 
 [DiagnosticTools.MemTest86Plus]
 enabled = true
-name = "Memtest86plus-[[VER]].iso"
+# Available architectures:
+# "x86_64", "i586"
+archs = ["x86_64"]
+name = "mt86plus_[[VER]]_[[ARCH]].iso"
 
 [DiagnosticTools.SystemRescue]
 enabled = true
-name = "systemrescue-[[VER]]-amd64.iso"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "systemrescue-[[VER]]-[[ARCH]].iso"
 
 [DiagnosticTools.UltimateBootCD]
 enabled = true
@@ -47,18 +56,27 @@ directory = "Disk_Utilities"
 
 [DiskUtils.Clonezilla]
 enabled = true
-name = "clonezilla-live-[[VER]]-amd64.iso"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "clonezilla-live-[[VER]]-[[ARCH]].iso"
 
 [DiskUtils.GPartedLive]
 enabled = true
-name = "gparted-live-[[VER]]-amd64.iso"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "gparted-live-[[VER]]-[[ARCH]].iso"
 
 [DiskUtils.ShredOS]
 enabled = true
 # Available editions:
 # "vanilla", "nomodeset"
 editions = ["vanilla"]
-name = "shredos_[[VER]]_[[EDITION]].iso"
+# Available architectures:
+# "x86-64", "i586"
+archs = ["x86-64"]
+name = "shredos-[[VER]]_[[ARCH]]_[[EDITION]].iso"
 
 [DiskUtils.HDAT2]
 enabled = true
@@ -78,9 +96,22 @@ directory = "Operating_Systems"
 enabled = true
 directory = "Linux"
 
+[OperatingSystems.Linux.AlpineLinux]
+enabled = true
+# Available editions:
+# "standard", "extended", "virt", "xen"
+editions = ["standard"]
+# Available architectures:
+# "aarch64", "armhf", "armv7", "loongarch64", "ppc64le", "riscv64", "s390x", "x86", "x86_64"
+archs = ["x86_64"]
+name = "alpine-[[EDITION]]-[[VER]]-[[ARCH]].iso"
+
 [OperatingSystems.Linux.ArchLinux]
 enabled = true
-name = "archlinux-[[VER]]-x86_64.iso"
+# Available architectures:
+# "x86_64"
+archs = ["x86_64"]
+name = "archlinux-[[VER]]-[[ARCH]].iso"
 
 [OperatingSystems.Linux.Debian]
 enabled = true
@@ -94,7 +125,10 @@ enabled = true
 # Available editions:
 # "LTS", "interim"
 editions = ["LTS"]
-name = "ubuntu-[[EDITION]]-[[VER]]-desktop-amd64.iso"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "ubuntu-[[EDITION]]-[[VER]]-desktop-[[ARCH]].iso"
 
 [OperatingSystems.Linux.Fedora]
 enabled = true
@@ -112,7 +146,10 @@ enabled = true
 # Available editions:
 # "installer", "installer-netinst", "installer-purple", "live"
 editions = ["installer", "live"]
-name = "kali-linux-[[VER]]-[[EDITION]]-amd64.iso"
+# Available architectures:
+# "amd64", "arm64"
+archs = ["amd64"]
+name = "kali-linux-[[VER]]-[[EDITION]]-[[ARCH]].iso"
 
 [OperatingSystems.Linux.LinuxMint]
 enabled = true
@@ -133,14 +170,20 @@ enabled = true
 # Available editions:
 # "leap", "leap-micro", "jump"
 editions = ["leap"]
-name = "openSUSE-[[EDITION]]-[[VER]]-DVD-x86_64-Current.iso"
+# Available architectures:
+# "x86_64", "aarch64", "s390x", "i686", "ppc64le"
+archs = ["x86_64"]
+name = "openSUSE-[[EDITION]]-DVD-[[ARCH]]-[[VER]].iso"
 
 [OperatingSystems.Linux.OpenSUSERolling]
 enabled = true
 # Available editions:
 # "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"
 editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
-name = "openSUSE-[[EDITION]]-x86_64-[[VER]].iso"
+# Available architectures:
+# "x86_64"
+archs = ["x86_64"]
+name = "openSUSE-[[EDITION]]-[[ARCH]]-[[VER]].iso"
 
 [OperatingSystems.Linux.Proxmox]
 enabled = true
@@ -154,7 +197,20 @@ enabled = true
 # Available editions:
 # "dvd", "boot", "minimal"
 editions = ["dvd"]
-name = "Rocky-[[VER]]-x86_64-[[EDITION]].iso"
+# Available architectures:
+# "x86_64", "aarch64", "ppc64le", "s390x", "riscv64"
+archs = ["x86_64"]
+name = "Rocky-[[VER]]-[[arch]]-[[EDITION]].iso"
+
+[OperatingSystems.Linux.RockyLinuxLive]
+enabled = true
+# Available editions:
+# "KDE", "Workstation", "Workstation Lite"
+editions = ["KDE"]
+# Available architectures:
+# "x86_64", "aarch64"
+archs = ["x86_64"]
+name = "Rocky-[[VER]]-[[EDITION]]-[[arch]].iso"
 
 [OperatingSystems.Linux.TrueNAS]
 enabled = true
@@ -162,7 +218,10 @@ name = "TrueNAS-SCALE-[[VER]].iso"
 
 [OperatingSystems.Linux.Tails]
 enabled = true
-name = "tails-amd64-[[VER]].iso"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "tails-[[ARCH]]-[[VER]].iso"
 
 [OperatingSystems.Linux.ChromeOS]
 enabled = true
@@ -207,7 +266,10 @@ enabled = true
 # Available editions:
 # "dvd", "nano", "serial", "vga"
 editions = ["vga"]
-name = "OPNsense-[[VER]]-[[EDITION]]-amd64.[[ext]]"
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "OPNsense-[[VER]]-[[EDITION]]-[[ARCH]].[[ext]]"
 
 [OperatingSystems.Other.FreeDOS]
 enabled = true
@@ -215,10 +277,3 @@ enabled = true
 # "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD"
 editions = ["LiveCD"]
 name = "FreeDOS-[[VER]]-[[EDITION]].iso"
-
-[OperatingSystems.Other.TempleOS]
-enabled = true
-# Available editions:
-# "Distro", "Lite"
-editions = ["Distro"]
-name = "TempleOS_[[EDITION]]_[[VER]].ISO"

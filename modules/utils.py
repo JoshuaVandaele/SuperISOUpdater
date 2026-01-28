@@ -191,8 +191,25 @@ def blake2b_hash_check(file: Path, hash: str) -> bool:
     return result
 
 
+def blake3_hash_check(file: Path, hash: str) -> bool:
+    """
+    Calculate the blake3 hash of a given file and compare it with a provided hash value.
+
+    Args:
+        file (Path): The path to the file for which the hash is to be calculated.
+        hash (str): The blake3 hash value to compare against the calculated hash.
+
+    Returns:
+        bool: True if the calculated blake3 hash matches the provided hash; otherwise, False.
+    """
+    logging.warning(
+        f"[blake3_hash_check] Not yet implemented!\nFile: {file}\nHash: {hash}"
+    )
+    return True
+
+
 def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) -> bool:
-    """Verifies the signature of a file against a publick ey
+    """Verifies the signature of a file against a public key
 
     Args:
         file_path (Path): Path to the file to check

@@ -32,6 +32,9 @@ class GenericMirrorManager(ABC):
         self._initialize_all_mirrors()
         self._ensure_latest_version()
         self._mirrors.sort(key=lambda m: m.speed, reverse=True)
+        logging.debug(
+            f"Mirror order: {', '.join(f'{m.__class__.__name__} ({m.speed})' for m in self._mirrors)}"
+        )
 
     @property
     def current_mirror(self):

@@ -8,4 +8,5 @@ class RNL(GenericMirror):
             file_regex=r"ubcd.+\.iso",
             version_regex=r"ubcd(\d+)\.iso",
             version_separator="",
+            has_signature=False,
         )

@@ -13,6 +13,7 @@ from modules.exceptions import DownloadLinkNotFoundError, IntegrityCheckError
 from modules.SumType import SumType
 from modules.utils import (
     blake2b_hash_check,
+    blake3_hash_check,
     download_file,
     md5_hash_check,
     parse_hash,
@@ -37,6 +38,7 @@ class GenericMirror(ABC):
         SumType.SHA256: ["sha256"],
         SumType.SHA512: ["sha512"],
         SumType.BLAKE2b: ["b2sum", "blake2"],
+        SumType.BLAKE3: ["b3sum", "blake3"],
         SumType.MD5: ["md5"],
     }
 
@@ -133,6 +135,9 @@ class GenericMirror(ABC):
                 case SumType.BLAKE2b:
                     if not blake2b_hash_check(file, sum):
                         return False
+                case SumType.BLAKE3:
+                    if not blake3_hash_check(file, sum):
+                        return False
         return True
 
     def _get_public_key(self) -> bytes:
@@ -158,7 +163,8 @@ class GenericMirror(ABC):
         for url in candidates:
             if url in urls_with_file_regex:
                 chosen_url = url
-                break
+                if str(self.version) in url:
+                    break
 
         r = self.session.get(chosen_url)
         r.raise_for_status()
@@ -367,17 +373,24 @@ class GenericMirror(ABC):
             checksum_success = False
 
         if self._has_signature:
+            sig_error: str | None = None
             file_to_verify = file if not self._signature_file else self._signature_file
             signature_success: bool
             try:
                 signature_success = self._signature_check(file_to_verify)
-            except Exception:
+            except Exception as e:
                 signature_success = False
+                sig_error = str(e)
+
+            if self._signature_file:
+                self._signature_file.unlink()
 
             if not signature_success:
                 if file:
                     file.unlink()
-                raise IntegrityCheckError("Integrity check failed! (Signature)")
+                raise IntegrityCheckError(
+                    f"Integrity check failed! (Signature){f': {sig_error}' if sig_error else ''}"
+                )
 
         if not checksum_success:
             if file:
