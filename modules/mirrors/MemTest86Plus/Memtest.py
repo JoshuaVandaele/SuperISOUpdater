@@ -7,11 +7,11 @@ from modules.utils import extract_matching_file
 
 
 class Memtest(GenericMirror):
-    def __init__(self) -> None:
+    def __init__(self, arch: str) -> None:
         super().__init__(
             url="https://www.memtest.org/",
-            file_regex=r"mt86plus_(\d+\.?)+_64.iso\.zip",
-            version_regex=r"mt86plus_(.+)_64\.iso\.zip",
+            file_regex=rf"mt86plus_(.+)_{arch}.iso\.zip",
+            version_regex=rf"mt86plus_(.+)_{arch}\.iso\.zip",
             has_signature=False,
         )
 

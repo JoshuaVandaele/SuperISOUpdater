@@ -117,40 +117,69 @@ The tool currently supports the following ISOs:
 - **Diagnostic Tools**
   - Hiren's BootCD PE
   - MemTest86 Plus
+    - Architectures: x86_64, i586
   - SystemRescue
   - UltimateBootCD
-  - Rescuezilla (editions: "bionic", "focal", "jammy", "noble")
+  - Rescuezilla
+    - Editions: bionic, focal, jammy, noble
+    - Architectures: 64bit, 32bit
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
   - Clonezilla
   - GParted Live
   - ShredOS
-  - HDAT2 (editions: "full", "lite", "diskette")
+    - Architectures: x86-64, i586
+  - HDAT2
+    - Editions: full, lite, diskette
 - **Operating Systems**
   - **Linux**
+    - Alpine Linux
+      - Editions: standard, extended, virt, xen
+      - Architectures: aarch64, armhf, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
     - Arch Linux
-    - Debian (architectures: "amd64", "arm64", "armhf", "ppc64el", "riscv64", "s390x")
-    - Ubuntu (editions: "LTS", "interim")
-    - Fedora (editions: "Budgie", "Cinnamon", "KDE", "LXDE", "MATE_Compiz", "SoaS", "Sway", "Xfce", "i3") (architectures: "x86_64", "aarch64")
-    - Kali Linux (editions: "installer", "installer-netinst", "installer-purple", "live")
-    - Linux Mint (editions: "cinnamon", "mate", "xfce")
-    - Manjaro (editions: "plasma", "xfce", "gnome", "cinnamon", "i3") (Architectures: "amd64", "ARM")
-    - OpenSUSE (editions: "leap", "leap-micro", "jump") (Architectures: "aarch64", "ppc64le", "s390x", "x86_64")
-    - OpenSUSE Rolling (editions: "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD")
-    - OPNsense (editions: "dvd", "nano", "serial", "vga")
-    - Proxmox (editions: "ve", "mail-gateway", "backup-server")
-    - Rocky Linux (editions: "dvd", "boot", "minimal") (Architectures: "aarch64", "ppc64le", "s390x", "x86_64")
+    - Debian
+      - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
+    - Ubuntu
+      - Editions: LTS, interim
+    - Fedora
+      - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
+      - Architectures: x86_64, aarch64
+    - Kali Linux
+      - Editions: installer, installer-netinst, installer-purple, live
+      - Architectures: amd64, arm64
+    - Linux Mint
+      - Editions: cinnamon, mate, xfce
+    - Manjaro
+      - Editions: plasma, xfce, gnome, cinnamon, i3")
+      - Architectures: amd64, ARM
+    - OpenSUSE
+      - Editions: leap, leap-micro, jump
+      - Architectures: x86_64, aarch64, s390x, i686, ppc64le
+    - OpenSUSE Rolling
+      - Editions: MicroOS-DVD, Tumbleweed-DVD, Tumbleweed-NET, Tumbleweed-GNOME-Live, Tumbleweed-KDE-Live, Tumbleweed-XFCE-Live, Tumbleweed-Rescue-CD
+    - OPNsense
+      - Editions: dvd, nano, serial, vga
+    - Proxmox
+      - Editions: ve, mail-gateway, backup-server
+    - Rocky Linux
+      - Editions: dvd, boot, minimal
+      - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
+    - Rocky Linux Live
+      - Editions: KDE, Workstation, Workstation Lite
+      - Architectures: x86_64, aarch64
     - TrueNAS
     - Tails
-    - ChromeOS (editions: "ltc", "ltr", "stable")
+    - ChromeOS
+      - Editions: ltc, ltr, stable
   - **Windows**
-    - Windows 11 (Multi-edition ISO, Any language) (architectures: "x64", "arm64")
+    - Windows 11 (Multi-edition ISO, Any language)
+      - Architectures: x64, arm64
     - Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
   - **Other**
-    - FreeDOS (editions: "BonusCD", "FloppyEdition", "FullUSB", "LegacyCD", "LiteUSB", "LiveCD")
-    - TempleOS (editions: "Distro", "Lite")
+    - FreeDOS
+      - Editions: BonusCD, FloppyEdition, FullUSB, LegacyCD, LiteUSB, LiveCD
 
 ## Contribute
 

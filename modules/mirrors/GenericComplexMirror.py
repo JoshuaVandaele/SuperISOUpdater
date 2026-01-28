@@ -49,37 +49,6 @@ class GenericComplexMirror(GenericMirror):
             headers,
         )
 
-    def pre_init(self) -> None:
-        pass
-
-    def mid_init(self) -> None:
-        pass
-
-    def initialize(self) -> None:
-        self.pre_init()
-        text, soup = self._fetch_page(self._url)
-        self._soup_page: BeautifulSoup = soup
-        self._text_page: str = text
-
-        self.version: Version = (
-            self._determine_version(self._version_regex)
-            if self._version_regex
-            else self._version
-        )  # type: ignore
-
-        self.mid_init()
-
-        types, sums = self._determine_sums()
-        self.sum_types: list[SumType] = types
-        self.sums: list[str] = sums
-        self.download_link: str = self._get_download_link()
-        self.speed: float = self._determine_speed()
-
-        self.post_init()
-
-    def post_init(self) -> None:
-        pass
-
     def _determine_version(self, version_regex: str) -> Version:
         latest_version = self._VersionClass("0")
 

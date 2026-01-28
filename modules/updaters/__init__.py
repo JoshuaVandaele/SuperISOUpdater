@@ -22,7 +22,6 @@ from .ShredOS import ShredOS
 from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .Tails import Tails
-from .TempleOS import TempleOS
 from .TrueNAS import TrueNAS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
@@ -53,7 +52,6 @@ __all__ = [
     "Rescuezilla",
     "SuperGrub2",
     "SystemRescue",
-    "TempleOS",
     "Ubuntu",
     "UltimateBootCD",
     "TrueNAS",

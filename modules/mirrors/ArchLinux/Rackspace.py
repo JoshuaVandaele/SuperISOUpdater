@@ -6,11 +6,11 @@ class Rackspace(GenericMirror):
     KEY_ID = "3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C"
     KEY_SERVER = "keyserver.ubuntu.com"
 
-    def __init__(self) -> None:
+    def __init__(self, arch) -> None:
         super().__init__(
             url="https://mirror.rackspace.com/archlinux/iso/latest/",
-            file_regex=r"archlinux-.+-x86_64\.iso",
-            version_regex=r"archlinux-(.+)-x86_64\.iso",
+            file_regex=rf"archlinux-.+-{arch}\.iso",
+            version_regex=rf"archlinux-(.+)-{arch}\.iso",
             version_padding=2,
         )
 
