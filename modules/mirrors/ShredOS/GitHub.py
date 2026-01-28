@@ -6,13 +6,13 @@ from modules.SumType import SumType
 
 
 class GitHub(GitHubMirror):
-    def __init__(self, edition: str) -> None:
+    def __init__(self, edition: str, arch) -> None:
         super().__init__(
             repository="PartialVolume/shredos.x86_64",
-            file_regex=rf"shredos-.+x86-64.+{edition}\.iso",
+            file_regex=rf"shredos-.+{arch}.+{edition}\.iso",
             determine_version_using=GitHubVersion.NAME,
             has_signature=False,
-            version_regex=r"v.+?_(.+)?_x86-64_.+",
+            version_regex=rf"v.+?_(.+?)_.+",
         )
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
