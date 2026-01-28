@@ -66,6 +66,12 @@ directory = "Linux"
 [OperatingSystems.Linux.ArchLinux]
 enabled = true
 
+[OperatingSystems.Linux.AlpineLinux]
+enabled = true
+# Available editions:
+# "standard", "extended", "virt", "xen"
+editions = ["standard"]
+
 [OperatingSystems.Linux.Debian]
 enabled = true
 # Available editions:
