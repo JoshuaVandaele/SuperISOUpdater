@@ -7,14 +7,11 @@ from bs4 import BeautifulSoup, Tag
 
 from modules.exceptions import VersionNotFoundError
 from modules.updaters.GenericUpdater import GenericUpdater
-from modules.utils import parse_hash, sha256_hash_check
+from modules.utils import md5_hash_check, parse_hash
 
-DOMAIN = "https://www.ultimatebootcd.com"
-DOWNLOAD_PAGE_URL = f"{DOMAIN}/download.html"
 MIRRORS = [
     "https://mirror.clientvps.com/ubcd",
-    "http://mirror.koddos.net/ubcd",
-    "https://mirror.lyrahosting.com/ubcd",
+    "http://mirror.koddos.net/ubcd"
 ]
 FILE_NAME = "ubcd[[VER]].iso"
 
@@ -24,8 +21,6 @@ class UltimateBootCD(GenericUpdater):
     A class representing an updater for Ultimate Boot CD.
 
     Attributes:
-        download_page (requests.Response): The HTTP response containing the download page HTML.
-        soup_download_page (BeautifulSoup): The parsed HTML content of the download page.
         mirrors (list[str])
         mirror (str)
         download_table (Tag)
@@ -38,41 +33,27 @@ class UltimateBootCD(GenericUpdater):
         file_path = folder_path / FILE_NAME
         super().__init__(file_path)
 
-        self.download_page = requests.get(DOWNLOAD_PAGE_URL)
-
-        if self.download_page.status_code != 200:
-            raise ConnectionError(
-                f"Failed to fetch the download page from '{DOWNLOAD_PAGE_URL}'"
-            )
-
-        self.soup_download_page = BeautifulSoup(
-            self.download_page.content, features="html.parser"
-        )
-
         self.mirrors = MIRRORS
         shuffle(self.mirrors)
 
         self.download_table: Tag | None = None
         for mirror in self.mirrors:
-            self.mirror_page = requests.get(mirror)
+            mirror_page = requests.get(mirror)
 
-            if self.mirror_page.status_code != 200:
+            if mirror_page.status_code != 200:
                 continue
 
-            self.soup_mirror_page = BeautifulSoup(
-                self.mirror_page.content, features="html.parser"
+            soup_mirror_page = BeautifulSoup(
+                mirror_page.content, features="html.parser"
             )
 
-            self.download_table = self.soup_mirror_page.find("table")  # type: ignore
+            self.download_table = soup_mirror_page.find("table")  # type: ignore
             if self.download_table:
                 self.mirror = mirror
                 break
 
-        if not self.mirror_page:
-            raise ConnectionError(f"Could not connect to any mirrors!")
-
         if not self.download_table:
-            raise LookupError(f"Could not find table of downloads in any mirrors")
+            raise ConnectionError(f"Could not connect to any mirrors or find download table!")
 
     @cache
     def _get_download_link(self) -> str:
@@ -80,18 +61,15 @@ class UltimateBootCD(GenericUpdater):
         return f"{self.mirror}/ubcd{self._version_to_str(latest_version)}.iso"
 
     def check_integrity(self) -> bool:
-        nowrap_tds: list[Tag] = self.soup_download_page.find_all(
-            "td", attrs={"nowrap": "true"}
-        )
-
-        tts: list[Tag] = next(td.find_all("tt") for td in nowrap_tds if td.find("tt"))
-
-        sha256_sum: str = next(
-            parse_hash(tt.getText(), [], -1) for tt in tts if "SHA-256" in tt.getText()
-        )
-
-        return sha256_hash_check(
-            self._get_complete_normalized_file_path(absolute=True), sha256_sum
+        latest_version = self._get_latest_version()
+        iso_name = f"ubcd{self._version_to_str(latest_version)}.iso"
+        md5_url = f"{self.mirror}/{iso_name}.md5"
+        md5_response = requests.get(md5_url)
+        if md5_response.status_code != 200:
+            raise ConnectionError(f"Failed to fetch MD5 checksum from '{md5_url}'")
+        md5_sum = parse_hash(md5_response.text, [], 0)
+        return md5_hash_check(
+            self._get_complete_normalized_file_path(absolute=True), md5_sum
         )
 
     @cache
