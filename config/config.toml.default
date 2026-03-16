@@ -19,7 +19,7 @@ enabled = true
 [DiagnosticTools.Rescuezilla]
 enabled = true
 # Available editions:
-# "bionic", "focal", "jammy", "noble"
+# "bionic", "focal", "jammy", "noble", "oracular", "plucky"
 editions = ["noble"]
 
 # Boot Repair

@@ -110,7 +110,7 @@ The tool currently supports the following ISOs:
   - MemTest86 Plus
   - SystemRescue
   - UltimateBootCD
-  - Rescuezilla (editions: "bionic", "focal", "jammy", "noble")
+  - Rescuezilla (editions: "bionic", "focal", "jammy", "noble", "oracular", "plucky")
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
