@@ -1,6 +1,8 @@
 from functools import cache
 from pathlib import Path
 
+import requests
+
 from modules.updaters.GenericUpdater import GenericUpdater
 from modules.updaters.util_update_checker import (
     github_get_latest_version,
@@ -40,18 +42,15 @@ class ShredOS(GenericUpdater):
         )
 
     def check_integrity(self) -> bool:
-        sha1_sums = self.release_info["text"]
+        img_url = self._get_download_link()
+        img_filename = img_url.split("/")[-1]
+        sha1_url = self.release_info["files"][f"{img_filename}.sha1"]
 
-        sha1_sum = parse_hash(
-            sha1_sums,
-            [
-                "sha1",
-                self._version_to_str(self._get_latest_version()),
-                "x86-64",
-                ".img",
-            ],
-            1,
-        )
+        sha1_response = requests.get(sha1_url)
+        if sha1_response.status_code != 200:
+            raise ConnectionError(f"Failed to fetch SHA1 checksum from '{sha1_url}'")
+
+        sha1_sum = parse_hash(sha1_response.text, [], 0)
 
         return sha1_hash_check(
             self._get_complete_normalized_file_path(absolute=True),
