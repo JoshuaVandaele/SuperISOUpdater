@@ -223,13 +223,6 @@ enabled = true
 archs = ["amd64"]
 name = "tails-[[ARCH]]-[[VER]].iso"
 
-[OperatingSystems.Linux.ChromeOS]
-enabled = true
-# Available editions:
-# "ltc", "ltr", "stable"
-editions = ["stable"]
-name = "chromeos_[[VER]]_[[EDITION]].img"
-
 # Windows
 [OperatingSystems.Windows]
 enabled = true

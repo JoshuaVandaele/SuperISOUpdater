@@ -1,5 +1,4 @@
 from .ArchLinux import ArchLinux
-from .ChromeOS import ChromeOS
 from .Clonezilla import Clonezilla
 from .Debian import Debian
 from .Fedora import Fedora
@@ -31,7 +30,6 @@ from .Windows11 import Windows11
 __all__ = [
     "ArchLinux",
     "Debian",
-    "ChromeOS",
     "Clonezilla",
     "Fedora",
     "FreeDOS",
