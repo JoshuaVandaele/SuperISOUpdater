@@ -188,7 +188,7 @@ If you have any suggestions, bug reports, or feature requests, feel free to open
 
 ## License
 
-This project is licensed under the [GPLv3 License](./LICENSE).
+This project is licensed under the [GPL-2.0-or-later](./LICENSE) license.
 
 ---
 
