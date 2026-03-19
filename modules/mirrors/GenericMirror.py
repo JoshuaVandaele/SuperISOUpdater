@@ -43,7 +43,7 @@ class GenericMirror(ABC):
     }
 
     SIGNATURE_EXTENSIONS = ["asc", "sig", "gpg"]
-    PUBKEY_EXTENSIONS = ["pub", "pem"]
+    PUBKEY_EXTENSIONS = ["key", "pub", "pem"]
 
     def __init__(
         self,

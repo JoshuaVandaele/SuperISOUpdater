@@ -172,7 +172,7 @@ The tool currently supports the following ISOs:
       - Editions: KDE, Workstation, Workstation Lite
       - Architectures: x86_64, aarch64
     - ✅ TrueNAS
-    - 🔳 Tails
+    - ✅ Tails
   - **Windows**
     - ✅ Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
