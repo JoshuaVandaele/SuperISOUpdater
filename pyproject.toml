@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sisou"
+version = "2.0.0"
+authors = [{ name = "Joshua Vandaele", email = "joshua@vandaele.software" }]
+license = "GPL-3.0-only"
+keywords = [
+    "ventoy",
+    "iso",
+    "updater",
+    "downloader",
+    "cli",
+    "os",
+    "linux",
+    "windows",
+    "sysadmin",
+    "bootable",
+    "automation",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Internet",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+]
+description = "A powerful tool to conveniently update all of your ISO files!"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.10, <4"
+dependencies = [
+    "beautifulsoup4~=4.14",
+    "python-gnupg~=0.5",
+    "requests-cache~=1.3",
+    "requests~=2.32",
+    "tqdm~=4.67",
+]
+
+[project.urls]
+Homepage = "https://github.com/JoshuaVandaele/SuperISOUpdater"
+"Bug Reports" = "https://github.com/JoshuaVandaele/SuperISOUpdater/issues"
+Source = "https://github.com/JoshuaVandaele/SuperISOUpdater"
+
+[project.scripts]
+sisou = "sisou:main"
+
+[tool.setuptools]
+py-modules = ["sisou", "modules"]
+
+[tool.setuptools.package-data]
+sisou = ["config.toml.default"]
