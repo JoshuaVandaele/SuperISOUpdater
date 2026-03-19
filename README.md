@@ -1,17 +1,16 @@
 # Super ISO Updater
 
 > [!WARNING]  
-> This branch is still a work in progress. As such, not all of the listed features may be available yet.
+> This branch is still a work in progress. As such, not all listed features may be available yet.
 
-Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is primarily designed to work with a Ventoy drive and supports a wide range of ISOs.
+Super ISO Updater (SISOU) is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is primarily meant to be used with a Ventoy drive and supports a wide range of ISOs.
 
 ## Features
 
-- **Automatic ISO Updates:** Automatically check for and download the latest ISO versions from official sources using the fastest available mirrors.
-- **Checksum Verification:** Automatically verifies the integrity of downloaded ISOs using checksums to ensure they are not corrupted.
-- **Signature Verification:** Supports verifying digital signatures (GPG/PGP) for ISOs when available.
-- **Flexible Organization & Configuration:** Keep your ISOs structured exactly how you want on your Ventoy drive and easily enable, disable, or add ISOs using the configuration file. (We recommend using [TreeView Mode](https://www.ventoy.net/en/doc_treeview.html))
-- **Wide ISO Support:** Compatible with numerous operating systems, utilities, and diagnostic tools (See [Supported ISOs](#supported-isos)).
+- **Automatic ISO Updates:** Automatically check for and downloads the latest ISO versions from official sources, always using the fastest available mirror.
+- **Checksum & Signature Verification:** Verifies the integrity of every downloaded file, ensuring nothing has been corrupted or tempered with.
+- **Flexible Organization & Configuration:** Organize your ISOs exactly the way you want on your drive and manage them effortlessly. Enable, disable, or add new ones through the configuration file. (We recommend using [TreeView Mode](https://www.ventoy.net/en/doc_treeview.html) in Ventoy.)
+- **Wide ISO Support:** Compatible with a broad range of operating systems, utilities, and diagnostic tools. (See [Supported ISOs](#supported-isos))
 
 ## Getting Started
 
@@ -22,48 +21,55 @@ Super ISO Updater is a powerful tool that provides a convenient way to check for
 
 ### Installation
 
-#### Using pip
+Pick whichever method works best for you:
 
-1. Open your terminal or command prompt.
-2. Install the package using the following command:
+#### pip _(recommended for most users)_
 
 ```sh
 python -m pip install sisou
 ```
 
-#### Using git
+#### pipx
 
-1. Clone this repository locally by running
+```sh
+pipx install sisou
+```
+
+#### From source
 
 ```sh
 git clone https://github.com/JoshuaVandaele/SuperISOUpdater
-```
-
-2. Navigate into the newly created directory by running
-
-```sh
 cd SuperISOUpdater
-```
-
-3. Install the module using the following command:
-
-```sh
 python -m pip install .
 ```
 
 ### Updating
 
-To update the package to the latest version, run the following command:
+#### pip
 
 ```sh
 python -m pip install --upgrade sisou
+```
+
+#### pipx
+
+```sh
+pipx upgrade sisou
+```
+
+#### From source
+
+```sh
+cd SuperISOUpdater
+git pull
+python -m pip install .
 ```
 
 ## Usage
 
 To use SISOU, follow these steps:
 
-### Running the script
+### Running SISOU
 
 ```sh
 sisou <Ventoy Partition>
@@ -83,7 +89,7 @@ sisou /run/media/joshua/Ventoy/
 
 ### Logging
 
-The script generates logs during its execution. You can control the log level using the `-l` or `--log-level` argument when running the script. The available log levels are: DEBUG, INFO, WARNING, ERROR, and CRITICAL. By default, the log level is set to INFO.
+SISOU generates logs during its execution. You can control the log level using the `-l` or `--log-level` argument. The available log levels are: DEBUG, INFO, WARNING, ERROR, and CRITICAL. By default, the log level is set to INFO.
 
 To set a specific log level, use the `-l` option followed by the desired log level:
 
@@ -99,19 +105,16 @@ sisou <Ventoy Partition> -f /path/to/log_file.log
 
 ## Customization
 
-The `sisou.py` script uses a configuration file (`config.toml`) to define the ISOs to be updated. You can customize this configuration file to add or remove ISOs from the update process.
+SISOU is configured through a `config.toml` file, where you can control which ISOs get updated and how: toggling them on or off, and choosing your preferred editions, languages, and architectures.
 
-To customize the ISOs, open the `config.toml` file and edit the relevant sections. Each ISO is associated with an updater class (e.g., `Ubuntu`, `MemTest86Plus`, etc.). You can enable or disable ISOs, select editions, or architectures you want to download by modifying the corresponding values in the configuration file.
-
-_NOTE: Be cautious when modifying the configuration file, as incorrect changes may cause the script to malfunction._
-
-By default, the script uses the `config.toml` file located in the same directory as the Ventoy drive.
-
-You can specify a custom configuration file using the `-c` or `--config-file` argument when running the script:
+By default, SISOU looks for `config.toml` in the same directory as your Ventoy drive. You can point it to a different file with the `-c` / `--config-file` argument:
 
 ```sh
 sisou <Ventoy Partition> -c /path/to/config.toml
 ```
+
+> [!TIP]
+> No config file yet? No problem, one will be created for you automatically on the first run.
 
 ## Supported ISOs
 
@@ -182,7 +185,7 @@ The tool currently supports the following ISOs:
     - 🔳 FreeDOS
       - Editions: BonusCD, FloppyEdition, FullUSB, LegacyCD, LiteUSB, LiveCD
 
-## Contribute
+## Contributing
 
 If you have any suggestions, bug reports, or feature requests, feel free to open an issue or submit a pull request. Your contributions are highly appreciated!
 
@@ -192,4 +195,6 @@ This project is licensed under the [GPL-2.0-or-later](./LICENSE) license.
 
 ---
 
-Thank you for using Super ISO Updater! If you encounter any issues or need assistance, please don't hesitate to reach out. Happy updating!
+Thank you for using Super ISO Updater!
+
+<img src="assets/sisou.svg" alt="Super ISO Updater" width="200" />
