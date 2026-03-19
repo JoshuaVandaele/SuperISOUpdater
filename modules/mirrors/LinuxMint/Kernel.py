@@ -8,27 +8,27 @@ from modules.utils import create_sig_check_file_from_url, pgp_receive_key
 from modules.Version import Version
 
 
-class OVH(GenericMirror):
-    KEY_ID = "843938DF228D22F7B3742BC0D94AA3F0EFE21092"
-    KEY_SERVER = "keyserver.ubuntu.com"
+class Kernel(GenericMirror):
+    KEY_ID = "27DEB15644C6B3CF3BD7D291300F846BA25BAE09"
+    KEY_SERVER = "keys.openpgp.org"
 
-    def __init__(self, arch: str, edition: str) -> None:
+    def __init__(self, edition: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         version = self._determine_version()
         checksum_url: str = (
-            f"https://ubuntu.mirrors.ovh.net/releases/{version}/SHA256SUMS"
+            f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/sha256sum.txt"
         )
 
         super().__init__(
-            url=f"https://ubuntu.mirrors.ovh.net/releases/{version}/",
-            file_regex=rf"ubuntu-{version}-{edition}-{arch}.iso",
+            url=f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/",
+            file_regex=rf"linuxmint-{version}-{edition}-64bit.iso",
             version=version,
             signature_file=create_sig_check_file_from_url(checksum_url),
         )
 
     def _determine_version(self) -> Version:
         r = self.session.get(
-            "https://ubuntu.mirrors.ovh.net/releases/",
+            "https://mirrors.edge.kernel.org/linuxmint/stable/",
         )
         r.raise_for_status()
         soup = BeautifulSoup(r.content, features="html.parser")
@@ -36,7 +36,7 @@ class OVH(GenericMirror):
 
         latest_version = Version("0")
         for url in urls:
-            ver_match = re.match(r"^((\d+\.)+\d+)", url)
+            ver_match = re.match(r"^(\d[\d\.]+)", url)
             if not ver_match:
                 continue
             current_version = Version(ver_match.group(0))

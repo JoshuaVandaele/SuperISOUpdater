@@ -1,13 +1,11 @@
 import re
-import tempfile
-from pathlib import Path
 
 import requests_cache
 
 from modules.DotDashVersion import DotDashVersion
 from modules.mirrors.GenericMirror import GenericMirror
 from modules.SumType import SumType
-from modules.utils import parse_hash, pgp_receive_key
+from modules.utils import create_sig_check_file_from_url, parse_hash, pgp_receive_key
 
 CHECKSUM_URL: str = "https://gparted.org/gparted-live/stable/CHECKSUMS.TXT"
 
@@ -16,17 +14,6 @@ class GParted(GenericMirror):
     KEY_ID = "EB1DD5BF6F88820BBCF5356C8E94C9CD163E3FB0"
     KEY_SERVER = "keys.openpgp.org"
 
-    def create_sig_check_file(self) -> Path:
-        r = self.session.get(CHECKSUM_URL)
-        r.raise_for_status()
-
-        sig_file = tempfile.NamedTemporaryFile(delete=False, prefix="sisou_", mode="wb")
-        sig_file.write(r.content)
-        sig_file.flush()
-        sig_file.close()
-
-        return Path(tempfile.gettempdir()) / sig_file.name
-
     def __init__(self, arch: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         super().__init__(
@@ -34,7 +21,7 @@ class GParted(GenericMirror):
             file_regex=rf"gparted-live-.+-{arch}\.iso",
             version_regex=rf"gparted-live-(.+?)-{arch}\.iso",
             version_class=DotDashVersion,
-            signature_file=self.create_sig_check_file(),
+            signature_file=create_sig_check_file_from_url(CHECKSUM_URL),
         )
 
     def _get_public_key(self) -> bytes | None:

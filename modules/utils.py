@@ -13,6 +13,7 @@ from typing import Generator
 
 import gnupg
 import requests
+import requests_cache
 from tqdm import tqdm
 
 READ_CHUNK_SIZE = 524288
@@ -378,3 +379,16 @@ def extract_matching_file(zip_path: Path, pattern: str) -> Generator[Path, None,
                     break
             else:
                 return
+
+
+def create_sig_check_file_from_url(url) -> Path:
+    session = requests_cache.CachedSession(backend="memory")
+    r = session.get(url)
+    r.raise_for_status()
+
+    sig_file = tempfile.NamedTemporaryFile(delete=False, prefix="sisou_", mode="wb")
+    sig_file.write(r.content)
+    sig_file.flush()
+    sig_file.close()
+
+    return Path(tempfile.gettempdir()) / sig_file.name

@@ -7,7 +7,7 @@ import requests_cache
 from modules.DotDashVersion import DotDashVersion
 from modules.mirrors.GenericComplexMirror import GenericComplexMirror
 from modules.SumType import SumType
-from modules.utils import parse_hash, pgp_receive_key
+from modules.utils import create_sig_check_file_from_url, parse_hash, pgp_receive_key
 
 CHECKSUM_URL: str = "https://clonezilla.org/downloads/stable/data/CHECKSUMS.TXT"
 
@@ -17,24 +17,13 @@ class SourceForge(GenericComplexMirror):
     KEY_ID = "667857D045599AFD"
     KEY_SERVER = "keys.openpgp.org"
 
-    def create_sig_check_file(self) -> Path:
-        r = self.session.get(CHECKSUM_URL)
-        r.raise_for_status()
-
-        sig_file = tempfile.NamedTemporaryFile(delete=False, prefix="sisou_", mode="wb")
-        sig_file.write(r.content)
-        sig_file.flush()
-        sig_file.close()
-
-        return Path(tempfile.gettempdir()) / sig_file.name
-
     def __init__(self, arch) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         super().__init__(
             url=CHECKSUM_URL,
             version_regex=rf"clonezilla-live-(.+)-{arch}.iso",
             version_class=DotDashVersion,
-            signature_file=self.create_sig_check_file(),
+            signature_file=create_sig_check_file_from_url(CHECKSUM_URL),
         )
         self.arch = arch
 
