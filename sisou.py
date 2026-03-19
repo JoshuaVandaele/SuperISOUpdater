@@ -128,7 +128,6 @@ def run_updaters(
                     logging.exception(
                         f"[{installer_for}] An error occurred while trying to add the installer. See traceback below."
                     )
-            # Run updater(s)
             for updater in updaters:
                 run_updater(updater)
 
@@ -141,11 +140,7 @@ def run_updaters(
 def main():
     """Main function to run the update process."""
     parser = argparse.ArgumentParser(description="Process a file and set log level")
-
-    # Add the positional argument for the file path
     parser.add_argument("ventoy_path", help="Path to the Ventoy drive")
-
-    # Add the optional argument for log level
     parser.add_argument(
         "-l",
         "--log-level",
@@ -153,17 +148,12 @@ def main():
         default="INFO",
         help="Set the log level (default: INFO)",
     )
-
-    # Add the optional argument for log file
     parser.add_argument(
         "-f", "--log-file", help="Path to the log file (default: log to console)"
     )
-
-    # Add the optional argument for config file
     parser.add_argument(
         "-c", "--config-file", help="Path to the config file (default: config.toml)"
     )
-
     args = parser.parse_args()
 
     log_file = Path(args.log_file) if args.log_file else None
@@ -174,19 +164,19 @@ def main():
     default_config_path = Path(__file__).parent / "config" / "config.toml.default"
     config_path = Path(args.config_file) if args.config_file else None
     if not config_path:
-        logging.info(
+        logging.debug(
             "No config file specified. Trying to find config.toml in the current directory..."
         )
         config_path = Path() / "config.toml"
 
         if not config_path.is_file():
-            logging.info(
+            logging.debug(
                 "No config file specified. Trying to find config.toml in the ventoy drive..."
             )
             config_path = ventoy_path / "config.toml"
 
             if not config_path.is_file():
-                logging.info(
+                logging.debug(
                     "No config.toml found in the ventoy drive. Generating one from config.toml.default..."
                 )
                 with open(default_config_path) as default_config_file:
