@@ -163,7 +163,7 @@ The tool currently supports the following ISOs:
       - Editions: MicroOS-DVD, Tumbleweed-DVD, Tumbleweed-NET, Tumbleweed-GNOME-Live, Tumbleweed-KDE-Live, Tumbleweed-XFCE-Live, Tumbleweed-Rescue-CD
     - 🔳 OPNsense
       - Editions: dvd, nano, serial, vga
-    - 🔳 Proxmox
+    - ✅ Proxmox
       - Editions: ve, mail-gateway, backup-server
     - 🔳 Rocky Linux
       - Editions: dvd, boot, minimal

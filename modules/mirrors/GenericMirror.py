@@ -261,7 +261,14 @@ class GenericMirror(ABC):
                 )
 
             sum_pos: int = 1 if re.search(rf"^{self._file_regex}", sum_file_text) else 0
-            return sum_file_text, sum_pos
+
+            min_sum_file_text = ""
+            for line in sum_file_text.splitlines():
+                filename = line.split()[(sum_pos + 1) % 2]
+                if str(self.version) in filename:
+                    min_sum_file_text += f"{line}\n"
+
+            return min_sum_file_text or sum_file_text, sum_pos
 
         sums: list[str] = []
         sum_types: list[SumType] = []
