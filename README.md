@@ -137,9 +137,9 @@ The tool currently supports the following ISOs:
     - Editions: full, lite, diskette
 - **Operating Systems**
   - **Linux**
-    - 🔳 Alpine Linux
-      - Editions: standard, extended, virt, xen
-      - Architectures: aarch64, armhf, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
+    - ✅ Alpine Linux
+      - Editions: standard
+      - Architectures: aarch64, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
     - ✅ Arch Linux
     - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x

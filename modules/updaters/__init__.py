@@ -1,3 +1,4 @@
+from .AlpineLinux import AlpineLinux
 from .ArchLinux import ArchLinux
 from .Clonezilla import Clonezilla
 from .Debian import Debian
@@ -28,6 +29,7 @@ from .Windows10 import Windows10
 from .Windows11 import Windows11
 
 __all__ = [
+    "AlpineLinux",
     "ArchLinux",
     "Debian",
     "Clonezilla",

@@ -99,10 +99,10 @@ directory = "Linux"
 [OperatingSystems.Linux.AlpineLinux]
 enabled = true
 # Available editions:
-# "standard", "extended", "virt", "xen"
+# "standard"
 editions = ["standard"]
 # Available architectures:
-# "aarch64", "armhf", "armv7", "loongarch64", "ppc64le", "riscv64", "s390x", "x86", "x86_64"
+# "aarch64", "armv7", "loongarch64", "ppc64le", "riscv64", "s390x", "x86", "x86_64"
 archs = ["x86_64"]
 name = "alpine-[[EDITION]]-[[VER]]-[[ARCH]].iso"
 
