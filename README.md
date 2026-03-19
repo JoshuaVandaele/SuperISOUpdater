@@ -130,7 +130,7 @@ The tool currently supports the following ISOs:
   - Super Grub 2
 - **Disk Utilities**
   - ✅ Clonezilla
-  - 🔳 GParted Live
+  - ✅ GParted Live
   - ✅ ShredOS
     - Architectures: x86-64, i586
   - ✅ HDAT2

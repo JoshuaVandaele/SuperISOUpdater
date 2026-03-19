@@ -5,16 +5,15 @@ from pathlib import Path
 import requests_cache
 
 from modules.DotDashVersion import DotDashVersion
-from modules.mirrors.GenericComplexMirror import GenericComplexMirror
+from modules.mirrors.GenericMirror import GenericMirror
 from modules.SumType import SumType
 from modules.utils import parse_hash, pgp_receive_key
 
-CHECKSUM_URL: str = "https://clonezilla.org/downloads/stable/data/CHECKSUMS.TXT"
+CHECKSUM_URL: str = "https://gparted.org/gparted-live/stable/CHECKSUMS.TXT"
 
 
-class SourceForge(GenericComplexMirror):
-    # From https://clonezilla.org/gpg-verify.php
-    KEY_ID = "667857D045599AFD"
+class GParted(GenericMirror):
+    KEY_ID = "EB1DD5BF6F88820BBCF5356C8E94C9CD163E3FB0"
     KEY_SERVER = "keys.openpgp.org"
 
     def create_sig_check_file(self) -> Path:
@@ -28,25 +27,26 @@ class SourceForge(GenericComplexMirror):
 
         return Path(tempfile.gettempdir()) / sig_file.name
 
-    def __init__(self, arch) -> None:
+    def __init__(self, arch: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         super().__init__(
-            url=CHECKSUM_URL,
-            version_regex=rf"clonezilla-live-(.+)-{arch}.iso",
+            url="https://gparted.org/download.php",
+            file_regex=rf"gparted-live-.+-{arch}\.iso",
+            version_regex=rf"gparted-live-(.+?)-{arch}\.iso",
             version_class=DotDashVersion,
             signature_file=self.create_sig_check_file(),
         )
-        self.arch = arch
 
-    def __del__(self):
-        if self._signature_file:
-            self._signature_file.unlink(missing_ok=True)
+    def _get_public_key(self) -> bytes | None:
+        return pgp_receive_key(self.KEY_ID, self.KEY_SERVER)
 
     def _determine_sums(self) -> tuple[list[SumType], list[str]]:
+        r = self.session.get(CHECKSUM_URL)
+        r.raise_for_status()
         cur_sum_type: SumType | None = None
         sums: list[str] = []
         sum_types: list[SumType] = []
-        for line in self._text_page.lower().splitlines():
+        for line in r.text.lower().splitlines():
             if line.startswith("#"):
                 for sum_type in SumType:
                     if sum_type.value in line:
@@ -62,14 +62,3 @@ class SourceForge(GenericComplexMirror):
             sums.append(parse_hash(line, self._file_regex, 0))
             cur_sum_type = None
         return sum_types, sums
-
-    def _get_download_link(self) -> str:
-        return f"https://sourceforge.net/projects/clonezilla/files/clonezilla_live_stable/{self.version}/clonezilla-live-{self.version}-{self.arch}.iso"
-
-    def _get_signature(self) -> bytes:
-        r = self.session.get(f"{CHECKSUM_URL}.gpg")
-        r.raise_for_status()
-        return r.content
-
-    def _get_public_key(self) -> bytes | None:
-        return pgp_receive_key(self.KEY_ID, self.KEY_SERVER)

@@ -4,11 +4,11 @@ from modules.ParsedTokens import ParsedTokens
 from modules.Version import Version
 
 """
-Clonezilla's versioning consists of x.y.z-a
+Versioning consisting of x.y.z-a
 """
 
 
-class ClonezillaVersion(Version):
+class DotDashVersion(Version):
     def __init__(self, version_string: str, separator=".", zero_pad=0) -> None:
         if not version_string:
             raise ValueError("The version string cannot be empty.")
