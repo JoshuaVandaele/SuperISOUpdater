@@ -1,5 +1,8 @@
 # Super ISO Updater
 
+> [!WARNING]  
+> This branch is still a work in progress. As such, not all of the listed features may be available yet.
+
 Super ISO Updater is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is primarily designed to work with a Ventoy drive and supports a wide range of ISOs.
 
 ## Features
@@ -115,70 +118,68 @@ sisou <Ventoy Partition> -c /path/to/config.toml
 The tool currently supports the following ISOs:
 
 - **Diagnostic Tools**
-  - Hiren's BootCD PE
-  - MemTest86 Plus
+  - ✅ Hiren's BootCD PE
+  - ✅ MemTest86 Plus
     - Architectures: x86_64, i586
-  - SystemRescue
-  - UltimateBootCD
-  - Rescuezilla
+  - ✅ SystemRescue
+  - ✅ UltimateBootCD
+  - ✅ Rescuezilla
     - Editions: bionic, focal, jammy, noble
     - Architectures: 64bit, 32bit
 - **Boot Repair**
   - Super Grub 2
 - **Disk Utilities**
-  - Clonezilla
-  - GParted Live
-  - ShredOS
+  - ✅ Clonezilla
+  - 🔳 GParted Live
+  - ✅ ShredOS
     - Architectures: x86-64, i586
-  - HDAT2
+  - ✅ HDAT2
     - Editions: full, lite, diskette
 - **Operating Systems**
   - **Linux**
-    - Alpine Linux
+    - 🔳 Alpine Linux
       - Editions: standard, extended, virt, xen
       - Architectures: aarch64, armhf, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
-    - Arch Linux
-    - Debian
+    - ✅ Arch Linux
+    - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
-    - Ubuntu
+    - 🔳 Ubuntu
       - Editions: LTS, interim
-    - Fedora
+    - ✅ Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64
-    - Kali Linux
+    - 🔳 Kali Linux
       - Editions: installer, installer-netinst, installer-purple, live
       - Architectures: amd64, arm64
-    - Linux Mint
+    - 🔳 Linux Mint
       - Editions: cinnamon, mate, xfce
-    - Manjaro
-      - Editions: plasma, xfce, gnome, cinnamon, i3")
+    - 🔳 Manjaro
+      - Editions: plasma, xfce, gnome, cinnamon, i3"
       - Architectures: amd64, ARM
-    - OpenSUSE
+    - 🔳 OpenSUSE
       - Editions: leap, leap-micro, jump
       - Architectures: x86_64, aarch64, s390x, i686, ppc64le
-    - OpenSUSE Rolling
+    - 🔳 OpenSUSE Rolling
       - Editions: MicroOS-DVD, Tumbleweed-DVD, Tumbleweed-NET, Tumbleweed-GNOME-Live, Tumbleweed-KDE-Live, Tumbleweed-XFCE-Live, Tumbleweed-Rescue-CD
-    - OPNsense
+    - 🔳 OPNsense
       - Editions: dvd, nano, serial, vga
-    - Proxmox
+    - 🔳 Proxmox
       - Editions: ve, mail-gateway, backup-server
-    - Rocky Linux
+    - 🔳 Rocky Linux
       - Editions: dvd, boot, minimal
       - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
-    - Rocky Linux Live
+    - 🔳 Rocky Linux Live
       - Editions: KDE, Workstation, Workstation Lite
       - Architectures: x86_64, aarch64
-    - TrueNAS
-    - Tails
-    - ChromeOS
-      - Editions: ltc, ltr, stable
+    - ✅ TrueNAS
+    - 🔳 Tails
   - **Windows**
-    - Windows 11 (Multi-edition ISO, Any language)
+    - ✅ Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
-    - Windows 10 (Multi-edition ISO, Any language)
+    - ✅ Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
   - **Other**
-    - FreeDOS
+    - 🔳 FreeDOS
       - Editions: BonusCD, FloppyEdition, FullUSB, LegacyCD, LiteUSB, LiveCD
 
 ## Contribute
