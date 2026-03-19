@@ -143,8 +143,8 @@ The tool currently supports the following ISOs:
     - ✅ Arch Linux
     - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
-    - 🔳 Ubuntu
-      - Editions: LTS, interim
+    - ✅ Ubuntu
+      - Editions: desktop, live-server
     - ✅ Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64

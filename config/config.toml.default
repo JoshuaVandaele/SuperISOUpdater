@@ -123,12 +123,12 @@ name = "debian-live-[[VER]]-[[ARCH]]-netinst.iso"
 [OperatingSystems.Linux.Ubuntu]
 enabled = true
 # Available editions:
-# "LTS", "interim"
-editions = ["LTS"]
+# "desktop", "live-server"
+editions = ["desktop"]
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "ubuntu-[[EDITION]]-[[VER]]-desktop-[[ARCH]].iso"
+name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]].iso"
 
 [OperatingSystems.Linux.Fedora]
 enabled = true
