@@ -181,9 +181,6 @@ The tool currently supports the following ISOs:
       - Architectures: x64, arm64
     - ✅ Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
-  - **Other**
-    - 🔳 FreeDOS
-      - Editions: BonusCD, FloppyEdition, FullUSB, LegacyCD, LiteUSB, LiveCD
 
 ## Contributing
 
