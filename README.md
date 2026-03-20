@@ -152,9 +152,8 @@ The tool currently supports the following ISOs:
       - Architectures: amd64, arm64
     - ✅ Linux Mint
       - Editions: cinnamon, mate, xfce
-    - 🔳 Manjaro
-      - Editions: plasma, xfce, gnome, cinnamon, i3"
-      - Architectures: amd64, ARM
+    - ✅ Manjaro
+      - Editions: kde, xfce, gnome, cinnamon, i3
     - 🔳 OpenSUSE
       - Editions: leap, leap-micro, jump
       - Architectures: x86_64, aarch64, s390x, i686, ppc64le

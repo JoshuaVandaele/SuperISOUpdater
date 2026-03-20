@@ -141,8 +141,8 @@ name = "linuxmint-[[VER]]-[[EDITION]]-64bit.iso"
 [OperatingSystems.Linux.Manjaro]
 enabled = true
 # Available editions:
-# "plasma", "xfce", "gnome", "cinnamon", "i3"
-editions = ["plasma"]
+# "kde", "xfce", "gnome", "cinnamon", "i3"
+editions = ["kde"]
 name = "manjaro-[[EDITION]]-[[VER]]-linux.iso"
 
 [OperatingSystems.Linux.OpenSUSE]
