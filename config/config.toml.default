@@ -38,16 +38,6 @@ editions = ["noble"]
 # depending on the edition.
 name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]].iso"
 
-# Boot Repair
-
-[BootRepair]
-enabled = true
-directory = "Boot_Repair"
-
-[BootRepair.SuperGrub2]
-enabled = true
-name = "SuperGrub2-[[VER]].img"
-
 # Disk Utilities
 
 [DiskUtils]

@@ -18,7 +18,6 @@ from .Proxmox import Proxmox
 from .Rescuezilla import Rescuezilla
 from .RockyLinux import RockyLinux
 from .ShredOS import ShredOS
-from .SuperGrub2 import SuperGrub2
 from .SystemRescue import SystemRescue
 from .Tails import Tails
 from .TrueNAS import TrueNAS
@@ -48,7 +47,6 @@ __all__ = [
     "RockyLinux",
     "Tails",
     "Rescuezilla",
-    "SuperGrub2",
     "SystemRescue",
     "Ubuntu",
     "UltimateBootCD",

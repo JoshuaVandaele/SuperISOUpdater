@@ -129,8 +129,6 @@ The tool currently supports the following ISOs:
   - ✅ Rescuezilla
     - Editions: bionic, focal, jammy, noble
     - Architectures: 64bit, 32bit
-- **Boot Repair**
-  - Super Grub 2
 - **Disk Utilities**
   - ✅ Clonezilla
   - ✅ GParted Live
