@@ -29,15 +29,6 @@ name = "systemrescue-[[VER]]-[[ARCH]].iso"
 enabled = true
 name = "ubcd[[VER]].iso"
 
-[DiagnosticTools.Rescuezilla]
-enabled = true
-# Available editions:
-# "bionic", "focal", "jammy", "noble"
-editions = ["noble"]
-# The architecture is selected automatically
-# depending on the edition.
-name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]].iso"
-
 # Disk Utilities
 
 [DiskUtils]
@@ -58,6 +49,22 @@ enabled = true
 archs = ["amd64"]
 name = "gparted-live-[[VER]]-[[ARCH]].iso"
 
+[DiskUtils.HDAT2]
+enabled = true
+# Available editions:
+# "full", "lite", "diskette"
+editions = ["full"]
+name = "hdat2_[[EDITION]]_[[VER]].[[EXT]]"
+
+[DiagnosticTools.Rescuezilla]
+enabled = true
+# Available editions:
+# "bionic", "focal", "jammy", "noble"
+editions = ["noble"]
+# The architecture is selected automatically
+# depending on the edition.
+name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]].iso"
+
 [DiskUtils.ShredOS]
 enabled = true
 # Available editions:
@@ -67,13 +74,6 @@ editions = ["vanilla"]
 # "x86-64", "i586"
 archs = ["x86-64"]
 name = "shredos-[[VER]]_[[ARCH]]_[[EDITION]].iso"
-
-[DiskUtils.HDAT2]
-enabled = true
-# Available editions:
-# "full", "lite", "diskette"
-editions = ["full"]
-name = "hdat2_[[EDITION]]_[[VER]].[[EXT]]"
 
 # Operating Systems
 
@@ -109,16 +109,6 @@ enabled = true
 # "amd64", "arm64", "armhf", "ppc64el", "riscv64", "s390x"
 archs = ["amd64"]
 name = "debian-live-[[VER]]-[[ARCH]]-netinst.iso"
-
-[OperatingSystems.Linux.Ubuntu]
-enabled = true
-# Available editions:
-# "desktop", "live-server"
-editions = ["desktop"]
-# Available architectures:
-# "amd64"
-archs = ["amd64"]
-name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]].iso"
 
 [OperatingSystems.Linux.Fedora]
 enabled = true
@@ -213,6 +203,16 @@ enabled = true
 archs = ["amd64"]
 name = "tails-[[ARCH]]-[[VER]].img"
 
+[OperatingSystems.Linux.Ubuntu]
+enabled = true
+# Available editions:
+# "desktop", "live-server"
+editions = ["desktop"]
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]].iso"
+
 # Windows
 [OperatingSystems.Windows]
 enabled = true
@@ -239,12 +239,7 @@ name = "Win10_[[VER]]_[[LANG]]_x64.iso"
 enabled = true
 directory = "BSD"
 
-# Other
-[OperatingSystems.Other]
-enabled = true
-directory = "Other"
-
-[OperatingSystems.Other.OPNsense]
+[OperatingSystems.BSD.OPNsense]
 enabled = true
 # Available editions:
 # "dvd", "nano", "serial", "vga"

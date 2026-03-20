@@ -126,16 +126,16 @@ The tool currently supports the following ISOs:
     - Architectures: x86_64, i586
   - ✅ SystemRescue
   - ✅ UltimateBootCD
-  - ✅ Rescuezilla
-    - Editions: bionic, focal, jammy, noble
-    - Architectures: 64bit, 32bit
 - **Disk Utilities**
   - ✅ Clonezilla
   - ✅ GParted Live
-  - ✅ ShredOS
-    - Architectures: x86-64, i586
   - ✅ HDAT2
     - Editions: full, lite, diskette
+  - ✅ Rescuezilla
+    - Editions: bionic, focal, jammy, noble
+    - Architectures: 64bit, 32bit
+  - ✅ ShredOS
+    - Architectures: x86-64, i586
 - **Operating Systems**
   - **Linux**
     - ✅ Alpine Linux
@@ -144,8 +144,6 @@ The tool currently supports the following ISOs:
     - ✅ Arch Linux
     - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
-    - ✅ Ubuntu
-      - Editions: desktop, live-server
     - ✅ Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64
@@ -162,8 +160,6 @@ The tool currently supports the following ISOs:
       - Architectures: x86_64, aarch64, s390x, i686, ppc64le
     - 🔳 OpenSUSE Rolling
       - Editions: MicroOS-DVD, Tumbleweed-DVD, Tumbleweed-NET, Tumbleweed-GNOME-Live, Tumbleweed-KDE-Live, Tumbleweed-XFCE-Live, Tumbleweed-Rescue-CD
-    - 🔳 OPNsense
-      - Editions: dvd, nano, serial, vga
     - ✅ Proxmox
       - Editions: ve, mail-gateway, backup-server
     - 🔳 Rocky Linux
@@ -174,11 +170,15 @@ The tool currently supports the following ISOs:
       - Architectures: x86_64, aarch64
     - ✅ TrueNAS
     - ✅ Tails
+    - ✅ Ubuntu
+      - Editions: desktop, live-server
   - **Windows**
     - ✅ Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
     - ✅ Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
+    - 🔳 OPNsense
+      - Editions: dvd, nano, serial, vga
 
 ## Contributing
 
