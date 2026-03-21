@@ -8,7 +8,7 @@ class Tails(GenericHTTPMirror):
         super().__init__(
             uri="https://tails.net/install/download/index.en.html",
             file_regex=rf"tails-{arch}-(.+?).img",
-            version_regex=rf"tails-{arch}-([\d.]+)",
+            version_regex=rf"tails-{arch}-([\d.]+)\.",
         )
 
     def _determine_sums(self) -> list[Checksum]:
