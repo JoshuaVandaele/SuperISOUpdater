@@ -1,11 +1,11 @@
 from modules.DotDashVersion import DotDashVersion
-from modules.mirrors.GenericMirror import GenericMirror
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
 
 
-class Proxmox(GenericMirror):
+class Proxmox(GenericHTTPMirror):
     def __init__(self, edition: str) -> None:
         super().__init__(
-            url="https://enterprise.proxmox.com/iso/",
+            uri="https://enterprise.proxmox.com/iso/",
             file_regex=rf"proxmox-{edition}_(.+)\.iso",
             version_regex=rf"proxmox-{edition}_(.+)\.iso",
             version_class=DotDashVersion,

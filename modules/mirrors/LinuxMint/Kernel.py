@@ -3,30 +3,30 @@ import re
 import requests_cache
 from bs4 import BeautifulSoup
 
-from modules.mirrors.GenericMirror import GenericMirror
-from modules.utils import create_sig_check_file_from_url, pgp_receive_key
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
+from modules.utils import download_file_to_tmp, pgp_receive_key
 from modules.Version import Version
 
 
-class Kernel(GenericMirror):
+class Kernel(GenericHTTPMirror):
     KEY_ID = "27DEB15644C6B3CF3BD7D291300F846BA25BAE09"
     KEY_SERVER = "keys.openpgp.org"
 
     def __init__(self, edition: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
-        version = self._determine_version()
+        version = self._determine_latest_version()
         checksum_url: str = (
             f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/sha256sum.txt"
         )
 
         super().__init__(
-            url=f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/",
+            uri=f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/",
             file_regex=rf"linuxmint-{version}-{edition}-64bit.iso",
             version=version,
-            signature_file=create_sig_check_file_from_url(checksum_url),
+            signed_file=download_file_to_tmp(checksum_url),
         )
 
-    def _determine_version(self) -> Version:
+    def _determine_latest_version(self) -> Version:
         r = self.session.get(
             "https://mirrors.edge.kernel.org/linuxmint/stable/",
         )
@@ -44,8 +44,8 @@ class Kernel(GenericMirror):
                 latest_version = current_version
 
         if latest_version == Version("0"):
-            raise ValueError(f"No version found on the page '{self._url}'")
+            raise ValueError(f"No version found on the page '{self.uri}'")
         return latest_version
 
-    def _get_public_key(self) -> bytes | None:
+    def _determine_public_key(self) -> bytes | None:
         return pgp_receive_key(self.KEY_ID, self.KEY_SERVER)

@@ -1,16 +1,22 @@
 import re
 
-import requests_cache
-
+from modules.Checksum import Checksum, SumType
 from modules.GitHubVersion import GitHubVersion
-from modules.mirrors.GenericMirror import GenericMirror
-from modules.SumType import SumType
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
 from modules.utils import parse_hash
 from modules.Version import Version
 
 
-class GitHubMirror(GenericMirror):
+class GitHubMirror(GenericHTTPMirror):
     API_URL = "https://api.github.com"
+    _init_steps: list[str] = [
+        "_init_github",
+        "_init_version",
+        "_init_download_link",
+        "_init_checksums",
+        "_init_signature",
+        "_init_speed",
+    ]
 
     def __init__(
         self,
@@ -28,7 +34,7 @@ class GitHubMirror(GenericMirror):
             determine_version_using (GitHubVersion, optional): _description_. Defaults to GitHubVersion.TAG.
         """
         super().__init__(
-            url=f"{self.API_URL}/repos/{repository}/releases",
+            uri=f"{self.API_URL}/repos/{repository}/releases",
             file_regex=file_regex,
             version_regex=version_regex,
             version_padding=version_padding,
@@ -36,24 +42,12 @@ class GitHubMirror(GenericMirror):
         )
         self.determine_version_using = determine_version_using
 
-    def initialize(self) -> None:
-        github_data = self.session.get(self.url)
+    def _init_github(self) -> None:
+        github_data = self.session.get(self.uri)
         github_data.raise_for_status()
         self.github_info = github_data.json()
 
-        self.version: Version = (
-            self._determine_version(self._version_regex)
-            if self._version_regex
-            else self._version
-        )  # type: ignore
-
-        types, sums = self._determine_sums()
-        self.sum_types: list[SumType] = types
-        self.sums: list[str] = sums
-        self.download_link: str = self._get_download_link()
-        self.speed: float = self._determine_speed()
-
-    def _determine_version(self, version_regex: str) -> Version:
+    def _determine_latest_version(self) -> Version:
         latest_version = Version("0")
         self.current_release_json = {}
         for release in self.github_info:
@@ -65,23 +59,23 @@ class GitHubMirror(GenericMirror):
                     version_key = "tag_name"
                 else:
                     version_key = "name"
-                current_version = self._determine_version_from_search(
-                    version_regex, release[version_key]
+                current_version = self._determine_latest_version_from_search(
+                    self._version_regex, release[version_key]
                 )
                 if current_version and current_version > latest_version:
                     latest_version = current_version
                     self.current_release_json = release
             elif self.determine_version_using == GitHubVersion.FILE_NAME:
                 for asset in release["assets"]:
-                    current_version = self._determine_version_from_search(
-                        version_regex, asset["name"]
+                    current_version = self._determine_latest_version_from_search(
+                        self._version_regex, asset["name"]
                     )
                     if current_version and current_version > latest_version:
                         latest_version = current_version
                         self.current_release_json = release
         if latest_version == Version("0"):
             raise ValueError(
-                f"No version found on the page '{self._url}' using regex '{version_regex}'"
+                f"No version found on the page '{self.uri}' using regex '{self._version_regex}'"
             )
         return latest_version
 
@@ -92,69 +86,35 @@ class GitHubMirror(GenericMirror):
                 files.append(asset["browser_download_url"])
         return files
 
-    def _determine_sums(self) -> tuple[list[SumType], list[str]]:
-        def fetch_and_parse_sum() -> tuple[str, int]:
-            sum_file = self.session.get(url)
-            sum_file.raise_for_status()
-
-            sum_file_text = sum_file.text.strip()
-            if not re.search(self._file_regex, sum_file_text):
-                raise ValueError(
-                    f"File regex '{self._file_regex}' did not match in sum file text:\n'{sum_file_text}'"
-                )
-
-            sum_pos: int = 1 if re.search(rf"^{self._file_regex}", sum_file_text) else 0
-            return sum_file_text, sum_pos
-
-        sums: list[str] = []
-        sum_types: list[SumType] = []
+    # TODO: Can we get rid of this?
+    def _determine_sums(self) -> list[Checksum]:
+        sums: list[Checksum] = []
         errors: list[str] = []
-
         for asset in self.current_release_json.get("assets", []):
             url = asset["browser_download_url"]
-            found_for_url: bool = False
-            for sum_type, filenames in self.CHECKSUM_FILENAMES.items():
-                if found_for_url:
-                    break
-                for filename in filenames:
-                    if filename not in url:
-                        continue
-
-                    try:
-                        sum_file_text, sum_pos = fetch_and_parse_sum()
-                    except Exception as e:
-                        errors.append(
-                            f"Error fetching or parsing sum file from '{url}': {e}"
-                        )
-                        continue
-
-                    sums.append(parse_hash(sum_file_text, self._file_regex, sum_pos))
-                    sum_types.append(sum_type)
-                    found_for_url = True
-                    break
-            if found_for_url:
-                continue
             for sum_type in SumType:
-                if not re.search(rf"{sum_type.value}", url.lower()):
+                if not sum_type.matches(url):
                     continue
 
                 try:
-                    sum_file_text, sum_pos = fetch_and_parse_sum()
+                    sum_file_text, sum_pos = self._fetch_and_parse_sum(url)
                 except Exception as e:
                     errors.append(
                         f"Error fetching or parsing sum file from '{url}': {e}"
                     )
                     continue
 
-                sums.append(parse_hash(sum_file_text, self._file_regex, sum_pos))
-                sum_types.append(sum_type)
-                break
+                has_whitespace = re.search(r"\s", sum_file_text)
+                hash_value = (
+                    sum_file_text
+                    if not has_whitespace
+                    else parse_hash(sum_file_text, self._file_regex, sum_pos)
+                )
+                sums.append(Checksum.from_sum_type(sum_type, hash_value))
+        if sums:
+            return sums
 
-        if not sums or not sum_types:
-            raise ValueError(
-                f"No sums found on the page '{self._url}' using file regex '{self._file_regex}'."
-                + f" Errors: {', '.join(errors)}"
-                if errors
-                else "No sums found."
-            )
-        return sum_types, sums
+        raise ValueError(
+            f"Could not determine the sum type from the page at '{self.uri}'."
+            + (f" Errors: {', '.join(errors)}" if errors else "")
+        )

@@ -1,10 +1,10 @@
-from modules.mirrors.GenericMirror import GenericMirror
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
 
 
-class RNL(GenericMirror):
+class RNL(GenericHTTPMirror):
     def __init__(self) -> None:
         super().__init__(
-            url="https://ftp.rnl.tecnico.ulisboa.pt/pub/UBCD/",
+            uri="https://ftp.rnl.tecnico.ulisboa.pt/pub/UBCD/",
             file_regex=r"ubcd.+\.iso",
             version_regex=r"ubcd(\d+)\.iso",
             version_separator="",

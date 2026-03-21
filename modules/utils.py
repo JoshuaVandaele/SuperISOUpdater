@@ -16,8 +16,6 @@ import requests
 import requests_cache
 from tqdm import tqdm
 
-READ_CHUNK_SIZE = 524288
-
 
 def logging_critical_exception(msg, *args, **kwargs):
     """
@@ -77,138 +75,6 @@ def parse_config_from_dict(input_dict: dict):
     return new_dict
 
 
-def md5_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the MD5 hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (Path): The path to the file for which the hash is to be calculated.
-        hash (str): The MD5 hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated MD5 hash matches the provided hash; otherwise, False.
-    """
-    with open(file, "rb") as f:
-        file_hash = hashlib.md5()
-        while chunk := f.read(READ_CHUNK_SIZE):
-            file_hash.update(chunk)
-    result = hash.lower() == file_hash.hexdigest()
-
-    logging.debug(
-        f"[md5_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
-    )
-    return result
-
-
-def sha1_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the SHA-1 hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (Path): The path to the file for which the hash is to be calculated.
-        hash (str): The SHA-1 hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated SHA-1 hash matches the provided hash; otherwise, False.
-    """
-    with open(file, "rb") as f:
-        file_hash = hashlib.sha1()
-        while chunk := f.read(READ_CHUNK_SIZE):
-            file_hash.update(chunk)
-    result = hash.lower() == file_hash.hexdigest()
-
-    logging.debug(
-        f"[sha1_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
-    )
-    return result
-
-
-def sha256_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the SHA-256 hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (str): The path to the file for which the hash is to be calculated.
-        hash (str): The SHA-256 hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated SHA-256 hash matches the provided hash; otherwise, False.
-    """
-    with open(file, "rb") as f:
-        file_hash = hashlib.sha256()
-        while chunk := f.read(READ_CHUNK_SIZE):
-            file_hash.update(chunk)
-    result = hash.lower() == file_hash.hexdigest()
-
-    logging.debug(
-        f"[sha256_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
-    )
-    return result
-
-
-def sha512_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the SHA-512 hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (Path): The path to the file for which the hash is to be calculated.
-        hash (str): The SHA-512 hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated SHA-512 hash matches the provided hash; otherwise, False.
-    """
-    with open(file, "rb") as f:
-        file_hash = hashlib.sha512()
-        while chunk := f.read(READ_CHUNK_SIZE):
-            file_hash.update(chunk)
-    result = hash.lower() == file_hash.hexdigest()
-
-    logging.debug(
-        f"[sha512_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
-    )
-    return result
-
-
-def blake2b_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the blake2b hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (Path): The path to the file for which the hash is to be calculated.
-        hash (str): The blake2b hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated blake2b hash matches the provided hash; otherwise, False.
-    """
-    with open(file, "rb") as f:
-        file_hash = hashlib.blake2b()
-        while chunk := f.read(READ_CHUNK_SIZE):
-            file_hash.update(chunk)
-    result = hash.lower() == file_hash.hexdigest()
-
-    logging.debug(
-        f"[blake2b_hash_check] {file.resolve()}: `{hash.lower()}` is {'' if result else 'not'} equal to file hash `{file_hash.hexdigest()}`"
-    )
-    return result
-
-
-def blake3_hash_check(file: Path, hash: str) -> bool:
-    """
-    Calculate the blake3 hash of a given file and compare it with a provided hash value.
-
-    Args:
-        file (Path): The path to the file for which the hash is to be calculated.
-        hash (str): The blake3 hash value to compare against the calculated hash.
-
-    Returns:
-        bool: True if the calculated blake3 hash matches the provided hash; otherwise, False.
-    """
-    logging.warning(
-        f"[blake3_hash_check] Not yet implemented!\nFile: {file}\nHash: {hash}"
-    )
-    return True
-
-
 def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) -> bool:
     """Verifies the signature of a file against a public key
 
@@ -251,6 +117,42 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
         f"[pgp_check] {file_path.resolve()}: Signature is{' ' if result else ' not '}valid"
     )
 
+    return result
+
+
+def pgp_check_message(signed_message: str | bytes, public_key: str | bytes) -> bool:
+    """Verifies a PGP signed message
+    Args:
+        signed_message (str | bytes): The full cleartext signed message, including
+                                      the PGP headers, body, and signature block.
+        public_key (str | bytes): Public key to verify against.
+    Raises:
+        ValueError: If the supplied public key could not be imported.
+    Returns:
+        bool: Whether the signature is valid.
+    """
+    try:
+        gpg = gnupg.GPG()
+    except OSError:
+        logging.warning(
+            "GnuPG check skipped because GnuPG is not installed. "
+            "Consider installing it: https://www.gnupg.org/download/#binary"
+        )
+        return True
+
+    if isinstance(public_key, str):
+        public_key = public_key.encode()
+    if isinstance(signed_message, str):
+        signed_message = signed_message.encode()
+
+    import_result = gpg.import_keys(public_key)
+    if not import_result.count:
+        raise ValueError("Public key could not be imported.")
+
+    verify_result = gpg.verify(signed_message)
+    result = verify_result.valid
+
+    logging.debug(f"[pgp_check_message] Signature is{' ' if result else ' not '}valid")
     return result
 
 
@@ -381,7 +283,7 @@ def extract_matching_file(zip_path: Path, pattern: str) -> Generator[Path, None,
                 return
 
 
-def create_sig_check_file_from_url(url) -> Path:
+def download_file_to_tmp(url) -> Path:
     session = requests_cache.CachedSession(backend="memory")
     r = session.get(url)
     r.raise_for_status()

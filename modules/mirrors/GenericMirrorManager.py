@@ -72,11 +72,11 @@ class GenericMirrorManager(ABC):
             except Exception as e:
                 self._mirrors.remove(mirror)
                 failed_mirrors.append((mirror, e))
-                logging.debug(f"Error with mirror {mirror._url}: {e}")
+                logging.debug(f"Error with mirror {mirror.uri}: {e}")
 
         if not self._mirrors:
             err_details = [
-                f"{m._url}: {''.join(traceback.format_exception(type(e), e, e.__traceback__))}"
+                f"{m.uri}: {''.join(traceback.format_exception(type(e), e, e.__traceback__))}"
                 for m, e in failed_mirrors
             ]
             raise NoMirrorsError(
@@ -103,6 +103,5 @@ class GenericMirrorManager(ABC):
     def attempt_download(self, local_file: Path) -> None:
         self.try_for_all_mirrors(
             lambda m: m.download_and_verify(local_file),
-            check_bool_output=True,
             stop_after_success=True,
         )

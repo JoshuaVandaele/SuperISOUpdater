@@ -3,30 +3,30 @@ import re
 import requests_cache
 from bs4 import BeautifulSoup
 
-from modules.mirrors.GenericMirror import GenericMirror
-from modules.utils import create_sig_check_file_from_url, pgp_receive_key
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
+from modules.utils import download_file_to_tmp, pgp_receive_key
 from modules.Version import Version
 
 
-class OVH(GenericMirror):
+class OVH(GenericHTTPMirror):
     KEY_ID = "843938DF228D22F7B3742BC0D94AA3F0EFE21092"
     KEY_SERVER = "keyserver.ubuntu.com"
 
     def __init__(self, arch: str, edition: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
-        version = self._determine_version()
+        version = self._determine_latest_version()
         checksum_url: str = (
             f"https://ubuntu.mirrors.ovh.net/releases/{version}/SHA256SUMS"
         )
 
         super().__init__(
-            url=f"https://ubuntu.mirrors.ovh.net/releases/{version}/",
+            uri=f"https://ubuntu.mirrors.ovh.net/releases/{version}/",
             file_regex=rf"ubuntu-{version}-{edition}-{arch}.iso",
             version=version,
-            signature_file=create_sig_check_file_from_url(checksum_url),
+            signed_file=download_file_to_tmp(checksum_url),
         )
 
-    def _determine_version(self) -> Version:
+    def _determine_latest_version(self) -> Version:
         r = self.session.get(
             "https://ubuntu.mirrors.ovh.net/releases/",
         )
@@ -44,8 +44,8 @@ class OVH(GenericMirror):
                 latest_version = current_version
 
         if latest_version == Version("0"):
-            raise ValueError(f"No version found on the page '{self._url}'")
+            raise ValueError(f"No version found on the page '{self.uri}'")
         return latest_version
 
-    def _get_public_key(self) -> bytes | None:
+    def _determine_public_key(self) -> bytes | None:
         return pgp_receive_key(self.KEY_ID, self.KEY_SERVER)

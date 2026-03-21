@@ -4,6 +4,6 @@ from modules.mirrors.ShredOS.GitHub import GitHub
 
 
 class ShredOSMirrorManager(GenericMirrorManager):
-    def __init__(self, edition: str, arch: str) -> None:
-        mirrors: list[GenericMirror] = [GitHub(edition, arch)]
+    def __init__(self, arch: str) -> None:
+        mirrors: list[GenericMirror] = [GitHub(arch)]
         super().__init__(mirrors)

@@ -2,13 +2,13 @@ import re
 
 import requests_cache
 
-from modules.mirrors.GenericMirror import GenericMirror
-from modules.SumType import SumType
-from modules.utils import parse_hash
+from modules.Checksum import Checksum, SumType
+from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
+from modules.utils import pgp_check_message
 from modules.Version import Version
 
 
-class Fedora(GenericMirror):
+class Fedora(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str, spin: bool) -> None:
         self.spin = spin
         self.session = requests_cache.CachedSession(backend="memory")
@@ -17,13 +17,16 @@ class Fedora(GenericMirror):
             url = f"https://download.fedoraproject.org/pub/fedora/linux/releases/{version}/Spins/{arch}/iso/"
         else:
             url = f"https://download.fedoraproject.org/pub/fedora/linux/releases/{version}/{edition}/{arch}/iso/"
+        added_regex: str = ""
+        # TODO: This should be user-configurable in a clean way...
+        # Maybe Server/netinst and Server/dvd?
+        if edition == "Server":
+            added_regex = r"netinst"
         super().__init__(
-            url=url,
-            file_regex=rf"Fedora-{edition}.+{arch}.+iso",
+            uri=url,
+            file_regex=rf"Fedora-{edition}(.+)?{added_regex}(.+)?{arch}(.+)?\.iso",
             version=version,
             version_separator="",
-            # TODO: The CHECKSUM file is signed and should be verified
-            has_signature=False,
         )
 
     def determine_version(self) -> Version:
@@ -40,29 +43,39 @@ class Fedora(GenericMirror):
 
         return Version(f"{latest_version}", "")
 
-    def _determine_sums(self):
-        if self.spin:
-            return [], []
-        checksum_urls = [url for url in self._urls() if re.search(r".+CHECKSUM", url)]
+    def __get_checksum_file(self):
+        checksum_urls = [url for url in self._urls() if "CHECKSUM" in url]
         if len(checksum_urls) != 1:
             raise ValueError(f"Found {len(checksum_urls)} checksum files, expected 1.")
 
         sum_file = self.session.get(checksum_urls[0], headers=self.headers)
         sum_file.raise_for_status()
+        return sum_file
 
+    def _determine_sums(self) -> list[Checksum]:
+        sums: list[Checksum] = []
+        if self.spin:
+            return sums
+        sum_file = self.__get_checksum_file()
         sum_file_text = sum_file.text.strip()
-
-        hash_sum_type: SumType | None = None
-        for sum_type in SumType:
-            if not re.search(rf"Hash: {sum_type.value}".lower(), sum_file_text.lower()):
+        for line in sum_file_text.splitlines():
+            if not re.search(self._file_regex, line):
                 continue
-            if hash_sum_type:
-                raise ValueError(
-                    f"Found two hash types: {hash_sum_type} and {sum_type.value}. Can only have one."
-                )
-            hash_sum_type = sum_type
-        if not hash_sum_type:
-            raise ValueError("Could not find the type of hash used.")
+            for sum_type in SumType:
+                if not sum_type.matches(line):
+                    continue
+                sums.append(Checksum.from_sum_type(sum_type, line.split()[-1]))
+                break
+        return sums
 
-        hash = parse_hash(sum_file_text, rf"\({self._file_regex}\)", -1)
-        return [hash_sum_type], [hash]
+    def _determine_public_key(self) -> bytes:
+        # https://fedoraproject.org/security/
+        r = self.session.get("https://fedoraproject.org/fedora.gpg")
+        r.raise_for_status()
+        return r.content
+
+    def _determine_signature(self) -> bytes:
+        return self.__get_checksum_file().content
+
+    def signature_check(self, _) -> bool:
+        return pgp_check_message(self.signature, self.public_key)
