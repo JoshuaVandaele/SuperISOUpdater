@@ -100,6 +100,22 @@ enabled = true
 archs = ["x86_64"]
 name = "archlinux-[[VER]]-[[ARCH]].iso"
 
+[OperatingSystems.Linux.ArtixLinux]
+enabled = true
+# Available editions:
+# "base-dinit", "base-openrc", "base-runit", "base-s6",
+# "cinnamon-dinit", "cinnamon-openrc", "cinnamon-runit", "cinnamon-s6",
+# "lxde-dinit", "lxde-openrc", "lxde-runit", "lxde-s6",
+# "lxqt-dinit", "lxqt-openrc", "lxqt-runit", "lxqt-s6",
+# "mate-dinit", "mate-openrc", "mate-runit", "mate-s6",
+# "plasma-dinit", "plasma-openrc", "plasma-runit", "plasma-s6",
+# "xfce-dinit", "xfce-openrc", "xfce-runit", "xfce-s6"
+editions = ["base-openrc"]
+# Available architectures:
+# "x86_64"
+archs = ["x86_64"]
+name = "artix-[[EDITION]]-[[VER]]-[[ARCH]].iso"
+
 [OperatingSystems.Linux.Debian]
 enabled = true
 # Available architectures:

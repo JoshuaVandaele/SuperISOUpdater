@@ -142,6 +142,8 @@ The tool currently supports the following ISOs:
       - Editions: standard
       - Architectures: aarch64, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
     - ✅ Arch Linux
+    - ✅ Artix Linux
+      - Editions: {base,cinnamon,lxde,lxqt,mate,plasma,xfce}-{dinit,openrc,runit,s6}
     - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
     - ✅ Fedora
