@@ -1,6 +1,7 @@
 from .AlpineLinux import AlpineLinux
 from .ArchLinux import ArchLinux
 from .ArtixLinux import ArtixLinux
+from .CachyOS import CachyOS
 from .Clonezilla import Clonezilla
 from .Debian import Debian
 from .Fedora import Fedora
@@ -31,6 +32,7 @@ __all__ = [
     "AlpineLinux",
     "ArchLinux",
     "ArtixLinux",
+    "CachyOS",
     "Debian",
     "Clonezilla",
     "Fedora",

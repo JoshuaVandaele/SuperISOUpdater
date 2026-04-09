@@ -116,6 +116,13 @@ editions = ["base-openrc"]
 archs = ["x86_64"]
 name = "artix-[[EDITION]]-[[VER]]-[[ARCH]].iso"
 
+[OperatingSystems.Linux.CachyOS]
+enabled = true
+# Available editions:
+# "desktop", "handheld"
+editions = ["desktop"]
+name = "cachyos-[[EDITION]]-linux-[[VER]].iso"
+
 [OperatingSystems.Linux.Debian]
 enabled = true
 # Available architectures:

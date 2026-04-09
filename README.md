@@ -144,6 +144,8 @@ The tool currently supports the following ISOs:
     - ✅ Arch Linux
     - ✅ Artix Linux
       - Editions: {base,cinnamon,lxde,lxqt,mate,plasma,xfce}-{dinit,openrc,runit,s6}
+    - ✅ CachyOS
+      - Editions: desktop, handheld
     - ✅ Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
     - ✅ Fedora
