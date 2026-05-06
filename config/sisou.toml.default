@@ -250,13 +250,6 @@ langs = ["English International"]
 archs = ["x64"]
 name = "Win11_[[VER]]_[[LANG]]_[[ARCH]]"
 
-[OperatingSystems.Windows.Windows10]
-enabled = true
-# Available languages:
-# "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
-langs = ["English International"]
-name = "Win10_[[VER]]_[[LANG]]_x64"
-
 [OperatingSystems.BSD]
 enabled = true
 directory = "BSD"

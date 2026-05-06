@@ -178,7 +178,6 @@ The tool currently supports the following ISOs:
   - **Windows**
     - ✅ Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
-    - ✅ Windows 10 (Multi-edition ISO, Any language)
   - **BSD**
     - 🔳 OPNsense
       - Editions: dvd, nano, serial, vga

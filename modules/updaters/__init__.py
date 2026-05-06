@@ -25,7 +25,6 @@ from .Tails import Tails
 from .TrueNAS import TrueNAS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
-from .Windows10 import Windows10
 from .Windows11 import Windows11
 
 __all__ = [
@@ -55,6 +54,5 @@ __all__ = [
     "Ubuntu",
     "UltimateBootCD",
     "TrueNAS",
-    "Windows10",
     "Windows11",
 ]

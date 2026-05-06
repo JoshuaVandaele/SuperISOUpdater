@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. ...
 
@@ -22,8 +22,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Information (please complete the following information):**
- - Installer [e.g. Ubuntu, Windows10]
- - Python version [e.g. 3.11.4]
+
+- Installer [e.g. Ubuntu, Artix Linux]
+- Python version [e.g. 3.11.4]
 - Traceback if applicable
 
 **Additional context**
