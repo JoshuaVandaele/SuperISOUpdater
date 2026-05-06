@@ -1,8 +1,13 @@
-from pathlib import Path
-
+from modules.ISOPath import ISOPath
 from modules.updaters.GenericUpdater import GenericUpdater
 
 
 class OpenSUSE(GenericUpdater):
-    def __init__(self, folder_path: Path, file_name: str, edition: str) -> None:
+    def __init__(
+        self,
+        iso_path: ISOPath,
+        arch: str | None = None,
+        edition: str | None = None,
+        lang: str | None = None,
+    ) -> None:
         raise NotImplementedError()

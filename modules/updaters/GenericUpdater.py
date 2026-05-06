@@ -1,9 +1,11 @@
 import glob
 import logging
+import os
 import re
 from abc import ABC
 from pathlib import Path
 
+from modules.ISOPath import ISOPath
 from modules.exceptions import NoMirrorsError
 from modules.mirrors.GenericMirrorManager import GenericMirrorManager
 from modules.Version import Version
@@ -15,70 +17,96 @@ class GenericUpdater(ABC):
     """
 
     def __init__(
-        self, file_path: Path, mirror_mgr: GenericMirrorManager, *args, **kwargs
+        self,
+        iso_path: ISOPath,
+        mirror_mgr: GenericMirrorManager,
+        arch: str | None = None,
+        edition: str | None = None,
+        lang: str | None = None,
+        extension: str = "iso",
+        valid_archs: list[str] | None = None,
+        valid_editions: list[str] | None = None,
+        valid_langs: list[str] | None = None,
+        *args,
+        **kwargs,
     ) -> None:
         """
         Initialize the GenericUpdater instance.
 
         Args:
-            file_path (Path): The path to the file that needs to be updated.
-            edition (str, optional): Edition of image to download. Requires `self.valid_edition: list[str]`.
-            lang (str, optional): Language of image to download. Requires `self.valid_lang: list[str]`.
+            iso_path (ISOPath): The path to the ISO file that needs to be updated.
+            mirror_mgr (GenericMirrorManager): The mirror manager. This should be provided by the child class.
+            arch (str | None): The architecture for which the ISO is intended. Only useful if `valid_archs` is defined.
+            edition (str | None): The edition of the software. Only useful if `valid_editions` is defined.
+            lang (str | None): The language of the software. Only useful if `valid_langs` is defined.
+            extension (str): The file extension to use. Defaults to 'iso'.
+            valid_archs (list[str] | None): A list of valid architectures.
+            valid_editions (list[str] | None): A list of valid editions.
+            valid_langs (list[str] | None): A list of valid languages.
         """
-        self.file_path = file_path.resolve()
-        self.folder_path = self.file_path.parent
+
+        self.iso_path = iso_path
         self.mirror_mgr = mirror_mgr
         self.version_separator = mirror_mgr.current_mirror.version_separator
+        self.extension = extension
 
-        if self.has_edition():
-            if not "[[EDITION]]" in str(self.file_path):
+        if edition:
+            if not valid_editions:
+                raise ValueError("The child class needs to define valid editions.")
+            if not self.iso_path.has_edition():
                 raise ValueError("Invalid name. The name needs a [[EDITION]] tag.")
-            if self.edition.lower() not in (  # type: ignore
-                valid_edition.lower() for valid_edition in self.valid_editions  # type: ignore
+
+            if edition.lower() not in (
+                valid_edition.lower() for valid_edition in valid_editions
             ):
                 raise ValueError(
-                    f"Invalid edition. The available editions are: {', '.join(self.valid_editions)}."  # type: ignore
+                    f"Invalid edition. The available editions are: {', '.join(valid_editions)}."
                 )
             self.edition = next(
                 valid_edition
-                for valid_edition in self.valid_editions  # type: ignore
-                if valid_edition.lower() == self.edition.lower()
+                for valid_edition in valid_editions
+                if valid_edition.lower() == edition.lower()
             )
+        else:
+            self.edition = None
 
-        if self.has_lang():
-            if not "[[LANG]]" in str(self.file_path):
+        if lang:
+            if not self.iso_path.has_lang():
                 raise ValueError("Invalid name. The name needs a [[LANG]] tag.")
-            if self.lang.lower() not in (  # type: ignore
-                valid_lang.lower() for valid_lang in self.valid_langs  # type: ignore
-            ):
+            if not valid_langs:
+                raise ValueError("The child class needs to define valid languages.")
+
+            if lang.lower() not in (valid_lang.lower() for valid_lang in valid_langs):
                 raise ValueError(
-                    f"Invalid language. The available languages are: {', '.join(self.valid_langs)}."  # type: ignore
+                    f"Invalid language. The available languages are: {', '.join(valid_langs)}."
                 )
             self.lang = next(
                 valid_lang
-                for valid_lang in self.valid_langs  # type: ignore
-                if valid_lang.lower() == self.lang.lower()
+                for valid_lang in valid_langs
+                if valid_lang.lower() == lang.lower()
             )
+        else:
+            self.lang = None
 
-        if self.has_arch():
-            if not "[[ARCH]]" in str(self.file_path):
+        if arch:
+            if not self.iso_path.has_arch():
                 raise ValueError("Invalid name. The name needs a [[ARCH]] tag.")
-            if self.arch.lower() not in (  # type: ignore
-                valid_arch.lower() for valid_arch in self.valid_archs  # type: ignore
-            ):
+            if not valid_archs:
+                raise ValueError("The child class needs to define valid architectures.")
+
+            if arch.lower() not in (valid_arch.lower() for valid_arch in valid_archs):
                 raise ValueError(
-                    f"Invalid architecture. The available architectures are: {', '.join(self.valid_archs)}."  # type: ignore
+                    f"Invalid architecture. The available architectures are: {', '.join(valid_archs)}."
                 )
             self.arch = next(
                 valid_arch
-                for valid_arch in self.valid_archs  # type: ignore
-                if valid_arch.lower() == self.arch.lower()
+                for valid_arch in valid_archs
+                if valid_arch.lower() == arch.lower()
             )
+        else:
+            self.arch = None
 
-        if not self.has_version():
-            raise ValueError("Invalid name. The name needs a [[VER]] tag.")
-
-        self.folder_path.mkdir(parents=True, exist_ok=True)
+        os.makedirs(self.iso_path.dirname(), exist_ok=True)
 
     def check_for_updates(self) -> bool:
         """
@@ -108,7 +136,15 @@ class GenericUpdater(ABC):
             IntegrityCheckError: If the integrity check of the downloaded file fails.
         """
         old_file = self._get_local_file()
-        new_file = self._get_complete_normalized_file_path(absolute=True)
+        new_file = Path(
+            self.iso_path.fill_placeholders(
+                version=str(self._get_latest_version()),
+                edition=self.edition,
+                lang=self.lang,
+                arch=self.arch,
+                extension=self.extension,
+            )
+        )
 
         try:
             self.mirror_mgr.attempt_download(new_file)
@@ -123,51 +159,6 @@ class GenericUpdater(ABC):
             )
             old_file.unlink()
 
-    def has_version(self) -> bool:
-        """
-        Check if the updater supports different versions.
-
-        Returns:
-            bool: True if different versions are supported, False otherwise.
-        """
-        return "[[VER]]" in str(self.file_path)
-
-    def has_edition(self) -> bool:
-        """
-        Check if the updater supports different editions.
-
-        Returns:
-            bool: True if different editions are supported, False otherwise.
-        """
-        if hasattr(self, "edition"):
-            assert hasattr(self, "valid_editions")
-            return True
-        return False
-
-    def has_lang(self) -> bool:
-        """
-        Check if the updater supports different languages.
-
-        Returns:
-            bool: True if different languages are supported, False otherwise.
-        """
-        if hasattr(self, "lang"):
-            assert hasattr(self, "valid_langs")
-            return True
-        return False
-
-    def has_arch(self) -> bool:
-        """
-        Check if the updater supports different architectures.
-
-        Returns:
-            bool: True if different architectures are supported, False otherwise.
-        """
-        if hasattr(self, "arch"):
-            assert hasattr(self, "valid_archs")
-            return True
-        return False
-
     def _get_local_file(self) -> Path | None:
         """
         Get the path of the locally stored file that matches the filename pattern.
@@ -175,15 +166,15 @@ class GenericUpdater(ABC):
         Returns:
             str | None: The path of the locally stored file if found, None if no file exists.
         """
-        file_path = self._get_normalized_file_path(
-            absolute=True,
-            version=None,
-            edition=self.edition if self.has_edition() else None,  # type: ignore
-            lang=self.lang if self.has_lang() else None,  # type: ignore
-            arch=self.arch if self.has_arch() else None,  # type: ignore
+        file_path = self.iso_path.fill_placeholders(
+            version="*",  # Use wildcard to match any version in the local file name
+            edition=self.edition,
+            lang=self.lang,
+            arch=self.arch,
+            extension=self.extension,
         )
 
-        local_files = glob.glob(str(file_path).replace("[[VER]]", "*"))
+        local_files = glob.glob(file_path)
 
         if local_files:
             return Path(local_files[0])
@@ -204,26 +195,19 @@ class GenericUpdater(ABC):
 
         local_file = self._get_local_file()
 
-        if not local_file or not self.has_version():
+        if not local_file:
             logging.debug(
                 f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
             )
             return None
 
         local_file_without_ext = local_file.with_suffix("")
-        normalized_path_without_ext = Path(
-            self._get_normalized_file_path(
-                absolute=True,
-                version=None,
-                edition=self.edition if self.has_edition() else None,  # type: ignore
-                lang=self.lang if self.has_lang() else None,  # type: ignore
-                arch=self.arch if self.has_arch() else None,  # type: ignore
-            )
-        ).with_suffix("")
+        normalized_path_without_ver = self.iso_path.basename().fill_placeholders(
+            version=None, edition=self.edition, lang=self.lang, arch=self.arch
+        )
 
         version_regex: str = r"(.+)".join(
-            re.escape(part)
-            for part in str(normalized_path_without_ext).split("[[VER]]")
+            re.escape(part) for part in normalized_path_without_ver.split("[[VER]]")
         )
         local_version_regex = re.search(version_regex, str(local_file_without_ext))
 
@@ -242,79 +226,3 @@ class GenericUpdater(ABC):
 
     def _get_latest_version(self) -> Version:
         return self.mirror_mgr.current_mirror.version
-
-    def _get_normalized_file_path(
-        self,
-        absolute: bool,
-        version: Version | None,
-        edition: str | None = None,
-        lang: str | None = None,
-        arch: str | None = None,
-    ) -> Path:
-        """
-        Get the normalized file path with customizable version, edition, and language.
-
-        Args:
-            absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
-            version (Version): The version as a list of version components.
-            edition (str, optional): The edition of the file. If provided, it replaces '[[EDITION]]' in the file name.
-                                    Defaults to None.
-            lang (str, optional): The language of the file. If provided, it replaces '[[LANG]]' in the file name.
-                                    Defaults to None.
-            arch (str, optional): The architecture of the file. If provided, it replaces '[[ARCH]]' in the file name.
-                                    Defaults to None.
-
-        Returns:
-            Path: The normalized file path.
-
-        Note:
-            This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name
-            with the specified version, edition, and language respectively. It also removes all spaces from the file name.
-        """
-        file_name: str = self.file_path.name
-
-        # Replace placeholders with the specified version, edition, and language
-        if version is not None and "[[VER]]" in file_name:
-            file_name = file_name.replace("[[VER]]", str(version))
-
-        if edition is not None and "[[EDITION]]" in file_name:
-            file_name = file_name.replace("[[EDITION]]", edition)
-
-        if lang is not None and "[[LANG]]" in file_name:
-            file_name = file_name.replace("[[LANG]]", lang)
-
-        if arch is not None and "[[ARCH]]" in file_name:
-            file_name = file_name.replace("[[ARCH]]", arch)
-
-        # Remove all spaces from the file name
-        file_name = "".join(file_name.split())
-
-        # Return the absolute or relative file path based on the 'absolute' parameter
-        return self.folder_path / file_name if absolute else Path(file_name)
-
-    def _get_complete_normalized_file_path(
-        self, absolute: bool, latest: bool = True
-    ) -> Path:
-        """
-        Get the complete normalized file path with customizable version, edition, and language.
-
-        Args:
-            absolute (bool): If True, return the absolute file path. Otherwise, return the relative file path.
-            latest (bool, optional): If True, use the latest version, edition, and language to construct the file path.
-                                    If False, use the local version, edition, and language.
-                                    Defaults to True.
-
-        Returns:
-            Path: The normalized file path.
-
-        Note:
-            This method replaces placeholders such as '[[VER]]', '[[EDITION]]', and '[[LANG]]' in the file name
-            with the specified version, edition, and language respectively. It also removes all spaces from the file name.
-        """
-        return self._get_normalized_file_path(
-            absolute=absolute,
-            version=self._get_latest_version() if latest else self._get_local_version(),
-            edition=self.edition if self.has_edition() else None,  # type: ignore
-            lang=self.lang if self.has_lang() else None,  # type: ignore
-            arch=self.arch if self.has_arch() else None,  # type: ignore
-        )

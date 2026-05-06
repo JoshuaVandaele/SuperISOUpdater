@@ -29,52 +29,6 @@ def logging_critical_exception(msg, *args, **kwargs):
     logging.critical(f"{msg}\n{traceback.format_exc()}", *args, **kwargs)
 
 
-def parse_config(toml_file: Path) -> dict | None:
-    """Parse a TOML configuration file and return a dictionary representation.
-
-    Args:
-        toml_file (Path): The path to the TOML configuration file.
-
-    Returns:
-        dict | None: The parsed configuration as a dictionary, or None if there was an error during parsing.
-    """
-    with open(toml_file, "rb") as f:
-        toml_dict = tomllib.load(f)
-    return parse_config_from_dict(toml_dict)
-
-
-def parse_config_from_dict(input_dict: dict):
-    """Recursively parse the nested config dictionary and return a new dictionary where the keys are the directory, unless they are a module's name.
-
-    Args:
-        input_dict (dict): The input dictionary to be parsed.
-
-    Returns:
-        dict: The parsed dictionary with modified keys.
-    """
-    new_dict = {}
-    for key, value in input_dict.items():
-        if isinstance(value, dict):
-            if "enabled" in value and not value["enabled"]:
-                logging.debug(f"Skipping disabled module {key}")
-                del value
-                continue
-            if "directory" in value:
-                logging.debug(f"Found directory {value['directory']}")
-                new_key = value["directory"]
-                del value["directory"]
-            else:
-                logging.debug(f"Found module {key}")
-                new_key = key
-            new_dict[new_key] = parse_config_from_dict(value)
-        elif key == "enabled":
-            continue
-        else:
-            logging.debug(f"Found key {key}")
-            new_dict[key] = value
-    return new_dict
-
-
 def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) -> bool:
     """Verifies the signature of a file against a public key
 
@@ -177,7 +131,7 @@ def pgp_receive_key(key_id: str, keyserver: str) -> bytes | None:
     if import_result.count > 0:
         key_ascii = gpg.export_keys(key_id)
         if key_ascii:
-            logging.info(f"[pgp_receive_key_bytes] Successfully imported key {key_id}")
+            logging.info(f"[pgp_receive_key] Successfully imported key {key_id}")
             return key_ascii.encode("utf-8")
 
     logging.warning(f"[pgp_receive_key] Key {key_id} could not be found or imported")

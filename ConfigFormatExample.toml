@@ -1,0 +1,21 @@
+# All keys are required unless specified otherwise.
+directory = "." # The base directory where all ISOs will be stored.
+# By default, the path is relative to the configuration file, but it can also be an absolute path. If the directory doesn't exist, it will be created.
+
+[CategoryName]
+enabled = true # If you disable a category, all updaters in it will be disabled as well. You can also disable ISOs individually.
+directory = "Relative/Path" # Where each ISO of this category will be stored.
+
+[CategoryName.UpdaterName]
+enabled = true # If you disable an updater, all ISOs using it will be disabled as well.
+name = "ISOName-[[VER]]" # The name of the ISO file. Certain substrings are required and will be replaced with the appropriate values:
+# [[VER]]: The version of the ISO, e.g. "1.0"
+# [[ARCH]]: The architecture of the ISO, e.g. "x64"
+# [[LANG]]: The language of the ISO, e.g. "fr-FR"
+# [[EDITION]]: The edition of the ISO, e.g. "livecd"
+editions = ["Edition1", "Edition2"] # List of editions to update if supported.
+archs = ["x64", "x86"] # List of architectures to update.
+langs = ["en-US", "fr-FR"] # List of languages to update.
+# The editions, architectures and languages specified here are required only if the updater supports specifying them. If the updater doesn't support them, they will be ignored and can be left unspecified.
+
+# See `config/sisou.toml.default` for an example of the full configuration file with all available updaters and options.

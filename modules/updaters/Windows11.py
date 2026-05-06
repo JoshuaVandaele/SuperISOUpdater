@@ -1,5 +1,4 @@
-from pathlib import Path
-
+from modules.ISOPath import ISOPath
 from modules.mirrors.Windows11.Windows11MirrorManager import Windows11MirrorManager
 from modules.updaters.GenericUpdater import GenericUpdater
 
@@ -16,49 +15,59 @@ class Windows11(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: Path, lang: str, file_name: str, arch: str) -> None:
-        self.valid_langs = [
-            "Arabic",
-            "Brazilian Portuguese",
-            "Bulgarian",
-            "Chinese",
-            "Chinese",
-            "Croatian",
-            "Czech",
-            "Danish",
-            "Dutch",
-            "English",
-            "English International",
-            "Estonian",
-            "Finnish",
-            "French",
-            "French Canadian",
-            "German",
-            "Greek",
-            "Hebrew",
-            "Hungarian",
-            "Italian",
-            "Japanese",
-            "Korean",
-            "Latvian",
-            "Lithuanian",
-            "Norwegian",
-            "Polish",
-            "Portuguese",
-            "Romanian",
-            "Russian",
-            "Serbian Latin",
-            "Slovak",
-            "Slovenian",
-            "Spanish",
-            "Spanish (Mexico)",
-            "Swedish",
-            "Thai",
-            "Turkish",
-            "Ukrainian",
-        ]
-        self.lang = lang
-        self.valid_archs = ["x64", "Arm64"]
-        self.arch = arch
+    def __init__(
+        self,
+        iso_path: ISOPath,
+        arch: str,
+        lang: str,
+        edition: str | None = None,
+    ) -> None:
         mirror_mgr = Windows11MirrorManager(lang, arch)
-        super().__init__(folder_path / file_name, mirror_mgr)
+        super().__init__(
+            iso_path=iso_path,
+            mirror_mgr=mirror_mgr,
+            arch=arch,
+            edition=edition,
+            lang=lang,
+            valid_archs=["x64", "Arm64"],
+            valid_langs=[
+                "Arabic",
+                "Brazilian Portuguese",
+                "Bulgarian",
+                "Chinese",
+                "Chinese",
+                "Croatian",
+                "Czech",
+                "Danish",
+                "Dutch",
+                "English",
+                "English International",
+                "Estonian",
+                "Finnish",
+                "French",
+                "French Canadian",
+                "German",
+                "Greek",
+                "Hebrew",
+                "Hungarian",
+                "Italian",
+                "Japanese",
+                "Korean",
+                "Latvian",
+                "Lithuanian",
+                "Norwegian",
+                "Polish",
+                "Portuguese",
+                "Romanian",
+                "Russian",
+                "Serbian Latin",
+                "Slovak",
+                "Slovenian",
+                "Spanish",
+                "Spanish (Mexico)",
+                "Swedish",
+                "Thai",
+                "Turkish",
+                "Ukrainian",
+            ],
+        )

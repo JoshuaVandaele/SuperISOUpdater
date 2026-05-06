@@ -3,12 +3,14 @@ import logging
 from abc import ABCMeta
 from functools import cache
 from itertools import product
+import os
 from pathlib import Path
+import shutil
 from typing import Type
 
+from modules.SISOUConfig import SISOUConfig
 import modules.updaters
 from modules.updaters import GenericUpdater
-from modules.utils import parse_config
 
 
 @cache
@@ -54,7 +56,7 @@ def run_updater(updater: GenericUpdater):
     Args:
         updater (GenericUpdater): The updater instance to run.
     """
-    installer_for = f"{updater.__class__.__name__}{' '+updater.edition if updater.has_edition() else ''}{' '+updater.lang if updater.has_lang() else ''}{' '+updater.arch if updater.has_arch() else ''}"  # type: ignore
+    installer_for = f"{updater.__class__.__name__}{' '+updater.edition if updater.edition else ''}{' '+updater.lang if updater.lang else ''}{' '+updater.arch if updater.arch else ''}"
 
     logging.info(f"[{installer_for}] Checking for updates...")
 
@@ -67,84 +69,42 @@ def run_updater(updater: GenericUpdater):
             logging.info(f"[{installer_for}] Update completed successfully!")
         else:
             logging.info(f"[{installer_for}] No updates available.")
-    except:
+    except Exception:
         logging.exception(
             f"[{installer_for}] An error occurred while updating. See traceback below."
         )
 
 
-def run_updaters(
-    install_path: Path,
-    config: dict,
-    updater_list: list[Type[GenericUpdater]],
-    default_config: dict,
-):
-    """Run updaters based on the provided configuration.
+def create_and_run_updaters(config: SISOUConfig) -> None:
+    for iso_config in config:
+        edition = iso_config.editions or [None]
+        lang = iso_config.langs or [None]
+        arch = iso_config.archs or [None]
 
-    Args:
-        install_path (Path): The installation path.
-        config (dict): The configuration dictionary.
-        updater_list (list[Type[GenericUpdater]]): A list of available updater classes.
-        default_config (dict): The default configuration dictionary.
-    """
-    for key, value in config.items():
-        # If the key's name is the name of an updater, run said updater using the values as argument, otherwise assume it's a folder's name
-        if key in [updater.__name__ for updater in updater_list]:
-            updater_class = next(
-                updater for updater in updater_list if updater.__name__ == key
-            )
-
-            updaters: list[GenericUpdater] = []
-
-            params: list[dict] = [{}]
-
-            editions = value.get("editions", [])
-            langs = value.get("langs", [])
-            archs = value.get("archs", [])
-            name = value.get("name")
-
-            if not name:
-                default_value = default_config.get(key, {})
-                name = default_value.get("name")
-                logging.debug(f"No name specified for {key}, using default name {name}")
-
-            fields = {
-                "file_name": [name],
-                "edition": editions,
-                "lang": langs,
-                "arch": archs,
-            }
-            fields = {k: v for k, v in fields.items() if v}
-
-            params = []
-
-            if fields:
-                keys, values = zip(*fields.items())
-                params = [
-                    dict(zip(keys, combination)) for combination in product(*values)
-                ]
-
-            for param in params:
-                try:
-                    updaters.append(updater_class(install_path, **param))
-                except Exception:
-                    installer_for = f"{key} {param}"
-                    logging.exception(
-                        f"[{installer_for}] An error occurred while trying to add the installer. See traceback below."
-                    )
-            for updater in updaters:
-                run_updater(updater)
-
-        else:
-            run_updaters(
-                install_path / key, value, updater_list, default_config.get(key, {})
-            )
+        for edition, lang, arch in product(edition, lang, arch):
+            installer_for = f"{iso_config.updater.__name__}{' '+edition if edition else ''}{' '+lang if lang else ''}{' '+arch if arch else ''}"
+            try:
+                updater_instance = iso_config.updater(
+                    iso_path=iso_config.iso_path,
+                    arch=arch,
+                    edition=edition,
+                    lang=lang,
+                )  # type: ignore // We don't pass a mirror_mgr parameter to child classes of GenericUpdater
+            except Exception:
+                logging.exception(
+                    f"[{installer_for}] An error occurred while updating. See traceback below."
+                )
+                continue
+            run_updater(updater_instance)
 
 
 def main():
     """Main function to run the update process."""
     parser = argparse.ArgumentParser(description="Process a file and set log level")
-    parser.add_argument("ventoy_path", help="Path to the Ventoy drive")
+    parser.add_argument(
+        "config_path",
+        help="Path to the configuration file or directory containing sisou.toml",
+    )
     parser.add_argument(
         "-l",
         "--log-level",
@@ -155,58 +115,31 @@ def main():
     parser.add_argument(
         "-f", "--log-file", help="Path to the log file (default: log to console)"
     )
-    parser.add_argument(
-        "-c", "--config-file", help="Path to the config file (default: config.toml)"
-    )
     args = parser.parse_args()
 
     log_file = Path(args.log_file) if args.log_file else None
     setup_logging(args.log_level, log_file)
 
-    ventoy_path = Path(args.ventoy_path).resolve()
+    config_path = args.config_path
 
-    default_config_path = Path(__file__).parent / "config" / "config.toml.default"
-    config_path = Path(args.config_file) if args.config_file else None
-    if not config_path:
-        logging.debug(
-            "No config file specified. Trying to find config.toml in the current directory..."
+    if os.path.isdir(config_path):
+        config_path = os.path.join(config_path, "sisou.toml")
+
+    if not os.path.exists(config_path):
+        default_config_path = os.path.join(
+            os.path.dirname(__file__), "config", "sisou.toml.default"
         )
-        config_path = Path() / "config.toml"
+        shutil.copyfile(default_config_path, config_path)
+        logging.info(
+            f"No config file found. A default config file has been created at: {config_path}"
+        )
+        return
 
-        if not config_path.is_file():
-            logging.debug(
-                "No config file specified. Trying to find config.toml in the ventoy drive..."
-            )
-            config_path = ventoy_path / "config.toml"
-
-            if not config_path.is_file():
-                logging.debug(
-                    "No config.toml found in the ventoy drive. Generating one from config.toml.default..."
-                )
-                with open(default_config_path) as default_config_file:
-                    config_path.parent.mkdir(parents=True, exist_ok=True)
-                    with open(config_path, "w") as config_file:
-                        config_file.write(default_config_file.read())
-                logging.info(
-                    "Generated config.toml in the ventoy drive. Please edit it to your liking and run sisou again."
-                )
-                return
-
+    os.chdir(os.path.dirname(config_path))
     logging.info(f"Using config file: {config_path}")
 
-    config = parse_config(config_path)
-    if not config:
-        raise ValueError("Configuration file could not be parsed or is empty")
-
-    default_config: dict = (
-        parse_config(default_config_path) if default_config_path.is_file() else {}
-    )  # type: ignore
-
-    available_updaters: list[Type[GenericUpdater]] = get_available_updaters()
-
-    run_updaters(ventoy_path, config, available_updaters, default_config)
-
-    logging.debug("Finished execution")
+    config = SISOUConfig(config_path)
+    create_and_run_updaters(config)
 
 
 if __name__ == "__main__":

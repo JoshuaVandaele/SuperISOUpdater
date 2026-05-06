@@ -105,12 +105,12 @@ sisou <Ventoy Partition> -f /path/to/log_file.log
 
 ## Customization
 
-SISOU is configured through a `config.toml` file, where you can control which ISOs get updated and how: toggling them on or off, and choosing your preferred editions, languages, and architectures.
+SISOU is configured through a `sisou.toml` file, where you can control which ISOs get updated and how: toggling them on or off, and choosing your preferred editions, languages, and architectures.
 
-By default, SISOU looks for `config.toml` in the same directory as your Ventoy drive. You can point it to a different file with the `-c` / `--config-file` argument:
+By default, SISOU looks for `sisou.toml` in the given directory, but you can also specify a custom path to the configuration file:
 
 ```sh
-sisou <Ventoy Partition> -c /path/to/config.toml
+sisou /etc/my_sisou_config.toml
 ```
 
 > [!TIP]

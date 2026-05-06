@@ -1,3 +1,5 @@
+directory = "."
+
 # Diagnostic Tools
 
 [DiagnosticTools]
@@ -9,25 +11,25 @@ enabled = true
 # Available architectures:
 # "x64"
 archs = ["x64"]
-name = "HBCD_PE_[[VER]]_[[ARCH]].iso"
+name = "HBCD_PE_[[VER]]_[[ARCH]]"
 
 [DiagnosticTools.MemTest86Plus]
 enabled = true
 # Available architectures:
 # "x86_64", "i586"
 archs = ["x86_64"]
-name = "mt86plus_[[VER]]_[[ARCH]].iso"
+name = "mt86plus_[[VER]]_[[ARCH]]"
 
 [DiagnosticTools.SystemRescue]
 enabled = true
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "systemrescue-[[VER]]-[[ARCH]].iso"
+name = "systemrescue-[[VER]]-[[ARCH]]"
 
 [DiagnosticTools.UltimateBootCD]
 enabled = true
-name = "ubcd[[VER]].iso"
+name = "ubcd[[VER]]"
 
 # Disk Utilities
 
@@ -40,21 +42,21 @@ enabled = true
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "clonezilla-live-[[VER]]-[[ARCH]].iso"
+name = "clonezilla-live-[[VER]]-[[ARCH]]"
 
 [DiskUtils.GPartedLive]
 enabled = true
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "gparted-live-[[VER]]-[[ARCH]].iso"
+name = "gparted-live-[[VER]]-[[ARCH]]"
 
 [DiskUtils.HDAT2]
 enabled = true
 # Available editions:
 # "full", "lite", "diskette"
 editions = ["full"]
-name = "hdat2_[[EDITION]]_[[VER]].[[EXT]]"
+name = "hdat2_[[EDITION]]_[[VER]]"
 
 [DiagnosticTools.Rescuezilla]
 enabled = true
@@ -63,14 +65,14 @@ enabled = true
 editions = ["noble"]
 # The architecture is selected automatically
 # depending on the edition.
-name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]].iso"
+name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]]"
 
 [DiskUtils.ShredOS]
 enabled = true
 # Available architectures:
 # "x86-64", "i686"
 archs = ["x86-64"]
-name = "shredos-[[VER]]_[[ARCH]].iso"
+name = "shredos-[[VER]]_[[ARCH]]"
 
 # Operating Systems
 
@@ -91,14 +93,14 @@ editions = ["standard"]
 # Available architectures:
 # "aarch64", "armv7", "loongarch64", "ppc64le", "riscv64", "s390x", "x86", "x86_64"
 archs = ["x86_64"]
-name = "alpine-[[EDITION]]-[[VER]]-[[ARCH]].iso"
+name = "alpine-[[EDITION]]-[[VER]]-[[ARCH]]"
 
 [OperatingSystems.Linux.ArchLinux]
 enabled = true
 # Available architectures:
 # "x86_64"
 archs = ["x86_64"]
-name = "archlinux-[[VER]]-[[ARCH]].iso"
+name = "archlinux-[[VER]]-[[ARCH]]"
 
 [OperatingSystems.Linux.ArtixLinux]
 enabled = true
@@ -114,21 +116,21 @@ editions = ["base-openrc"]
 # Available architectures:
 # "x86_64"
 archs = ["x86_64"]
-name = "artix-[[EDITION]]-[[VER]]-[[ARCH]].iso"
+name = "artix-[[EDITION]]-[[VER]]-[[ARCH]]"
 
 [OperatingSystems.Linux.CachyOS]
 enabled = true
 # Available editions:
 # "desktop", "handheld"
 editions = ["desktop"]
-name = "cachyos-[[EDITION]]-linux-[[VER]].iso"
+name = "cachyos-[[EDITION]]-linux-[[VER]]"
 
 [OperatingSystems.Linux.Debian]
 enabled = true
 # Available architectures:
 # "amd64", "arm64", "armhf", "ppc64el", "riscv64", "s390x"
 archs = ["amd64"]
-name = "debian-live-[[VER]]-[[ARCH]]-netinst.iso"
+name = "debian-live-[[VER]]-[[ARCH]]-netinst"
 
 [OperatingSystems.Linux.Fedora]
 enabled = true
@@ -139,7 +141,7 @@ editions = ["KDE"]
 # Available architectures:
 # "aarch64", "x86_64"
 archs = ["x86_64"]
-name = "Fedora-[[EDITION]]-Live-[[VER]].[[ARCH]].iso"
+name = "Fedora-[[EDITION]]-Live-[[VER]].[[ARCH]]"
 
 [OperatingSystems.Linux.KaliLinux]
 enabled = true
@@ -149,21 +151,21 @@ editions = ["installer", "live"]
 # Available architectures:
 # "amd64", "arm64"
 archs = ["amd64"]
-name = "kali-linux-[[VER]]-[[EDITION]]-[[ARCH]].iso"
+name = "kali-linux-[[VER]]-[[EDITION]]-[[ARCH]]"
 
 [OperatingSystems.Linux.LinuxMint]
 enabled = true
 # Available editions:
 # "cinnamon", "mate", "xfce"
 editions = ["cinnamon"]
-name = "linuxmint-[[VER]]-[[EDITION]]-64bit.iso"
+name = "linuxmint-[[VER]]-[[EDITION]]-64bit"
 
 [OperatingSystems.Linux.Manjaro]
 enabled = true
 # Available editions:
 # "kde", "xfce", "gnome", "cinnamon", "i3"
 editions = ["kde"]
-name = "manjaro-[[EDITION]]-[[VER]]-linux.iso"
+name = "manjaro-[[EDITION]]-[[VER]]-linux"
 
 [OperatingSystems.Linux.OpenSUSE]
 enabled = true
@@ -173,7 +175,7 @@ editions = ["leap"]
 # Available architectures:
 # "x86_64", "aarch64", "s390x", "i686", "ppc64le"
 archs = ["x86_64"]
-name = "openSUSE-[[EDITION]]-DVD-[[ARCH]]-[[VER]].iso"
+name = "openSUSE-[[EDITION]]-DVD-[[ARCH]]-[[VER]]"
 
 [OperatingSystems.Linux.OpenSUSERolling]
 enabled = true
@@ -183,14 +185,14 @@ editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
 # Available architectures:
 # "x86_64"
 archs = ["x86_64"]
-name = "openSUSE-[[EDITION]]-[[ARCH]]-[[VER]].iso"
+name = "openSUSE-[[EDITION]]-[[ARCH]]-[[VER]]"
 
 [OperatingSystems.Linux.Proxmox]
 enabled = true
 # Available editions:
 # "ve", "mail-gateway", "backup-server"
 editions = ["ve"]
-name = "proxmox-[[EDITION]]_[[VER]].iso"
+name = "proxmox-[[EDITION]]_[[VER]]"
 
 [OperatingSystems.Linux.RockyLinux]
 enabled = true
@@ -200,7 +202,7 @@ editions = ["dvd"]
 # Available architectures:
 # "x86_64", "aarch64", "ppc64le", "s390x", "riscv64"
 archs = ["x86_64"]
-name = "Rocky-[[VER]]-[[arch]]-[[EDITION]].iso"
+name = "Rocky-[[VER]]-[[arch]]-[[EDITION]]"
 
 [OperatingSystems.Linux.RockyLinuxLive]
 enabled = true
@@ -210,18 +212,18 @@ editions = ["KDE"]
 # Available architectures:
 # "x86_64", "aarch64"
 archs = ["x86_64"]
-name = "Rocky-[[VER]]-[[EDITION]]-[[arch]].iso"
+name = "Rocky-[[VER]]-[[EDITION]]-[[arch]]"
 
 [OperatingSystems.Linux.TrueNAS]
 enabled = true
-name = "TrueNAS-SCALE-[[VER]].iso"
+name = "TrueNAS-SCALE-[[VER]]"
 
 [OperatingSystems.Linux.Tails]
 enabled = true
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "tails-[[ARCH]]-[[VER]].img"
+name = "tails-[[ARCH]]-[[VER]]"
 
 [OperatingSystems.Linux.Ubuntu]
 enabled = true
@@ -231,7 +233,7 @@ editions = ["desktop"]
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]].iso"
+name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]]"
 
 # Windows
 [OperatingSystems.Windows]
@@ -246,14 +248,14 @@ langs = ["English International"]
 # Available architectures:
 # "x64", "Arm64"
 archs = ["x64"]
-name = "Win11_[[VER]]_[[LANG]]_[[ARCH]].iso"
+name = "Win11_[[VER]]_[[LANG]]_[[ARCH]]"
 
 [OperatingSystems.Windows.Windows10]
 enabled = true
 # Available languages:
 # "Arabic", "Brazilian Portuguese", "Bulgarian", "Chinese", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "English International", "Estonian", "Finnish", "French", "French Canadian", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian Latin", "Slovak", "Slovenian", "Spanish", "Spanish (Mexico)", "Swedish", "Thai", "Turkish", "Ukrainian"
 langs = ["English International"]
-name = "Win10_[[VER]]_[[LANG]]_x64.iso"
+name = "Win10_[[VER]]_[[LANG]]_x64"
 
 [OperatingSystems.BSD]
 enabled = true
@@ -267,4 +269,4 @@ editions = ["vga"]
 # Available architectures:
 # "amd64"
 archs = ["amd64"]
-name = "OPNsense-[[VER]]-[[EDITION]]-[[ARCH]].[[EXT]]"
+name = "OPNsense-[[VER]]-[[EDITION]]-[[ARCH]]"

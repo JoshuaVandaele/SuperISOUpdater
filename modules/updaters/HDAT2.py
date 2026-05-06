@@ -1,5 +1,4 @@
-from pathlib import Path
-
+from modules.ISOPath import ISOPath
 from modules.mirrors.HDAT2.HDAT2MirrorManager import HDAT2MirrorManager
 from modules.updaters.GenericUpdater import GenericUpdater
 
@@ -18,16 +17,25 @@ class HDAT2(GenericUpdater):
         This class inherits from the abstract base class GenericUpdater.
     """
 
-    def __init__(self, folder_path: Path, edition: str, file_name: str) -> None:
-        self.valid_editions = ["full", "lite", "diskette"]
-        self.edition = edition.lower()
-
-        if self.edition == "diskette":
+    def __init__(
+        self,
+        iso_path: ISOPath,
+        edition: str,
+        arch: str | None = None,
+        lang: str | None = None,
+    ) -> None:
+        if edition.lower() == "diskette":
             extension = "img"
         else:
             extension = "iso"
 
-        self.file_name = file_name.replace("[[EXT]]", extension)
-
-        mirror_mgr = HDAT2MirrorManager(self.edition, extension)
-        super().__init__(folder_path / self.file_name, mirror_mgr)
+        mirror_mgr = HDAT2MirrorManager(edition, extension)
+        super().__init__(
+            iso_path=iso_path,
+            mirror_mgr=mirror_mgr,
+            arch=arch,
+            edition=edition,
+            lang=lang,
+            extension=extension,
+            valid_editions=["full", "lite", "diskette"],
+        )
