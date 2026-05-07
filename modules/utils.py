@@ -1,9 +1,7 @@
-import hashlib
 import logging
 import re
 import shutil
 import tempfile
-import tomllib
 import traceback
 import zipfile
 from contextlib import contextmanager
@@ -206,7 +204,9 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
 
 
 @contextmanager
-def extract_matching_file(zip_path: Path, pattern: str) -> Generator[Path, None, None]:
+def extract_matching_zip_file(
+    zip_path: Path, pattern: str
+) -> Generator[Path, None, None]:
     """
     Context manager that extracts a single file from a ZIP archive if its name matches
     a given regex pattern, using a temporary directory for extraction.

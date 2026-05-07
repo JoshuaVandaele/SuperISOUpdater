@@ -3,7 +3,7 @@ from pathlib import Path
 
 from modules.exceptions import IntegrityCheckError
 from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
-from modules.utils import extract_matching_file
+from modules.utils import extract_matching_zip_file
 
 
 class Memtest(GenericHTTPMirror):
@@ -15,13 +15,14 @@ class Memtest(GenericHTTPMirror):
             has_signature=False,
         )
 
-    def download_and_verify(self, file: Path) -> bool:
-        if not super().download_and_verify(file):
-            return False
+    def download_and_verify(self, file: Path):
+        zip_file = Path(f"{file}.zip")
+        super().download_and_verify(zip_file)
         try:
-            with extract_matching_file(file, r"\.iso$") as extracted:
+            with extract_matching_zip_file(zip_file, r"\.iso$") as extracted:
                 extracted: Path
                 shutil.move(extracted, file)
         except Exception as e:
-            raise IntegrityCheckError(f"Failed to extract {file}") from e
-        return True
+            raise IntegrityCheckError(f"Failed to extract {zip_file}") from e
+        finally:
+            zip_file.unlink(missing_ok=True)
