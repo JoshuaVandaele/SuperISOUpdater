@@ -179,7 +179,7 @@ The tool currently supports the following ISOs:
     - ✅ Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
   - **BSD**
-    - 🔳 OPNsense
+    - ✅ OPNsense
       - Editions: dvd, nano, serial, vga
 
 ## Contributing
