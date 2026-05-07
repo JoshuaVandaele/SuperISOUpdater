@@ -167,26 +167,6 @@ enabled = true
 editions = ["kde"]
 name = "manjaro-[[EDITION]]-[[VER]]-linux"
 
-[OperatingSystems.Linux.OpenSUSE]
-enabled = true
-# Available editions:
-# "leap", "leap-micro", "jump"
-editions = ["leap"]
-# Available architectures:
-# "x86_64", "aarch64", "s390x", "i686", "ppc64le"
-archs = ["x86_64"]
-name = "openSUSE-[[EDITION]]-DVD-[[ARCH]]-[[VER]]"
-
-[OperatingSystems.Linux.OpenSUSERolling]
-enabled = true
-# Available editions:
-# "MicroOS-DVD", "Tumbleweed-DVD", "Tumbleweed-NET", "Tumbleweed-GNOME-Live", "Tumbleweed-KDE-Live", "Tumbleweed-XFCE-Live", "Tumbleweed-Rescue-CD"
-editions = ["Tumbleweed-NET", "Tumbleweed-DVD"]
-# Available architectures:
-# "x86_64"
-archs = ["x86_64"]
-name = "openSUSE-[[EDITION]]-[[ARCH]]-[[VER]]"
-
 [OperatingSystems.Linux.Proxmox]
 enabled = true
 # Available editions:

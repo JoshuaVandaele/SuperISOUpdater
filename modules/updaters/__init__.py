@@ -13,8 +13,6 @@ from .KaliLinux import KaliLinux
 from .LinuxMint import LinuxMint
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
-from .OpenSUSE import OpenSUSE
-from .OpenSUSERolling import OpenSUSERolling
 from .OPNsense import OPNsense
 from .Proxmox import Proxmox
 from .Rescuezilla import Rescuezilla
@@ -44,8 +42,6 @@ __all__ = [
     "LinuxMint",
     "Manjaro",
     "MemTest86Plus",
-    "OpenSUSE",
-    "OpenSUSERolling",
     "OPNsense",
     "RockyLinux",
     "Tails",
