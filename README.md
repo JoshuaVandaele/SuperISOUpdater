@@ -160,7 +160,7 @@ The tool currently supports the following ISOs:
       - Editions: kde, xfce, gnome, cinnamon, i3
     - ✅ Proxmox
       - Editions: ve, mail-gateway, backup-server
-    - 🔳 Rocky Linux
+    - ✅ Rocky Linux
       - Editions: dvd, boot, minimal
       - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
     - 🔳 Rocky Linux Live

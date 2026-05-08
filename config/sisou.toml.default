@@ -182,7 +182,7 @@ editions = ["dvd"]
 # Available architectures:
 # "x86_64", "aarch64", "ppc64le", "s390x", "riscv64"
 archs = ["x86_64"]
-name = "Rocky-[[VER]]-[[arch]]-[[EDITION]]"
+name = "Rocky-[[VER]]-[[ARCH]]-[[EDITION]]"
 
 [OperatingSystems.Linux.RockyLinuxLive]
 enabled = true

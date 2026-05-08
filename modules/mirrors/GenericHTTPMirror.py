@@ -2,6 +2,7 @@ import logging
 import re
 import time
 from pathlib import Path
+from typing import Callable, Self
 from urllib.parse import urljoin
 
 import requests
@@ -39,7 +40,7 @@ class GenericHTTPMirror(GenericMirror):
         version_separator: str = ".",
         version_padding: int = 0,
         has_signature: bool = True,
-        signed_file: Path | None = None,
+        signed_file: Path | Callable[[Self], Path] | None = None,
     ) -> None:
         if not version_regex and not version:
             raise ValueError(

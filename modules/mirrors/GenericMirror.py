@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Callable, Self
 
 from modules.Checksum import Checksum
 from modules.exceptions import IntegrityCheckError
@@ -31,7 +32,7 @@ class GenericMirror(ABC):
         version_separator: str = ".",
         version_padding: int = 0,
         has_signature: bool = True,
-        signed_file: Path | None = None,
+        signed_file: Path | Callable[[Self], Path] | None = None,
     ) -> None:
         """
         Args:
@@ -71,7 +72,11 @@ class GenericMirror(ABC):
 
     @property
     def signed_file(self):
-        return self.__signed_file
+        return (
+            self.__signed_file
+            if not callable(self.__signed_file)
+            else self.__signed_file(self)
+        )
 
     def initialize(self) -> None:
         for step in self._init_steps:
