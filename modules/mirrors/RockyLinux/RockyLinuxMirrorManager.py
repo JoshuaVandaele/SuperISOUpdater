@@ -1,7 +1,7 @@
-from modules.mirrors.RockyLinux.OVH import OVH
-from modules.mirrors.RockyLinux.RockyLinux import RockyLinux
 from modules.mirrors.GenericMirror import GenericMirror
 from modules.mirrors.GenericMirrorManager import GenericMirrorManager
+from modules.mirrors.RockyLinux.OVH import OVH
+from modules.mirrors.RockyLinux.RockyLinux import RockyLinux
 
 
 class RockyLinuxMirrorManager(GenericMirrorManager):

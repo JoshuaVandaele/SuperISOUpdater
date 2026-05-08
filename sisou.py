@@ -1,15 +1,15 @@
 import argparse
 import logging
+import os
+import shutil
 from abc import ABCMeta
 from functools import cache
 from itertools import product
-import os
 from pathlib import Path
-import shutil
 from typing import Type
 
-from modules.SISOUConfig import SISOUConfig
 import modules.updaters
+from modules.SISOUConfig import SISOUConfig
 from modules.updaters import GenericUpdater
 
 
@@ -56,7 +56,7 @@ def run_updater(updater: GenericUpdater):
     Args:
         updater (GenericUpdater): The updater instance to run.
     """
-    installer_for = f"{updater.__class__.__name__}{' '+updater.edition if updater.edition else ''}{' '+updater.lang if updater.lang else ''}{' '+updater.arch if updater.arch else ''}"
+    installer_for = f"{updater.__class__.__name__}{' ' + updater.edition if updater.edition else ''}{' ' + updater.lang if updater.lang else ''}{' ' + updater.arch if updater.arch else ''}"
 
     logging.info(f"[{installer_for}] Checking for updates...")
 
@@ -82,7 +82,7 @@ def create_and_run_updaters(config: SISOUConfig) -> None:
         arch = iso_config.archs or [None]
 
         for edition, lang, arch in product(edition, lang, arch):
-            installer_for = f"{iso_config.updater.__name__}{' '+edition if edition else ''}{' '+lang if lang else ''}{' '+arch if arch else ''}"
+            installer_for = f"{iso_config.updater.__name__}{' ' + edition if edition else ''}{' ' + lang if lang else ''}{' ' + arch if arch else ''}"
             try:
                 updater_instance = iso_config.updater(
                     iso_path=iso_config.iso_path,

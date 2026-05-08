@@ -5,8 +5,8 @@ import re
 from abc import ABC
 from pathlib import Path
 
-from modules.ISOPath import ISOPath
 from modules.exceptions import NoMirrorsError
+from modules.ISOPath import ISOPath
 from modules.mirrors.GenericMirrorManager import GenericMirrorManager
 from modules.Version import Version
 

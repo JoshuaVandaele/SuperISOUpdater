@@ -1,10 +1,10 @@
+import os
+import tomllib
 from abc import ABCMeta
 from dataclasses import dataclass
 from functools import cache
-import os
 from sys import modules
 from typing import Type
-import tomllib
 
 import modules.updaters
 from modules.ISOPath import ISOPath

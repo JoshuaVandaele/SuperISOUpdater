@@ -62,7 +62,7 @@ class WindowsConsumerDownloader:
                     "The valid Windows versions are '11', '11arm64', '10', or '8'."
                 )
 
-        if not url_segment in WindowsConsumerDownloader._download_page_cache:
+        if url_segment not in WindowsConsumerDownloader._download_page_cache:
             download_page = requests.get(
                 f"https://www.microsoft.com/en-us/software-download/{url_segment}",
                 headers=WindowsConsumerDownloader._HEADERS,
@@ -116,16 +116,16 @@ class WindowsConsumerDownloader:
                 "https://www.microsoft.com/software-download-connector/api/getskuinformationbyproductedition"
                 + f"?profile={WindowsConsumerDownloader._PROFILE_ID}"
                 + f"&productEditionId={product_edition_id}"
-                + f"&SKU=undefined"
-                + f"&friendlyFileName=undefined"
-                + f"&Locale=en-US"
+                + "&SKU=undefined"
+                + "&friendlyFileName=undefined"
+                + "&Locale=en-US"
                 + f"&sessionID={WindowsConsumerDownloader._SESSION_ID}"
             )
 
             language_skuIDs = requests.get(
                 language_skuIDs_url, headers=WindowsConsumerDownloader._HEADERS
             ).json()
-            if not "Skus" in language_skuIDs:
+            if "Skus" not in language_skuIDs:
                 raise ValueError("Could not find SKU IDs")
 
             WindowsConsumerDownloader._language_skuIDs_cache[product_edition_id] = (
@@ -158,7 +158,7 @@ class WindowsConsumerDownloader:
                 + "&productEditionId=undefined"
                 + f"&SKU={sku_id}"
                 + "&friendlyFileName=undefined"
-                + f"&Locale=en-US"
+                + "&Locale=en-US"
                 + f"&sessionID={WindowsConsumerDownloader._SESSION_ID}"
             )
 

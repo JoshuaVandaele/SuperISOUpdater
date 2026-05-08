@@ -1,6 +1,3 @@
-import re
-
-from modules.Checksum import Checksum, SumType
 from modules.GitHubVersion import GitHubVersion
 from modules.mirrors.GitHubMirror import GitHubMirror
 

@@ -32,8 +32,8 @@ class Checksum(ABC):
         self.value = value.lower()
 
     @staticmethod
-    def from_sum_type(sum_type: SumType, value: str) -> Checksum:
-        match (sum_type):
+    def from_sum_type(sum_type: SumType, value: str) -> "Checksum":
+        match sum_type:
             case SumType.MD5:
                 return MD5Sum(value)
             case SumType.SHA1:

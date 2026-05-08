@@ -42,6 +42,9 @@ dependencies = [
     "tqdm~=4.67",
 ]
 
+[project.optional-dependencies]
+dev = ["ruff~=0.15"]
+
 [project.urls]
 Homepage = "https://github.com/JoshuaVandaele/SuperISOUpdater"
 "Bug Reports" = "https://github.com/JoshuaVandaele/SuperISOUpdater/issues"

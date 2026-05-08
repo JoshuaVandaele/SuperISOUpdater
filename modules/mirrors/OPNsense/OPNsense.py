@@ -1,7 +1,7 @@
 import bz2
-from pathlib import Path
 import re
 import shutil
+from pathlib import Path
 
 import requests_cache
 from bs4 import BeautifulSoup

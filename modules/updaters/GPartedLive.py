@@ -6,7 +6,6 @@ from modules.updaters.GenericUpdater import GenericUpdater
 
 
 class GPartedLive(GenericUpdater):
-
     def __init__(
         self,
         iso_path: ISOPath,

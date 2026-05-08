@@ -43,6 +43,7 @@ __all__ = [
     "Manjaro",
     "MemTest86Plus",
     "OPNsense",
+    "Proxmox",
     "RockyLinux",
     "Tails",
     "Rescuezilla",

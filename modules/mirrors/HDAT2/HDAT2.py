@@ -18,7 +18,7 @@ class HDAT2(GenericHTTPMirror):
             extra = "g"
 
         super().__init__(
-            uri=f"https://www.hdat2.com/download.html",
+            uri="https://www.hdat2.com/download.html",
             file_regex=rf"hdat2..{extra}_(\d+).{ext}",
             version_regex=rf"hdat2..{extra}_(\d+).{ext}",
             version_separator="",
@@ -28,7 +28,7 @@ class HDAT2(GenericHTTPMirror):
     def _determine_sums(self) -> list[Checksum]:
         normal_version: Version = deepcopy(self.version)  # type: ignore
         normal_version.separator = "."
-        search_r = f">{"Lite " if self.lite else ""}{self.ext.upper()} {normal_version} MD5=(.+)<"
+        search_r = f">{'Lite ' if self.lite else ''}{self.ext.upper()} {normal_version} MD5=(.+)<"
         sum_match = re.search(search_r, self._text_page)
         if not sum_match:
             raise ValueError(f"Sum regex '{search_r}' could not be found on {self.uri}")

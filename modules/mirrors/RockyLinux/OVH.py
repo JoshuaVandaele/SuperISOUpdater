@@ -12,7 +12,7 @@ class OVH(GenericHTTPMirror):
             return download_file_to_tmp(f"{self.download_link}/../CHECKSUM")
 
         super().__init__(
-            uri=f"https://rockylinux.mirrors.ovh.net/",
+            uri="https://rockylinux.mirrors.ovh.net/",
             # For some reason, sometimes there is a "1" after the edition e.g. dvd1
             file_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
             version_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
@@ -29,7 +29,7 @@ class OVH(GenericHTTPMirror):
     def _determine_sums(self) -> list[Checksum]:
         r = self.session.get(f"{self.download_link}/../CHECKSUM")
         r.raise_for_status()
-        lines = "\n".join([l for l in r.text.splitlines() if "=" in l])
+        lines = "\n".join([line for line in r.text.splitlines() if "=" in line])
         return [SHA256Sum(parse_hash(lines, self._file_regex, -1))]
 
     def _determine_public_key(self) -> bytes:

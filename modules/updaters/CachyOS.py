@@ -4,7 +4,6 @@ from modules.updaters.GenericUpdater import GenericUpdater
 
 
 class CachyOS(GenericUpdater):
-
     def __init__(
         self,
         iso_path: ISOPath,

@@ -2,7 +2,6 @@ import os
 
 
 class ISOPath(str):
-
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         if not self.has_version():
@@ -41,7 +40,7 @@ class ISOPath(str):
             result += f".{extension}"
         return result
 
-    def basename(self) -> ISOPath:
+    def basename(self) -> "ISOPath":
         return ISOPath(os.path.basename(self))
 
     def dirname(self) -> str:

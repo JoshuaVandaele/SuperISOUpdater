@@ -3,7 +3,6 @@ from modules.updaters.GenericUpdater import GenericUpdater
 
 
 class KaliLinux(GenericUpdater):
-
     def __init__(
         self,
         iso_path: ISOPath,

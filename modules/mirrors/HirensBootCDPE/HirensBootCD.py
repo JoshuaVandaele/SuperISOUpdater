@@ -1,4 +1,3 @@
-import logging
 import re
 
 from modules.Checksum import Checksum, SHA256Sum
