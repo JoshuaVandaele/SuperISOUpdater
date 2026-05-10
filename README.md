@@ -163,7 +163,7 @@ The tool currently supports the following ISOs:
     - ✅ Rocky Linux
       - Editions: dvd, boot, minimal
       - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
-    - 🔳 Rocky Linux Live
+    - ✅ Rocky Linux Live
       - Editions: KDE, Workstation, Workstation Lite
       - Architectures: x86_64, aarch64
     - ✅ TrueNAS

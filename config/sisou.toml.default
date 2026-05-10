@@ -187,12 +187,12 @@ name = "Rocky-[[VER]]-[[ARCH]]-[[EDITION]]"
 [OperatingSystems.Linux.RockyLinuxLive]
 enabled = true
 # Available editions:
-# "KDE", "Workstation", "Workstation Lite"
+# "KDE", "Workstation", "Workstation-Lite"
 editions = ["KDE"]
 # Available architectures:
 # "x86_64", "aarch64"
 archs = ["x86_64"]
-name = "Rocky-[[VER]]-[[EDITION]]-[[arch]]"
+name = "Rocky-[[VER]]-[[EDITION]]-[[ARCH]]"
 
 [OperatingSystems.Linux.TrueNAS]
 enabled = true

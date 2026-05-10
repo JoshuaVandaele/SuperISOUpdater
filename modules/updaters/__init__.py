@@ -17,6 +17,7 @@ from .OPNsense import OPNsense
 from .Proxmox import Proxmox
 from .Rescuezilla import Rescuezilla
 from .RockyLinux import RockyLinux
+from .RockyLinuxLive import RockyLinuxLive
 from .ShredOS import ShredOS
 from .SystemRescue import SystemRescue
 from .Tails import Tails
@@ -45,6 +46,7 @@ __all__ = [
     "OPNsense",
     "Proxmox",
     "RockyLinux",
+    "RockyLinuxLive",
     "Tails",
     "Rescuezilla",
     "SystemRescue",
