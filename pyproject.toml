@@ -55,7 +55,10 @@ Source = "https://github.com/JoshuaVandaele/SuperISOUpdater"
 sisou = "sisou:main"
 
 [tool.setuptools]
-py-modules = ["sisou", "modules"]
+py-modules = ["sisou"]
 
-[tool.setuptools.package-data]
-sisou = ["config.toml.default"]
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.data-files]
+"sisou/config" = ["config/sisou.toml.default"]
