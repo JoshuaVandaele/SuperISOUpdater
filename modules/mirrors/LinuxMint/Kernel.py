@@ -21,7 +21,7 @@ class Kernel(GenericHTTPMirror):
 
         super().__init__(
             uri=f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/",
-            file_regex=rf"linuxmint-{version}-{edition}-64bit.iso",
+            download_regex=rf"linuxmint-{version}-{edition}-64bit.iso",
             version=version,
             signed_file=download_file_to_tmp(checksum_url),
         )

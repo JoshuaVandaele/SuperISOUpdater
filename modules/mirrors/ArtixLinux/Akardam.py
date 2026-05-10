@@ -9,7 +9,7 @@ class Akardam(GenericHTTPMirror):
     def __init__(self, edition, arch) -> None:
         super().__init__(
             uri="https://mirror.akardam.net/artix-iso/",
-            file_regex=rf"artix-{edition}-\d+-{arch}\.iso",
+            download_regex=rf"artix-{edition}-\d+-{arch}\.iso",
             version_regex=rf"artix-{edition}-(\d+)-{arch}\.iso",
             version_separator="",
         )

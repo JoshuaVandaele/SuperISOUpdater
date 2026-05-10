@@ -19,7 +19,7 @@ class USCachyOS(GenericHTTPMirror):
 
         super().__init__(
             uri=f"https://us.cachyos.org/ISO/{edition}/{version}/",
-            file_regex=rf"cachyos-{edition}-linux-{version}.iso",
+            download_regex=rf"cachyos-{edition}-linux-{version}.iso",
             version=version,
             version_separator="",
         )

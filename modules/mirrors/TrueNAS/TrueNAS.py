@@ -5,7 +5,7 @@ class TrueNAS(GenericHTTPMirror):
     def __init__(self) -> None:
         super().__init__(
             uri="https://www.truenas.com/download",
-            file_regex=r"TrueNAS-SCALE-.+\.iso",
+            download_regex=r"TrueNAS-SCALE-.+\.iso",
             version_regex=r"TrueNAS-SCALE-([\d\.]+)\.iso",
         )
 

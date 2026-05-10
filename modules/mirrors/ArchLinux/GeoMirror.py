@@ -9,7 +9,7 @@ class GeoMirror(GenericHTTPMirror):
     def __init__(self, arch) -> None:
         super().__init__(
             uri="https://geo.mirror.pkgbuild.com/iso/latest/",
-            file_regex=rf"archlinux-.+-{arch}\.iso",
+            download_regex=rf"archlinux-.+-{arch}\.iso",
             version_regex=rf"archlinux-(.+)-{arch}\.iso",
             version_padding=2,
         )

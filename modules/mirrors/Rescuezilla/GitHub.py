@@ -7,7 +7,7 @@ class GitHub(GitHubMirror):
     def __init__(self, edition: str, arch: str) -> None:
         super().__init__(
             repository="rescuezilla/rescuezilla",
-            file_regex=rf"rescuezilla-.+-{arch}.{edition}.iso",
+            download_regex=rf"rescuezilla-.+-{arch}.{edition}.iso",
             determine_version_using=GitHubVersion.TAG,
             has_signature=False,
             version_regex=r"(.+)",

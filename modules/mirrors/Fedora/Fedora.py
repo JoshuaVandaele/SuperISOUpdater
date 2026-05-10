@@ -24,7 +24,7 @@ class Fedora(GenericHTTPMirror):
             added_regex = r"netinst"
         super().__init__(
             uri=url,
-            file_regex=rf"Fedora-{edition}(.+)?{added_regex}(.+)?{arch}(.+)?\.iso",
+            download_regex=rf"Fedora-{edition}(.+)?{added_regex}(.+)?{arch}(.+)?\.iso",
             version=version,
             version_separator="",
         )
@@ -59,7 +59,7 @@ class Fedora(GenericHTTPMirror):
         sum_file = self.__get_checksum_file()
         sum_file_text = sum_file.text.strip()
         for line in sum_file_text.splitlines():
-            if not re.search(self._file_regex, line):
+            if not re.search(self._download_regex, line):
                 continue
             for sum_type in SumType:
                 if not sum_type.matches(line):

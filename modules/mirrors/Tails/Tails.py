@@ -7,7 +7,7 @@ class Tails(GenericHTTPMirror):
         self.arch = arch
         super().__init__(
             uri="https://tails.net/install/download/index.en.html",
-            file_regex=rf"tails-{arch}-(.+?).img",
+            download_regex=rf"tails-{arch}-(.+?).img",
             version_regex=rf"tails-{arch}-([\d.]+)\.",
         )
 

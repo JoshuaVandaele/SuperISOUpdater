@@ -7,7 +7,7 @@ class Microsoft(GenericHTTPMirror):
     def __init__(self, lang: str, arch: str) -> None:
         super().__init__(
             uri="https://www.microsoft.com/en-us/software-download/windows11",
-            file_regex=rf"Win11_[\dH]+_{lang}_x64_v2.iso",
+            download_regex=rf"Win11_[\dH]+_{lang}_x64_v2.iso",
             version_regex=r"Version ([\dH]+)",
             version_separator="H",
             has_signature=False,

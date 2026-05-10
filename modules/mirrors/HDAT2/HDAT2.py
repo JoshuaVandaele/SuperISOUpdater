@@ -19,7 +19,7 @@ class HDAT2(GenericHTTPMirror):
 
         super().__init__(
             uri="https://www.hdat2.com/download.html",
-            file_regex=rf"hdat2..{extra}_(\d+).{ext}",
+            download_regex=rf"hdat2..{extra}_(\d+).{ext}",
             version_regex=rf"hdat2..{extra}_(\d+).{ext}",
             version_separator="",
             has_signature=False,

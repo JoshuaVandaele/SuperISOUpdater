@@ -10,7 +10,7 @@ class HirensBootCD(GenericHTTPMirror):
         self.arch = arch
         super().__init__(
             uri="https://www.hirensbootcd.org/download/",
-            file_regex=rf"HBCD_PE_{self.arch}.iso",
+            download_regex=rf"HBCD_PE_{self.arch}.iso",
             version_regex=r"\(v([\d\.]+)\)",
             has_signature=False,
         )

@@ -7,7 +7,7 @@ class Manjaro(GenericHTTPMirror):
     def __init__(self, edition: str) -> None:
         super().__init__(
             uri="https://manjaro.org/products/download/x86",
-            file_regex=rf"manjaro-{edition}-([\d\.]+)-\d+-linux\d+\.iso",
+            download_regex=rf"manjaro-{edition}-([\d\.]+)-\d+-linux\d+\.iso",
             version_regex=rf"manjaro-{edition}-([\d\.]+)-\d+-linux\d+\.iso",
         )
 
@@ -27,4 +27,4 @@ class Manjaro(GenericHTTPMirror):
     def _determine_sums(self):
         r = self.session.get(f"{self.download_link}.sha256")
         r.raise_for_status()
-        return [SHA256Sum(parse_hash(r.text, self._file_regex, 0))]
+        return [SHA256Sum(parse_hash(r.text, self._download_regex, 0))]

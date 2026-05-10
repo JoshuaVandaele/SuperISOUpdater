@@ -18,7 +18,7 @@ class OPNsense(GenericHTTPMirror):
 
         super().__init__(
             uri=f"https://pkg.opnsense.org/releases/{version}/",
-            file_regex=rf"OPNsense-{version}-{edition}-{arch}\.i(so|mg)\.bz2",
+            download_regex=rf"OPNsense-{version}-{edition}-{arch}\.i(so|mg)\.bz2",
             version=version,
             # TODO: Support OpenSSL signatures/verification
             has_signature=False,

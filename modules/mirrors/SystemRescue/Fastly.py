@@ -7,7 +7,7 @@ class Fastly(GenericHTTPMirror):
         super().__init__(
             # TODO: It would be better the uri was from Fastly directly
             uri="https://www.system-rescue.org/Download/",
-            file_regex=rf"systemrescue-.+\-{arch}\.iso",
+            download_regex=rf"systemrescue-.+\-{arch}\.iso",
             version_regex=rf"systemrescue-(.+?)-{arch}\.iso",
         )
 

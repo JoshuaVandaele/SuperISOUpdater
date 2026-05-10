@@ -21,7 +21,7 @@ class GitHubMirror(GenericHTTPMirror):
     def __init__(
         self,
         repository: str,
-        file_regex: str,
+        download_regex: str,
         version_regex: str,
         version_padding: int = 0,
         has_signature=True,
@@ -35,7 +35,7 @@ class GitHubMirror(GenericHTTPMirror):
         """
         super().__init__(
             uri=f"{self.API_URL}/repos/{repository}/releases",
-            file_regex=file_regex,
+            download_regex=download_regex,
             version_regex=version_regex,
             version_padding=version_padding,
             has_signature=has_signature,
@@ -108,7 +108,7 @@ class GitHubMirror(GenericHTTPMirror):
                 hash_value = (
                     sum_file_text
                     if not has_whitespace
-                    else parse_hash(sum_file_text, self._file_regex, sum_pos)
+                    else parse_hash(sum_file_text, self._download_regex, sum_pos)
                 )
                 sums.append(Checksum.from_sum_type(sum_type, hash_value))
         if sums:

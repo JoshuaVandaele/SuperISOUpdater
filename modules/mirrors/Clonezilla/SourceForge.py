@@ -19,7 +19,7 @@ class SourceForge(GenericHTTPMirror):
         self.session = requests_cache.CachedSession(backend="memory")
         super().__init__(
             uri=CHECKSUM_URL,
-            file_regex=rf"clonezilla-live-([\d\.-]+)-{arch}.iso",
+            download_regex=rf"clonezilla-live-([\d\.-]+)-{arch}.iso",
             version_regex=rf"clonezilla-live-([\d\.-]+)-{arch}.iso",
             version_class=DotDashVersion,
             signed_file=download_file_to_tmp(CHECKSUM_URL),
@@ -42,12 +42,12 @@ class SourceForge(GenericHTTPMirror):
                 continue
             if not cur_sum_type:
                 continue
-            if not re.search(self._file_regex, line):
+            if not re.search(self._download_regex, line):
                 cur_sum_type = None
                 continue
             sums.append(
                 Checksum.from_sum_type(
-                    cur_sum_type, parse_hash(line, self._file_regex, 0)
+                    cur_sum_type, parse_hash(line, self._download_regex, 0)
                 )
             )
             cur_sum_type = None

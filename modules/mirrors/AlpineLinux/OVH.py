@@ -5,7 +5,7 @@ class OVH(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str) -> None:
         super().__init__(
             uri=f"https://alpinelinux.mirrors.ovh.net/latest-stable/releases/{arch}/",
-            file_regex=rf"alpine-{edition}-(.+?)-{arch}.iso",
+            download_regex=rf"alpine-{edition}-(.+?)-{arch}.iso",
             version_regex=rf"alpine-{edition}-(.+?)-{arch}.iso",
         )
 

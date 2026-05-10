@@ -21,7 +21,7 @@ class OVH(GenericHTTPMirror):
 
         super().__init__(
             uri=f"https://ubuntu.mirrors.ovh.net/releases/{version}/",
-            file_regex=rf"ubuntu-{version}-{edition}-{arch}.iso",
+            download_regex=rf"ubuntu-{version}-{edition}-{arch}.iso",
             version=version,
             signed_file=download_file_to_tmp(checksum_url),
         )

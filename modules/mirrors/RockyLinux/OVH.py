@@ -14,7 +14,7 @@ class OVH(GenericHTTPMirror):
         super().__init__(
             uri="https://rockylinux.mirrors.ovh.net/",
             # For some reason, sometimes there is a "1" after the edition e.g. dvd1
-            file_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
+            download_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
             version_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
             signed_file=signed_file,
         )
@@ -30,7 +30,7 @@ class OVH(GenericHTTPMirror):
         r = self.session.get(f"{self.download_link}/../CHECKSUM")
         r.raise_for_status()
         lines = "\n".join([line for line in r.text.splitlines() if "=" in line])
-        return [SHA256Sum(parse_hash(lines, self._file_regex, -1))]
+        return [SHA256Sum(parse_hash(lines, self._download_regex, -1))]
 
     def _determine_public_key(self) -> bytes:
         # https://rockylinux.org/resources/gpg-key-info

@@ -32,7 +32,7 @@ class GenericHTTPMirror(GenericMirror):
     def __init__(
         self,
         uri: str,
-        file_regex: str,
+        download_regex: str,
         headers: dict[str, str] | None = None,
         version: Version | None = None,
         version_regex: str | None = None,
@@ -54,7 +54,7 @@ class GenericHTTPMirror(GenericMirror):
             has_signature,
             signed_file,
         )
-        self._file_regex: str = file_regex
+        self._download_regex: str = download_regex
         self._version_regex: str | None = version_regex
         self.version: Version | None = version
         self.headers: dict[str, str] | None = headers
@@ -77,12 +77,12 @@ class GenericHTTPMirror(GenericMirror):
         self.download_link = self._determine_download_link()
 
     def _determine_download_link(self) -> str:
-        for link in self._urls_with_file_regex():
-            if re.search(rf"{self._file_regex}$", link) and str(self.version) in link:
+        for link in self._urls_with_download_regex():
+            if re.search(rf"{self._download_regex}$", link) and str(self.version) in link:
                 return link
 
         raise DownloadLinkNotFoundError(
-            f"Download link not found for regex '{self._file_regex}' and version '{self.version}' on page '{self.uri}'"
+            f"Download link not found for regex '{self._download_regex}' and version '{self.version}' on page '{self.uri}'"
         )
 
     def _determine_public_key(self) -> bytes:
@@ -104,9 +104,9 @@ class GenericHTTPMirror(GenericMirror):
 
         chosen_url: str = candidates[0]
 
-        urls_with_file_regex = self._urls_with_file_regex()
+        urls_with_dl_regex = self._urls_with_download_regex()
         for url in candidates:
-            if url in urls_with_file_regex:
+            if url in urls_with_dl_regex:
                 chosen_url = url
                 if str(self.version) in url:
                     break
@@ -131,14 +131,14 @@ class GenericHTTPMirror(GenericMirror):
                 results.append(urljoin(self.uri, str(href)))
         return results
 
-    def _urls_with_file_regex(self) -> list[str]:
+    def _urls_with_download_regex(self) -> list[str]:
         """
         (Protected) Get all URLs from the page that match the regex.
 
         Returns:
             list[str]: A list of URLs matching the regex.
         """
-        return [url for url in self._urls() if re.search(self._file_regex, url)]
+        return [url for url in self._urls() if re.search(self._download_regex, url)]
 
     def _urls_with_version(self) -> list[str]:
         """
@@ -173,7 +173,7 @@ class GenericHTTPMirror(GenericMirror):
             ValueError: If no version is found on the page.
         """
         latest_version = self.VersionClass("0")
-        for url in self._urls_with_file_regex():
+        for url in self._urls_with_download_regex():
             logging.debug(
                 f"Checking URL for version: {url} with regex {self._version_regex}"
             )
@@ -199,14 +199,14 @@ class GenericHTTPMirror(GenericMirror):
         sum_file.raise_for_status()
 
         sum_file_text = sum_file.text.strip()
-        if not re.search(self._file_regex, sum_file_text):
+        if not re.search(self._download_regex, sum_file_text):
             if not re.search(r"\s", sum_file_text) and len(sum_file_text) > 0:
                 return sum_file_text, 0
             raise ValueError(
-                f"File regex '{self._file_regex}' did not match in sum file text: '{sum_file_text}'"
+                f"Download regex '{self._download_regex}' did not match in sum file text: '{sum_file_text}'"
             )
 
-        sum_pos: int = 1 if re.search(rf"^{self._file_regex}", sum_file_text) else 0
+        sum_pos: int = 1 if re.search(rf"^{self._download_regex}", sum_file_text) else 0
 
         min_sum_file_text = ""
         for line in sum_file_text.splitlines():
@@ -220,7 +220,7 @@ class GenericHTTPMirror(GenericMirror):
         sums: list[Checksum] = []
         errors: list[str] = []
         for check in ["version", "file", "any"]:
-            urls = self._urls() if check == "any" else self._urls_with_file_regex()
+            urls = self._urls() if check == "any" else self._urls_with_download_regex()
             for url in urls:
                 if check == "version" and str(self.version) not in url:
                     continue
@@ -241,7 +241,7 @@ class GenericHTTPMirror(GenericMirror):
                     hash_value = (
                         sum_file_text
                         if not has_whitespace
-                        else parse_hash(sum_file_text, self._file_regex, sum_pos)
+                        else parse_hash(sum_file_text, self._download_regex, sum_pos)
                     )
                     sums.append(Checksum.from_sum_type(sum_type, hash_value))
             if sums:

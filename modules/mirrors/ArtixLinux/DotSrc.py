@@ -9,7 +9,7 @@ class DotSrc(GenericHTTPMirror):
     def __init__(self, edition, arch) -> None:
         super().__init__(
             uri="https://mirrors.dotsrc.org/artix-linux/iso/",
-            file_regex=rf"artix-{edition}-\d+-{arch}\.iso",
+            download_regex=rf"artix-{edition}-\d+-{arch}\.iso",
             version_regex=rf"artix-{edition}-(\d+)-{arch}\.iso",
             version_separator="",
         )
