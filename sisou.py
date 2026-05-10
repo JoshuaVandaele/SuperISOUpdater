@@ -39,12 +39,11 @@ def setup_logging(log_level: str, log_file: Path | None):
     Raises:
         ValueError: If the log_level is invalid.
     """
-    numeric_log_level = getattr(logging, log_level, None)
-
     logging.basicConfig(
-        level=numeric_log_level,
+        level=log_level,
         format="%(asctime)s - %(levelname)s - %(message)s",
         filename=log_file,
+        force=True,
     )
 
     logging.debug("Logging started")

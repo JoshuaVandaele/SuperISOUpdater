@@ -82,14 +82,34 @@ class GenericMirror(ABC):
         for step in self._init_steps:
             getattr(self, step)()
 
-    def checksum_file(self, file: Path) -> bool:
-        for checksum in self.checksums:
+    def checksum_file(self, file: Path, sums: list[Checksum]) -> bool:
+        for checksum in sums:
             if not checksum.verify_file(file):
                 return False
         return True
 
-    def signature_check(self, file: Path) -> bool:
-        return pgp_check(file, signature=self.signature, public_key=self.public_key)
+    def signature_check(self, file: Path) -> None:
+        if not self.has_signature:
+            return
+
+        sig_error: str | None = None
+        signature_success: bool
+        try:
+            signature_success = pgp_check(
+                (self.signed_file or file),
+                signature=self.signature,
+                public_key=self.public_key,
+            )
+        except Exception as e:
+            signature_success = False
+            sig_error = str(e)
+
+        if not signature_success:
+            if file:
+                file.unlink()
+            raise IntegrityCheckError(
+                f"Integrity check failed! (Signature){f': {sig_error}' if sig_error else ''}"
+            )
 
     def download_and_verify(self, file: Path) -> None:
         """Downloads a file and verifies its integrity through checksum and signature.
@@ -102,28 +122,12 @@ class GenericMirror(ABC):
         """
         self._download_file(file)
 
-        if not self.checksum_file(file):
+        if not self.checksum_file(file, self.checksums):
             if file:
                 file.unlink()
             raise IntegrityCheckError("Integrity check failed! (Checksum)")
 
-        if not self.has_signature:
-            return
-
-        sig_error: str | None = None
-        signature_success: bool
-        try:
-            signature_success = self.signature_check(self.signed_file or file)
-        except Exception as e:
-            signature_success = False
-            sig_error = str(e)
-
-        if not signature_success:
-            if file:
-                file.unlink()
-            raise IntegrityCheckError(
-                f"Integrity check failed! (Signature){f': {sig_error}' if sig_error else ''}"
-            )
+        self.signature_check(file)
 
     def _init_version(self) -> None:
         self.version = self._determine_latest_version()

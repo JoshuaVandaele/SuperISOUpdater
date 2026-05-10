@@ -151,8 +151,8 @@ The tool currently supports the following ISOs:
     - ✅ Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64
-    - 🔳 Kali Linux
-      - Editions: installer, installer-netinst, installer-purple, live
+    - ✅ Kali Linux
+      - Editions: installer, installer-everything, installer-netinst, installer-purple, live
       - Architectures: amd64, arm64
     - ✅ Linux Mint
       - Editions: cinnamon, mate, xfce

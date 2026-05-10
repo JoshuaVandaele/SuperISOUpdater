@@ -78,7 +78,10 @@ class GenericHTTPMirror(GenericMirror):
 
     def _determine_download_link(self) -> str:
         for link in self._urls_with_download_regex():
-            if re.search(rf"{self._download_regex}$", link) and str(self.version) in link:
+            if (
+                re.search(rf"{self._download_regex}$", link)
+                and str(self.version) in link
+            ):
                 return link
 
         raise DownloadLinkNotFoundError(
