@@ -1,8 +1,5 @@
 # Super ISO Updater
 
-> [!WARNING]  
-> This branch is still a work in progress. As such, not all listed features may be available yet.
-
 Super ISO Updater (SISOU) is a powerful tool that provides a convenient way to check for updates and install the latest versions of various ISO files. It is primarily meant to be used with a Ventoy drive and supports a wide range of ISOs.
 
 ## Features
@@ -121,60 +118,60 @@ sisou /etc/my_sisou_config.toml
 The tool currently supports the following ISOs:
 
 - **Diagnostic Tools**
-  - ✅ Hiren's BootCD PE
-  - ✅ MemTest86 Plus
+  - Hiren's BootCD PE
+  - MemTest86 Plus
     - Architectures: x86_64, i586
-  - ✅ SystemRescue
-  - ✅ UltimateBootCD
+  - SystemRescue
+  - UltimateBootCD
 - **Disk Utilities**
-  - ✅ Clonezilla
-  - ✅ GParted Live
-  - ✅ HDAT2
+  - Clonezilla
+  - GParted Live
+  - HDAT2
     - Editions: full, lite, diskette
-  - ✅ Rescuezilla
+  - Rescuezilla
     - Editions: bionic, focal, jammy, noble
     - Architectures: 64bit, 32bit
-  - ✅ ShredOS
+  - ShredOS
     - Architectures: x86-64, i586
 - **Operating Systems**
   - **Linux**
-    - ✅ Alpine Linux
+    - Alpine Linux
       - Editions: standard
       - Architectures: aarch64, armv7, loongarch64, ppc64le, riscv64, s390x, x86, x86_64
-    - ✅ Arch Linux
-    - ✅ Artix Linux
+    - Arch Linux
+    - Artix Linux
       - Editions: {base,cinnamon,lxde,lxqt,mate,plasma,xfce}-{dinit,openrc,runit,s6}
-    - ✅ CachyOS
+    - CachyOS
       - Editions: desktop, handheld
-    - ✅ Debian
+    - Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
-    - ✅ Fedora
+    - Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64
-    - ✅ Kali Linux
+    - Kali Linux
       - Editions: installer, installer-everything, installer-netinst, installer-purple, live
       - Architectures: amd64, arm64
-    - ✅ Linux Mint
+    - Linux Mint
       - Editions: cinnamon, mate, xfce
-    - ✅ Manjaro
+    - Manjaro
       - Editions: kde, xfce, gnome, cinnamon, i3
-    - ✅ Proxmox
+    - Proxmox
       - Editions: ve, mail-gateway, backup-server
-    - ✅ Rocky Linux
+    - Rocky Linux
       - Editions: dvd, boot, minimal
       - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
-    - ✅ Rocky Linux Live
+    - Rocky Linux Live
       - Editions: KDE, Workstation, Workstation Lite
       - Architectures: x86_64, aarch64
-    - ✅ TrueNAS
-    - ✅ Tails
-    - ✅ Ubuntu
+    - TrueNAS
+    - Tails
+    - Ubuntu
       - Editions: desktop, live-server
   - **Windows**
-    - ✅ Windows 11 (Multi-edition ISO, Any language)
+    - Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
   - **BSD**
-    - ✅ OPNsense
+    - OPNsense
       - Editions: dvd, nano, serial, vga
 
 ## Contributing
