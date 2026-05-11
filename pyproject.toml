@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sisou"
-version = "2.0.1"
+version = "2.1.0"
 authors = [{ name = "Joshua Vandaele", email = "joshua@vandaele.software" }]
 license = "GPL-2.0-or-later"
 keywords = [
