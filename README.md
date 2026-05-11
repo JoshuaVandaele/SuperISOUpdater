@@ -145,6 +145,7 @@ The tool currently supports the following ISOs:
       - Editions: desktop, handheld
     - Debian
       - Architectures: amd64, arm64, armhf, ppc64el, riscv64, s390x
+    - EndeavourOS
     - Fedora
       - Editions: Budgie, Cinnamon, KDE, LXDE, MATE_Compiz, SoaS, Sway, Xfce, i3
       - Architectures: x86_64, aarch64

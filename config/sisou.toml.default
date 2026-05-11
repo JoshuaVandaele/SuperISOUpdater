@@ -132,6 +132,10 @@ enabled = true
 archs = ["amd64"]
 name = "debian-live-[[VER]]-[[ARCH]]-netinst"
 
+[OperatingSystems.Linux.EndeavourOS]
+enabled = true
+name = "EndeavourOS_[[VER]]"
+
 [OperatingSystems.Linux.Fedora]
 enabled = true
 # Available editions:

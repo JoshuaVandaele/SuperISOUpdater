@@ -4,6 +4,7 @@ from .ArtixLinux import ArtixLinux
 from .CachyOS import CachyOS
 from .Clonezilla import Clonezilla
 from .Debian import Debian
+from .EndeavourOS import EndeavourOS
 from .Fedora import Fedora
 from .GenericUpdater import GenericUpdater
 from .GPartedLive import GPartedLive
@@ -32,6 +33,7 @@ __all__ = [
     "ArtixLinux",
     "CachyOS",
     "Debian",
+    "EndeavourOS",
     "Clonezilla",
     "Fedora",
     "GenericUpdater",
