@@ -13,20 +13,26 @@ Super ISO Updater (SISOU) is a powerful tool that provides a convenient way to c
 
 ### Prerequisites
 
-- Python 3.12 installed on your system.
+- Python 3.12+ installed on your system.
 - GnuPG for signature verification. (Optional)
 
 ### Installation
 
 Pick whichever method works best for you:
 
-#### pip _(recommended for most users)_
+#### [pip](https://pypi.org/project/pip/) _(recommended for most users)_
 
 ```sh
 python -m pip install sisou
 ```
 
-#### pipx
+#### [uv](https://docs.astral.sh/uv/)
+
+```sh
+uvx sisou@latest
+```
+
+#### [pipx](https://pipx.pypa.io/)
 
 ```sh
 pipx install sisou
@@ -42,13 +48,19 @@ python -m pip install .
 
 ### Updating
 
-#### pip
+#### [pip](https://pypi.org/project/pip/)
 
 ```sh
 python -m pip install --upgrade sisou
 ```
 
-#### pipx
+#### [uv](https://docs.astral.sh/uv/)
+
+```sh
+uvx sisou@latest
+```
+
+#### [pipx](https://pipx.pypa.io/)
 
 ```sh
 pipx upgrade sisou
