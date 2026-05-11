@@ -157,6 +157,16 @@ editions = ["installer", "live"]
 archs = ["amd64"]
 name = "kali-linux-[[VER]]-[[EDITION]]-[[ARCH]]"
 
+[OperatingSystems.Linux.Kubuntu]
+enabled = true
+# Available editions:
+# "desktop"
+editions = ["desktop"]
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "kubuntu-[[VER]]-[[EDITION]]-[[ARCH]]"
+
 [OperatingSystems.Linux.LinuxMint]
 enabled = true
 # Available editions:

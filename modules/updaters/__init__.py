@@ -11,6 +11,7 @@ from .GPartedLive import GPartedLive
 from .HDAT2 import HDAT2
 from .HirensBootCDPE import HirensBootCDPE
 from .KaliLinux import KaliLinux
+from .Kubuntu import Kubuntu
 from .LinuxMint import LinuxMint
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
@@ -43,6 +44,7 @@ __all__ = [
     "ShredOS",
     "HirensBootCDPE",
     "KaliLinux",
+    "Kubuntu",
     "LinuxMint",
     "Manjaro",
     "MemTest86Plus",
