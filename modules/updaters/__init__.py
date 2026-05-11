@@ -26,6 +26,7 @@ from .TrueNAS import TrueNAS
 from .Ubuntu import Ubuntu
 from .UltimateBootCD import UltimateBootCD
 from .Windows11 import Windows11
+from .Xubuntu import Xubuntu
 
 __all__ = [
     "AlpineLinux",
@@ -56,4 +57,5 @@ __all__ = [
     "UltimateBootCD",
     "TrueNAS",
     "Windows11",
+    "Xubuntu",
 ]

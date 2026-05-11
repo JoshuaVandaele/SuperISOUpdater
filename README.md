@@ -168,6 +168,8 @@ The tool currently supports the following ISOs:
     - Tails
     - Ubuntu
       - Editions: desktop, live-server
+    - Xubuntu
+      - Editions: desktop, minimal
   - **Windows**
     - Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64

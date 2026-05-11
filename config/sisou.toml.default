@@ -219,6 +219,16 @@ editions = ["desktop"]
 archs = ["amd64"]
 name = "ubuntu-[[VER]]-[[EDITION]]-[[ARCH]]"
 
+[OperatingSystems.Linux.Xubuntu]
+enabled = true
+# Available editions:
+# "desktop", "minimal"
+editions = ["desktop"]
+# Available architectures:
+# "amd64"
+archs = ["amd64"]
+name = "xubuntu-[[VER]]-[[EDITION]]-[[ARCH]]"
+
 # Windows
 [OperatingSystems.Windows]
 enabled = true
