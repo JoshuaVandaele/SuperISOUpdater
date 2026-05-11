@@ -5,7 +5,7 @@ from modules.mirrors.UbuntuFlavor.UbuntuFlavorMirrorManager import (
 from modules.updaters.GenericUpdater import GenericUpdater
 
 
-class Kubuntu(GenericUpdater):
+class Edubuntu(GenericUpdater):
     def __init__(
         self,
         iso_path: ISOPath,
@@ -13,7 +13,7 @@ class Kubuntu(GenericUpdater):
         edition: str,
         lang: str | None = None,
     ) -> None:
-        mirror_mgr = UbuntuFlavorMirrorManager("kubuntu", arch, edition)
+        mirror_mgr = UbuntuFlavorMirrorManager("edubuntu", arch, edition)
         super().__init__(
             iso_path=iso_path,
             mirror_mgr=mirror_mgr,

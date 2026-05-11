@@ -164,7 +164,6 @@ The tool currently supports the following ISOs:
     - Kali Linux
       - Editions: installer, installer-everything, installer-netinst, installer-purple, live
       - Architectures: amd64, arm64
-    - Kubuntu
     - Linux Mint
       - Editions: cinnamon, mate, xfce
     - Manjaro
@@ -181,6 +180,9 @@ The tool currently supports the following ISOs:
     - Tails
     - Ubuntu
       - Editions: desktop, live-server
+    - Edubuntu
+    - Kubuntu
+    - Lubuntu
     - Xubuntu
       - Editions: desktop, minimal
   - **Windows**

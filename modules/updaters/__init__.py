@@ -4,6 +4,7 @@ from .ArtixLinux import ArtixLinux
 from .CachyOS import CachyOS
 from .Clonezilla import Clonezilla
 from .Debian import Debian
+from .Edubuntu import Edubuntu
 from .EndeavourOS import EndeavourOS
 from .Fedora import Fedora
 from .GenericUpdater import GenericUpdater
@@ -13,6 +14,7 @@ from .HirensBootCDPE import HirensBootCDPE
 from .KaliLinux import KaliLinux
 from .Kubuntu import Kubuntu
 from .LinuxMint import LinuxMint
+from .Lubuntu import Lubuntu
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
 from .OPNsense import OPNsense
@@ -35,6 +37,7 @@ __all__ = [
     "ArtixLinux",
     "CachyOS",
     "Debian",
+    "Edubuntu",
     "EndeavourOS",
     "Clonezilla",
     "Fedora",
@@ -46,6 +49,7 @@ __all__ = [
     "KaliLinux",
     "Kubuntu",
     "LinuxMint",
+    "Lubuntu",
     "Manjaro",
     "MemTest86Plus",
     "OPNsense",

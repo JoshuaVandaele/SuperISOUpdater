@@ -12,23 +12,22 @@ class Ubuntu(GenericHTTPMirror):
     KEY_ID = "843938DF228D22F7B3742BC0D94AA3F0EFE21092"
     KEY_SERVER = "keyserver.ubuntu.com"
 
-    def __init__(self, arch: str, edition: str) -> None:
+    def __init__(self, flavor: str, arch: str, edition: str) -> None:
+        self.flavor = flavor
         self.session = requests_cache.CachedSession(backend="memory")
         version = self._determine_latest_version()
-        checksum_url: str = (
-            f"http://cdimages.ubuntu.com/kubuntu/releases/{version}/release/SHA256SUMS"
-        )
+        checksum_url: str = f"http://cdimages.ubuntu.com/{self.flavor}/releases/{version}/release/SHA256SUMS"
 
         super().__init__(
-            uri=f"http://cdimages.ubuntu.com/kubuntu/releases/{version}/release/",
-            download_regex=rf"kubuntu-{version}-{edition}-{arch}.iso",
+            uri=f"http://cdimages.ubuntu.com/{self.flavor}/releases/{version}/release/",
+            download_regex=rf"{self.flavor}-{version}-{edition}-{arch}.iso",
             version=version,
             signed_file=download_file_to_tmp(checksum_url),
         )
 
     def _determine_latest_version(self) -> Version:
         r = self.session.get(
-            "http://cdimages.ubuntu.com/kubuntu/releases/",
+            f"http://cdimages.ubuntu.com/{self.flavor}/releases/",
         )
         r.raise_for_status()
         soup = BeautifulSoup(r.content, features="html.parser")
