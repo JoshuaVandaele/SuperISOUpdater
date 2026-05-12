@@ -256,7 +256,7 @@ class GenericHTTPMirror(GenericMirror):
         )
 
     def _determine_speed(self) -> float:
-        PROBE_BYTES: int = 2048
+        PROBE_BYTES: int = 512 * 1024  # 512 KB
         with requests.get(
             self.download_link, stream=True, timeout=10, headers=self.headers
         ) as response:
@@ -267,9 +267,8 @@ class GenericHTTPMirror(GenericMirror):
                 total_size += len(chunk)
                 if total_size >= PROBE_BYTES:
                     break
-            end = time.time_ns()
 
-        elapsed_time = end - start
+        elapsed_time = time.time_ns() - start
         if elapsed_time == 0:
             return float("inf")
         return total_size / elapsed_time
