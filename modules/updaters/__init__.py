@@ -14,6 +14,7 @@ from .HirensBootCDPE import HirensBootCDPE
 from .KaliLinux import KaliLinux
 from .Kubuntu import Kubuntu
 from .LinuxMint import LinuxMint
+from .LMDE import LMDE
 from .Lubuntu import Lubuntu
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
@@ -49,6 +50,7 @@ __all__ = [
     "KaliLinux",
     "Kubuntu",
     "LinuxMint",
+    "LMDE",
     "Lubuntu",
     "Manjaro",
     "MemTest86Plus",

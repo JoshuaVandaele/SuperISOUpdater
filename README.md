@@ -166,6 +166,7 @@ The tool currently supports the following ISOs:
       - Architectures: amd64, arm64
     - Linux Mint
       - Editions: cinnamon, mate, xfce
+    - LMDE
     - Manjaro
       - Editions: kde, xfce, gnome, cinnamon, i3
     - Proxmox

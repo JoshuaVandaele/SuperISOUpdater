@@ -164,6 +164,13 @@ enabled = true
 editions = ["cinnamon"]
 name = "linuxmint-[[VER]]-[[EDITION]]-64bit"
 
+[OperatingSystems.Linux.LMDE]
+enabled = true
+# Available editions:
+# "cinnamon"
+editions = ["cinnamon"]
+name = "lmde-[[VER]]-[[EDITION]]-64bit"
+
 [OperatingSystems.Linux.Manjaro]
 enabled = true
 # Available editions:
