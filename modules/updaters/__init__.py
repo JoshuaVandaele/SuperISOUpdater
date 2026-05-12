@@ -18,6 +18,7 @@ from .LMDE import LMDE
 from .Lubuntu import Lubuntu
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
+from .NetBSD import NetBSD
 from .OPNsense import OPNsense
 from .Proxmox import Proxmox
 from .Rescuezilla import Rescuezilla
@@ -54,6 +55,7 @@ __all__ = [
     "Lubuntu",
     "Manjaro",
     "MemTest86Plus",
+    "NetBSD",
     "OPNsense",
     "Proxmox",
     "RockyLinux",

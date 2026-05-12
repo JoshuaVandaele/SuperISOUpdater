@@ -285,6 +285,13 @@ name = "Win11_[[VER]]_[[LANG]]_[[ARCH]]"
 enabled = true
 directory = "BSD"
 
+[OperatingSystems.BSD.NetBSD]
+enabled = true
+# Available architectures:
+# "amd64", "evbarm-aarch64", "evbarm-aarch64eb", "evbmips-mips64eb", "evbmips-mips64el", "evbmips-mipseb", "evbmips-mipsel", "evbmips-mipsn64eb", "evbmips-mipsn64el", "evbppc", "hpcarm", "i386", "sparc64"
+archs = ["amd64"]
+name = "NetBSD-[[VER]]-[[ARCH]]"
+
 [OperatingSystems.BSD.OPNsense]
 enabled = true
 # Available editions:
