@@ -169,6 +169,8 @@ The tool currently supports the following ISOs:
     - LMDE
     - Manjaro
       - Editions: kde, xfce, gnome, cinnamon, i3
+    - MX Linux
+      - Editions: Xfce, Xfce_ahs, KDE, Fluxbox
     - Proxmox
       - Editions: ve, mail-gateway, backup-server
     - Rocky Linux

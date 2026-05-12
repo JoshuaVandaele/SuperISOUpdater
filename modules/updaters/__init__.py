@@ -18,6 +18,7 @@ from .LMDE import LMDE
 from .Lubuntu import Lubuntu
 from .Manjaro import Manjaro
 from .MemTest86Plus import MemTest86Plus
+from .MXLinux import MXLinux
 from .NetBSD import NetBSD
 from .OPNsense import OPNsense
 from .Proxmox import Proxmox
@@ -55,6 +56,7 @@ __all__ = [
     "Lubuntu",
     "Manjaro",
     "MemTest86Plus",
+    "MXLinux",
     "NetBSD",
     "OPNsense",
     "Proxmox",

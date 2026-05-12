@@ -178,6 +178,16 @@ enabled = true
 editions = ["kde"]
 name = "manjaro-[[EDITION]]-[[VER]]-linux"
 
+[OperatingSystems.Linux.MXLinux]
+enabled = true
+# Available editions:
+# "Xfce", "Xfce_ahs", "KDE", "Fluxbox"
+editions = ["Xfce"]
+# Available architectures:
+# "x64"
+archs = ["x64"]
+name = "MX-[[VER]]_[[EDITION]]_[[ARCH]]"
+
 [OperatingSystems.Linux.Proxmox]
 enabled = true
 # Available editions:
