@@ -248,3 +248,13 @@ def download_file_to_tmp(url) -> Path:
     sig_file.close()
 
     return Path(tempfile.gettempdir()) / sig_file.name
+
+
+def format_size(bytes: int) -> str:
+    """Format a file size in bytes into a human-readable string with appropriate units."""
+    size: float = bytes
+    for unit in ["B", "KB", "MB", "GB"]:
+        if size < 1024:
+            return f"{size:.1f} {unit}"
+        size /= 1024
+    return f"{size:.1f} TB"

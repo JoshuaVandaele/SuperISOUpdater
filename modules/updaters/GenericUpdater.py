@@ -108,7 +108,7 @@ class GenericUpdater(ABC):
 
         os.makedirs(self.iso_path.dirname(), exist_ok=True)
 
-    def check_for_updates(self) -> bool:
+    def is_update_available(self) -> bool:
         """
         Check if there are updates available for the software.
 
@@ -117,14 +117,14 @@ class GenericUpdater(ABC):
         """
         if not (local_version := self._get_local_version()):
             logging.debug(
-                f"[GenericUpdater.check_for_updates] No local version found for {self.__class__.__name__}"
+                f"[GenericUpdater.is_update_available] No local version found for {self.__class__.__name__}"
             )
             return True
 
         is_update_available = local_version < self._get_latest_version()
 
         logging.debug(
-            f"[GenericUpdater.check_for_updates] {local_version} < {self._get_latest_version()}? {is_update_available}"
+            f"[GenericUpdater.is_update_available] {local_version} < {self._get_latest_version()}? {is_update_available}"
         )
         return is_update_available
 

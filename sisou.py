@@ -11,6 +11,7 @@ from typing import Type
 import modules.updaters
 from modules.SISOUConfig import SISOUConfig
 from modules.updaters import GenericUpdater
+from modules.utils import format_size
 
 
 @cache
@@ -60,12 +61,25 @@ def run_updater(updater: GenericUpdater):
     logging.info(f"[{installer_for}] Checking for updates...")
 
     try:
-        if updater.check_for_updates():
+        if updater.is_update_available():
             logging.info(
-                f"[{installer_for}] Updates available. Downloading and installing the latest version..."
+                f"[{installer_for}] Update available. Updating from version {updater._get_local_version()} to {updater._get_latest_version()}..."
+            )
+            old_size = (
+                local_file.stat().st_size
+                if (local_file := updater._get_local_file())
+                else 0
             )
             updater.install_latest_version()
-            logging.info(f"[{installer_for}] Update completed successfully!")
+            new_size = (
+                local_file.stat().st_size
+                if (local_file := updater._get_local_file())
+                else 0
+            )
+            diff_size = new_size - old_size
+            logging.info(
+                f"[{installer_for}] Update completed successfully! ({'-' if diff_size < 0 else '+'}{format_size(abs(diff_size))})"
+            )
         else:
             logging.info(f"[{installer_for}] No updates available.")
     except Exception:
