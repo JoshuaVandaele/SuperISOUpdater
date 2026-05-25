@@ -129,7 +129,7 @@ def pgp_receive_key(key_id: str, keyserver: str) -> bytes | None:
     if import_result.count > 0:
         key_ascii = gpg.export_keys(key_id)
         if key_ascii:
-            logging.info(f"[pgp_receive_key] Successfully imported key {key_id}")
+            logging.debug(f"[pgp_receive_key] Successfully imported key {key_id}")
             return key_ascii.encode("utf-8")
 
     logging.warning(f"[pgp_receive_key] Key {key_id} could not be found or imported")
