@@ -14,8 +14,8 @@ class OVH(GenericHTTPMirror):
         super().__init__(
             uri="https://rockylinux.mirrors.ovh.net/",
             # For some reason, sometimes there is a "1" after the edition e.g. dvd1
-            download_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
-            version_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.\.iso",
+            download_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.?\.iso",
+            version_regex=rf"Rocky-([\d.]+)-{arch}-{edition}.?\.iso",
             signed_file=signed_file,
         )
         r = self.session.get(urljoin(self.uri, "fullfilelist"))
