@@ -10,10 +10,9 @@ class Rescuezilla(GenericUpdater):
         self,
         iso_path: ISOPath,
         edition: str,
-        arch: str | None = None,
+        arch: str,
         lang: str | None = None,
     ) -> None:
-        arch = "32bit" if edition.lower() == "bionic" else "64bit"
         mirror_mgr = RescuezillaMirrorManager(edition=edition, arch=arch)
         super().__init__(
             iso_path=iso_path,
@@ -21,6 +20,6 @@ class Rescuezilla(GenericUpdater):
             arch=arch,
             edition=edition,
             lang=lang,
-            valid_archs=["64bit", "32bit"],
-            valid_editions=["bionic", "focal", "jammy", "noble"],
+            valid_archs=["64bit"],
+            valid_editions=["noble", "resolute"],
         )

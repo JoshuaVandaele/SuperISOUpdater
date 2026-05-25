@@ -61,10 +61,11 @@ name = "hdat2_[[EDITION]]_[[VER]]"
 [DiagnosticTools.Rescuezilla]
 enabled = true
 # Available editions:
-# "bionic", "focal", "jammy", "noble"
-editions = ["noble"]
-# The architecture is selected automatically
-# depending on the edition.
+# "noble", "resolute"
+editions = ["resolute"]
+# Available architectures:
+# "64bit"
+archs = ["64bit"]
 name = "rescuezilla-[[VER]]-[[ARCH]].[[EDITION]]"
 
 [DiskUtils.ShredOS]

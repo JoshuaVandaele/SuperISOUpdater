@@ -141,7 +141,7 @@ The tool currently supports the following ISOs:
   - HDAT2
     - Editions: full, lite, diskette
   - Rescuezilla
-    - Editions: bionic, focal, jammy, noble
+    - Editions: noble, resolute
     - Architectures: 64bit, 32bit
   - ShredOS
     - Architectures: x86-64, i586
