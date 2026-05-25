@@ -1,4 +1,5 @@
 import argparse
+import importlib.metadata
 import logging
 import os
 import shutil
@@ -127,6 +128,12 @@ def main():
     )
     parser.add_argument(
         "-f", "--log-file", help="Path to the log file (default: log to console)"
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {importlib.metadata.version('sisou')}",
     )
     args = parser.parse_args()
 
