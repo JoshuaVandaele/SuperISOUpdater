@@ -135,7 +135,6 @@ class GenericUpdater(ABC):
         Raises:
             IntegrityCheckError: If the integrity check of the downloaded file fails.
         """
-        old_file = self._get_local_file()
         new_file = Path(
             self.iso_path.fill_placeholders(
                 version=str(self._get_latest_version()),
@@ -153,7 +152,7 @@ class GenericUpdater(ABC):
             raise RuntimeError from e
 
         # If the installation was successful and we had a previous version installed, remove it
-        if old_file:
+        if old_file := self._get_local_file():
             logging.debug(
                 f"[GenericUpdater.install_latest_version] Removing old file: {old_file}"
             )
