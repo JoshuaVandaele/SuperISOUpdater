@@ -26,24 +26,39 @@ class MirrorService(GenericHTTPMirror):
         )
 
     def _determine_latest_version(self) -> Version:
-        r = self.session.get(
+        ver_r = self.session.get(
             f"https://www.mirrorservice.org/sites/cdimage.ubuntu.com/cdimage/{self.flavor}/releases/",
         )
-        r.raise_for_status()
-        soup = BeautifulSoup(r.content, features="html.parser")
-        urls = [str(a_tag.get("href")) for a_tag in soup.find_all("a", href=True)]
+        ver_r.raise_for_status()
+        ver_soup = BeautifulSoup(ver_r.content, features="html.parser")
+        ver_urls = [
+            str(a_tag.get("href")) for a_tag in ver_soup.find_all("a", href=True)
+        ]
 
         latest_version = Version("0")
-        for url in urls:
-            ver_match = re.match(r"^([\d\.]+)\/?$", url)
+        for ver_url in sorted(ver_urls, reverse=True):
+            ver_match = re.match(r"^([\d\.]+)\/?$", ver_url)
             if not ver_match:
                 continue
             current_version = Version(ver_match.group(1))
             if current_version and current_version > latest_version:
-                latest_version = current_version
+                # Need to filter out pre-releases
+                rel_r = self.session.get(
+                    f"https://www.mirrorservice.org/sites/cdimage.ubuntu.com/cdimage/{self.flavor}/releases/{current_version}/",
+                )
+                rel_r.raise_for_status()
+                rel_soup = BeautifulSoup(rel_r.content, features="html.parser")
+                rel_urls = [
+                    str(a_tag.get("href"))
+                    for a_tag in rel_soup.find_all("a", href=True)
+                ]
+
+                for rel_url in rel_urls:
+                    if rel_url == "release/":
+                        latest_version = current_version
 
         if latest_version == Version("0"):
-            raise ValueError(f"No version found on the page '{r.url}'")
+            raise ValueError(f"No version found on the page '{ver_r.url}'")
         return latest_version
 
     def _determine_public_key(self) -> bytes | None:
