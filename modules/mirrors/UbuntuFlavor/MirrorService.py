@@ -36,12 +36,12 @@ class MirrorService(GenericHTTPMirror):
         ]
 
         latest_version = Version("0")
-        for ver_url in ver_urls:
+        for ver_url in sorted(ver_urls, reverse=True):
             ver_match = re.match(r"^([\d\.]+)\/?$", ver_url)
             if not ver_match:
                 continue
             current_version = Version(ver_match.group(1))
-            if current_version:
+            if current_version and current_version > latest_version:
                 # Need to filter out pre-releases
                 rel_r = self.session.get(
                     f"https://www.mirrorservice.org/sites/cdimage.ubuntu.com/cdimage/{self.flavor}/releases/{current_version}/",
@@ -54,7 +54,7 @@ class MirrorService(GenericHTTPMirror):
                 ]
 
                 for rel_url in rel_urls:
-                    if rel_url == "release/" and current_version > latest_version:
+                    if rel_url == "release/":
                         latest_version = current_version
 
         if latest_version == Version("0"):
