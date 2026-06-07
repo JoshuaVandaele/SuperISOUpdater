@@ -18,5 +18,10 @@ class Proxmox(GenericUpdater):
             arch=arch,
             edition=edition,
             lang=lang,
-            valid_editions=["ve", "mail-gateway", "backup-server"],
+            valid_editions=[
+                "ve",
+                "mail-gateway",
+                "backup-server",
+                "datacenter-manager",
+            ],
         )

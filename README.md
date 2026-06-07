@@ -172,7 +172,7 @@ The tool currently supports the following ISOs:
     - MX Linux
       - Editions: Xfce, Xfce_ahs, KDE, Fluxbox
     - Proxmox
-      - Editions: ve, mail-gateway, backup-server
+      - Editions: ve, mail-gateway, backup-server, datacenter-manager
     - Rocky Linux
       - Editions: dvd, boot, minimal
       - Architectures: x86_64, aarch64, ppc64le, s390x, riscv64
