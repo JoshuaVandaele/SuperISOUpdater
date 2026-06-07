@@ -35,7 +35,7 @@ class Fedora(GenericHTTPMirror):
         )
         r.raise_for_status()
 
-        versions = re.findall(r'href="(\d+)/"', r.text)
+        versions = re.findall(r'href="(?:\./)?(\d+)/?"', r.text)
         if not versions:
             raise ValueError(f"No version found on the page '{r.url}'")
 
