@@ -192,7 +192,7 @@ name = "MX-[[VER]]_[[EDITION]]_[[ARCH]]"
 [OperatingSystems.Linux.Proxmox]
 enabled = true
 # Available editions:
-# "ve", "mail-gateway", "backup-server"
+# "ve", "mail-gateway", "backup-server", "datacenter-manager"
 editions = ["ve"]
 name = "proxmox-[[EDITION]]_[[VER]]"
 
