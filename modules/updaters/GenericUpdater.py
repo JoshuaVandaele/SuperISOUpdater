@@ -47,6 +47,7 @@ class GenericUpdater(ABC):
 
         self.iso_path = iso_path
         self.mirror_mgr = mirror_mgr
+        self.VersionClass = mirror_mgr.current_mirror.VersionClass
         self.version_separator = mirror_mgr.current_mirror.version_separator
         self.extension = extension
 
@@ -152,15 +153,36 @@ class GenericUpdater(ABC):
             raise RuntimeError from e
 
         # If the installation was successful and we had a previous version installed, remove it
-        if old_file := self._get_local_file():
+        if (old_file := self._get_local_file()) and not old_file == new_file:
             logging.debug(
                 f"[GenericUpdater.install_latest_version] Removing old file: {old_file}"
             )
             old_file.unlink()
 
-    def _get_local_file(self) -> Path | None:
+    def _extract_version(self, check_path: Path | None) -> Version | None:
+        found_version: Version | None = None
+
+        normalized_path_without_ver = self.iso_path.basename().fill_placeholders(
+            version=None, edition=self.edition, lang=self.lang, arch=self.arch
+        )
+
+        version_regex: str = r"(.+)".join(
+            re.escape(part) for part in normalized_path_without_ver.split("[[VER]]")
+        )
+        found_version_regex = re.search(version_regex, str(check_path))
+
+        if found_version_regex:
+            found_version = self.VersionClass(
+                found_version_regex.group(1),
+                self.version_separator,
+            )
+
+        return found_version
+
+    def _get_local_file(self, newest=False) -> Path | None:
         """
         Get the path of the locally stored file that matches the filename pattern.
+        Defaults to returning the oldest matching version. Passing `newest=True` will grab the newest version instead.
 
         Returns:
             str | None: The path of the locally stored file if found, None if no file exists.
@@ -173,7 +195,11 @@ class GenericUpdater(ABC):
             extension=self.extension,
         )
 
-        local_files = glob.glob(file_path)
+        local_files = sorted(
+            glob.glob(file_path),
+            key=lambda x: self._extract_version(Path(x).with_suffix("")),
+            reverse=newest,
+        )
 
         if local_files:
             return Path(local_files[0])
@@ -190,9 +216,7 @@ class GenericUpdater(ABC):
             list[str] | None: A list of integers representing the version number if found,
                             None if the version cannot be determined or no local file exists.
         """
-        local_version: Version | None = None
-
-        local_file = self._get_local_file()
+        local_file = self._get_local_file(newest=True)
 
         if not local_file:
             logging.debug(
@@ -200,21 +224,7 @@ class GenericUpdater(ABC):
             )
             return None
 
-        local_file_without_ext = local_file.with_suffix("")
-        normalized_path_without_ver = self.iso_path.basename().fill_placeholders(
-            version=None, edition=self.edition, lang=self.lang, arch=self.arch
-        )
-
-        version_regex: str = r"(.+)".join(
-            re.escape(part) for part in normalized_path_without_ver.split("[[VER]]")
-        )
-        local_version_regex = re.search(version_regex, str(local_file_without_ext))
-
-        if local_version_regex:
-            local_version = Version(
-                local_version_regex.group(1),
-                self.version_separator,
-            )
+        local_version = self._extract_version(local_file.with_suffix(""))
 
         if not local_version:
             logging.debug(
