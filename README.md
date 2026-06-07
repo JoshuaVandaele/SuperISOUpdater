@@ -192,6 +192,9 @@ The tool currently supports the following ISOs:
     - Windows 11 (Multi-edition ISO, Any language)
       - Architectures: x64, arm64
   - **BSD**
+    - FreeBSD
+      - Editions: bootonly, dvd1, disc1
+      - Architectures: amd64, aarch64, powerpc64, powerpc64le, riscv64
     - NetBSD
       - Architectures:, amd64, evbarm-aarch64, evbarm-aarch64eb, evbmips-mips64eb, evbmips-mips64el, evbmips-mipseb, evbmips-mipsel, evbmips-mipsn64eb, evbmips-mipsn64el, evbppc hpcarm, i386, sparc64
     - OPNsense

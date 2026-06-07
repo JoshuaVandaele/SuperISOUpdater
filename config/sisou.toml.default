@@ -296,6 +296,16 @@ name = "Win11_[[VER]]_[[LANG]]_[[ARCH]]"
 enabled = true
 directory = "BSD"
 
+[OperatingSystems.BSD.FreeBSD]
+enabled = true
+# Available editions:
+# "bootonly", "dvd1", "disc1"
+editions = ["dvd1"]
+# Available architectures:
+# "amd64", "aarch64", "powerpc64", "powerpc64le", "riscv64"
+archs = ["amd64"]
+name = "FreeBSD-[[VER]]-RELEASE-[[ARCH]]-[[EDITION]]"
+
 [OperatingSystems.BSD.NetBSD]
 enabled = true
 # Available architectures:

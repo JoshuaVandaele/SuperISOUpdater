@@ -7,6 +7,7 @@ from .Debian import Debian
 from .Edubuntu import Edubuntu
 from .EndeavourOS import EndeavourOS
 from .Fedora import Fedora
+from .FreeBSD import FreeBSD
 from .GenericUpdater import GenericUpdater
 from .GPartedLive import GPartedLive
 from .HDAT2 import HDAT2
@@ -44,6 +45,7 @@ __all__ = [
     "EndeavourOS",
     "Clonezilla",
     "Fedora",
+    "FreeBSD",
     "GenericUpdater",
     "GPartedLive",
     "HDAT2",
