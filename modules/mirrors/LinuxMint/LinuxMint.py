@@ -43,7 +43,7 @@ class LinuxMint(GenericHTTPMirror):
                 latest_version = current_version
 
         if latest_version == Version("0"):
-            raise ValueError(f"No version found on the page '{self.uri}'")
+            raise ValueError(f"No version found on the page '{r.url}'")
         return latest_version
 
     def _determine_public_key(self) -> bytes | None:
