@@ -5,8 +5,8 @@ class OVH(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str) -> None:
         super().__init__(
             uri=f"https://alpinelinux.mirrors.ovh.net/latest-stable/releases/{arch}/",
-            download_regex=rf"alpine-{edition}-(.+?)-{arch}.iso",
-            version_regex=rf"alpine-{edition}-(.+?)-{arch}.iso",
+            download_regex=rf"alpine-{edition}-([\d\.]+)-{arch}.iso",
+            version_regex=rf"alpine-{edition}-([\d\.]+)-{arch}.iso",
         )
 
     def _determine_public_key(self) -> bytes | None:
