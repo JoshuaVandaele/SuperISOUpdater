@@ -157,7 +157,8 @@ def parse_hash(hashes: str, match_regex: str, hash_position_in_line: int):
 
 def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None:
     """
-    Download a file from a given URL and save it to the local file system.
+    Download a file from a given URL and save it to the local file system,
+    resuming a previously interrupted download when the server supports it.
 
     Args:
         url (str): The URL of the file to download.
@@ -168,16 +169,42 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
         None
     """
     part_file = local_file.with_suffix(".part")
-    logging.debug(f"[download_file] Downloading {url} to {part_file.resolve()}")
+
+    initial_pos = part_file.stat().st_size if part_file.exists() else 0
+    headers = {"Range": f"bytes={initial_pos}-"} if initial_pos else {}
+
+    logging.debug(
+        f"[download_file] Downloading {url} to {part_file.resolve()}"
+        + (f" (resuming from {initial_pos} bytes)" if initial_pos else "")
+    )
 
     try:
-        with requests.get(url, stream=True) as r:  # noqa: S113
-            r.raise_for_status()
-            total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
+        with requests.get(url, stream=True, headers=headers) as r:  # noqa: S113
+            if initial_pos and r.status_code == 416:
+                part_file.rename(local_file)
+                return
 
-            with open(part_file, "wb") as f:
+            resumed = bool(initial_pos) and r.status_code == 206
+            if not resumed:
+                logging.debug("[download_file] Server did not allow us to resume, restarting download from scratch")
+                initial_pos = 0
+
+            r.raise_for_status()
+
+            # On a 206 response, Content-Length is only the remaining data
+            remaining_size = int(r.headers.get("content-length", 0))
+            total_size = initial_pos + remaining_size
+
+            mode = "ab" if resumed else "wb"
+            with open(part_file, mode) as f:
                 if progress_bar:
-                    with tqdm(total=total_size, unit="B", desc=part_file.name, unit_scale=True) as pbar:
+                    with tqdm(
+                        total=total_size,
+                        initial=initial_pos,
+                        unit="B",
+                        desc=part_file.name,
+                        unit_scale=True,
+                    ) as pbar:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
                                 f.write(chunk)
@@ -186,8 +213,6 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
                     shutil.copyfileobj(r.raw, f)
     except requests.exceptions.RequestException:
         logging.exception(f"Failed to download {url} to {part_file.resolve()}")
-        if part_file.exists():
-            part_file.unlink()
         raise
     except KeyboardInterrupt:
         logging.info(f"Download of {url} to {part_file.resolve()} was cancelled")
