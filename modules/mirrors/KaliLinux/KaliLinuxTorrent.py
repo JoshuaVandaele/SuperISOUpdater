@@ -1,12 +1,9 @@
-import asyncio
 import contextlib
 import re
-import shutil
 from collections.abc import Callable
 from pathlib import Path
 
-from torrentp import TorrentDownloader
-
+from modules.Aria2Manager import Aria2Manager
 from modules.Checksum import Checksum, SHA1Sum, SHA256Sum
 from modules.exceptions import IntegrityCheckError
 from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
@@ -25,11 +22,6 @@ from modules.utils import download_file_to_tmp
 # depending on what checksums and signatures are available for each.
 # Those may be in separate files in separate locations, or in the same file.
 # - We want to support mirrors that use magnet links instead of torrent files
-# - We currently rely on torrentp to do the actual torrent downloading,
-# but we may want to implement our own torrent downloading in the future if we need more control over the process
-# (e.g. selecting which files to download from a torrent,
-# or integrating with our existing download manager for speed testing and such),
-# which would mean using libtorrent (which is a wrapper for libtorrent-rasterbar and not libtorrent-rtorrent)
 class KaliLinuxTorrent(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str) -> None:
         self.torrent_checksums: list[Checksum] = []
@@ -112,18 +104,11 @@ class KaliLinuxTorrent(GenericHTTPMirror):
             if not self.checksum_file(torrent_file, self.torrent_checksums):
                 raise IntegrityCheckError("Integrity check failed for torrent file! (Checksum)")
 
-            torrent_folder = Path(f"{torrent_file}.d")
-            stack.callback(shutil.rmtree, torrent_folder, ignore_errors=True)
-
-            try:
-                tdl = TorrentDownloader(str(torrent_file), str(torrent_folder))
-                asyncio.run(tdl.start_download())
-            except Exception as e:
-                raise IntegrityCheckError(f"Failed to download {file}") from e
+            torrent_folder = Aria2Manager.download_torrent(torrent_file, file)
 
             downloaded_iso = next(torrent_folder.glob("*.iso"), None)
             if not downloaded_iso:
-                raise IntegrityCheckError("Downloaded torrent did not contain an ISO file")
+                raise FileNotFoundError("Downloaded torrent did not contain an ISO file")
 
             self.signature_check(downloaded_iso)
 
