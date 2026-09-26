@@ -364,7 +364,7 @@ wheels = [
 
 [[package]]
 name = "sisou"
-version = "2.5.0"
+version = "2.5.2"
 source = { editable = "." }
 dependencies = [
     { name = "aria2" },
