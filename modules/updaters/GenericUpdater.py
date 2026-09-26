@@ -11,7 +11,7 @@ from modules.mirrors.GenericMirrorManager import GenericMirrorManager
 from modules.Version import Version
 
 
-class GenericUpdater(ABC):
+class GenericUpdater(ABC):  # noqa: B024
     """
     Abstract base class for a generic updater that manages software updates.
     """
@@ -57,16 +57,10 @@ class GenericUpdater(ABC):
             if not self.iso_path.has_edition():
                 raise ValueError("Invalid name. The name needs a [[EDITION]] tag.")
 
-            if edition.lower() not in (
-                valid_edition.lower() for valid_edition in valid_editions
-            ):
-                raise ValueError(
-                    f"Invalid edition. The available editions are: {', '.join(valid_editions)}."
-                )
+            if edition.lower() not in (valid_edition.lower() for valid_edition in valid_editions):
+                raise ValueError(f"Invalid edition. The available editions are: {', '.join(valid_editions)}.")
             self.edition = next(
-                valid_edition
-                for valid_edition in valid_editions
-                if valid_edition.lower() == edition.lower()
+                valid_edition for valid_edition in valid_editions if valid_edition.lower() == edition.lower()
             )
         else:
             self.edition = None
@@ -78,14 +72,8 @@ class GenericUpdater(ABC):
                 raise ValueError("The child class needs to define valid languages.")
 
             if lang.lower() not in (valid_lang.lower() for valid_lang in valid_langs):
-                raise ValueError(
-                    f"Invalid language. The available languages are: {', '.join(valid_langs)}."
-                )
-            self.lang = next(
-                valid_lang
-                for valid_lang in valid_langs
-                if valid_lang.lower() == lang.lower()
-            )
+                raise ValueError(f"Invalid language. The available languages are: {', '.join(valid_langs)}.")
+            self.lang = next(valid_lang for valid_lang in valid_langs if valid_lang.lower() == lang.lower())
         else:
             self.lang = None
 
@@ -96,14 +84,8 @@ class GenericUpdater(ABC):
                 raise ValueError("The child class needs to define valid architectures.")
 
             if arch.lower() not in (valid_arch.lower() for valid_arch in valid_archs):
-                raise ValueError(
-                    f"Invalid architecture. The available architectures are: {', '.join(valid_archs)}."
-                )
-            self.arch = next(
-                valid_arch
-                for valid_arch in valid_archs
-                if valid_arch.lower() == arch.lower()
-            )
+                raise ValueError(f"Invalid architecture. The available architectures are: {', '.join(valid_archs)}.")
+            self.arch = next(valid_arch for valid_arch in valid_archs if valid_arch.lower() == arch.lower())
         else:
             self.arch = None
 
@@ -117,15 +99,14 @@ class GenericUpdater(ABC):
             bool: True if updates are available, False if the local version is up to date.
         """
         if not (local_version := self._get_local_version()):
-            logging.debug(
-                f"[GenericUpdater.is_update_available] No local version found for {self.__class__.__name__}"
-            )
+            logging.debug(f"[GenericUpdater.is_update_available] No local version found for {self.__class__.__name__}")
             return True
 
         is_update_available = local_version < self._get_latest_version()
 
         logging.debug(
-            f"[GenericUpdater.is_update_available] {local_version} < {self._get_latest_version()}? {is_update_available}"
+            f"[GenericUpdater.is_update_available] {local_version} < {self._get_latest_version()}? "
+            "{is_update_available}"
         )
         return is_update_available
 
@@ -153,10 +134,8 @@ class GenericUpdater(ABC):
             raise RuntimeError from e
 
         # If the installation was successful and we had a previous version installed, remove it
-        if (old_file := self._get_local_file()) and not old_file == new_file:
-            logging.debug(
-                f"[GenericUpdater.install_latest_version] Removing old file: {old_file}"
-            )
+        if (old_file := self._get_local_file()) and old_file != new_file:
+            logging.debug(f"[GenericUpdater.install_latest_version] Removing old file: {old_file}")
             old_file.unlink()
 
     def _extract_version(self, check_path: Path | None) -> Version | None:
@@ -166,9 +145,7 @@ class GenericUpdater(ABC):
             version=None, edition=self.edition, lang=self.lang, arch=self.arch
         )
 
-        version_regex: str = r"(.+)".join(
-            re.escape(part) for part in normalized_path_without_ver.split("[[VER]]")
-        )
+        version_regex: str = r"(.+)".join(re.escape(part) for part in normalized_path_without_ver.split("[[VER]]"))
         found_version_regex = re.search(version_regex, str(check_path))
 
         if found_version_regex:
@@ -203,9 +180,7 @@ class GenericUpdater(ABC):
 
         if local_files:
             return Path(local_files[0])
-        logging.debug(
-            f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}"
-        )
+        logging.debug(f"[GenericUpdater._get_local_file] No local file found for {self.__class__.__name__}")
         return None
 
     def _get_local_version(self) -> Version | None:
@@ -219,17 +194,13 @@ class GenericUpdater(ABC):
         local_file = self._get_local_file(newest=True)
 
         if not local_file:
-            logging.debug(
-                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
-            )
+            logging.debug(f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}")
             return None
 
         local_version = self._extract_version(local_file.with_suffix(""))
 
         if not local_version:
-            logging.debug(
-                f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}"
-            )
+            logging.debug(f"[GenericUpdater._get_local_version] No local version found for {self.__class__.__name__}")
 
         return local_version
 

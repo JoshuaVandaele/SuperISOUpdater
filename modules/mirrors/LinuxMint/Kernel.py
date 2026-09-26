@@ -16,9 +16,7 @@ class Kernel(GenericHTTPMirror):
     def __init__(self, edition: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         version = self._determine_latest_version()
-        checksum_url: str = (
-            f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/sha256sum.txt"
-        )
+        checksum_url: str = f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/sha256sum.txt"
 
         super().__init__(
             uri=f"https://mirrors.edge.kernel.org/linuxmint/stable/{version}/",

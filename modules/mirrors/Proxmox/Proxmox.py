@@ -1,7 +1,8 @@
 import re
+from datetime import datetime
 
 from bs4 import BeautifulSoup
-from datetime import datetime
+
 from modules.Checksum import SHA256Sum
 from modules.DotDashVersion import DotDashVersion
 from modules.mirrors.GenericHTTPMirror import GenericHTTPMirror
@@ -18,9 +19,11 @@ class Proxmox(GenericHTTPMirror):
         )
 
     def _determine_public_key(self) -> bytes:
-        # https://enterprise.proxmox.com/iso/#verify indicates use of a single `release` key, but the actual signatures use multiple, so verification fails. Instead, use the `archive-keyring`.
+        # https://enterprise.proxmox.com/iso/#verify indicates use of a single `release` key,
+        # but the actual signatures use multiple, so verification fails.
+        # Instead, use the `archive-keyring`.
         key_index_url = "https://enterprise.proxmox.com/debian/"
-        key_line_regex = r"(?P<filename>.+\.gpg)\s{2,}(?P<modified>\d{2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4} \d{2}:\d{2})\s{2,}(?P<size>\d+)"
+        key_line_regex = r"(?P<filename>.+\.gpg)\s{2,}(?P<modified>\d{2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4} \d{2}:\d{2})\s{2,}(?P<size>\d+)"  # noqa: E501
 
         idx_r = self.session.get(key_index_url, headers=self.headers)
         idx_r.raise_for_status()
@@ -29,16 +32,13 @@ class Proxmox(GenericHTTPMirror):
         pre_tag = idx_soup.find("pre")
         if not pre_tag:
             raise ValueError(
-                f"Invalid file listing on {key_index_url} - cannot retrieve Proxmox public key for signature verification!"
+                f"Invalid file listing on {key_index_url} - "
+                "cannot retrieve Proxmox public key for signature verification!"
             )
 
         pre_lines = pre_tag.get_text().strip().splitlines()
         key_lines = sorted(
-            [
-                re.match(key_line_regex, key_line)
-                for key_line in pre_lines
-                if "archive-keyring" in key_line
-            ],
+            [re.match(key_line_regex, key_line) for key_line in pre_lines if "archive-keyring" in key_line],
             key=lambda x: datetime.strptime(x["modified"], "%d-%b-%Y %H:%M"),
             reverse=True,
         )

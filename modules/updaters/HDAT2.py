@@ -24,10 +24,7 @@ class HDAT2(GenericUpdater):
         arch: str | None = None,
         lang: str | None = None,
     ) -> None:
-        if edition.lower() == "diskette":
-            extension = "img"
-        else:
-            extension = "iso"
+        extension = "img" if edition.lower() == "diskette" else "iso"
 
         mirror_mgr = HDAT2MirrorManager(edition, extension)
         super().__init__(

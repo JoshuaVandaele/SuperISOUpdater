@@ -1,15 +1,15 @@
 import logging
 import traceback
 from abc import ABC
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from modules.exceptions import NoMirrorsError
 from modules.mirrors.GenericMirror import GenericMirror
 from modules.Version import Version
 
 
-class GenericMirrorManager(ABC):
+class GenericMirrorManager(ABC):  # noqa: B024
     """
     A class representing a mirror for downloading files.
     This class fetches a web page, determines the type of checksum available,
@@ -32,9 +32,7 @@ class GenericMirrorManager(ABC):
         self._initialize_all_mirrors()
         self._ensure_latest_version()
         self._mirrors.sort(key=lambda m: m.speed, reverse=True)
-        logging.debug(
-            f"Mirror order: {', '.join(f'{m.__class__.__name__} ({m.speed})' for m in self._mirrors)}"
-        )
+        logging.debug(f"Mirror order: {', '.join(f'{m.__class__.__name__} ({m.speed})' for m in self._mirrors)}")
 
     @property
     def current_mirror(self):
@@ -54,7 +52,7 @@ class GenericMirrorManager(ABC):
         Args:
             func (Callable): Function to call
             args (tuple): Arguments to pass to the function
-            check_bool_output (bool, optional): Should we check the function's output to treat it as a success? Defaults to False.
+            check_bool_output (bool, optional): Should we check the function's output? Defaults to False.
             stop_after_success (bool, optional): Should we stop after the first success? Defaults to False.
 
         Raises:
@@ -79,9 +77,7 @@ class GenericMirrorManager(ABC):
                 f"{m.uri}: {''.join(traceback.format_exception(type(e), e, e.__traceback__))}"
                 for m, e in failed_mirrors
             ]
-            raise NoMirrorsError(
-                f"All mirrors failed to run {func.__name__}. Errors: {'\n'.join(err_details)}"
-            )
+            raise NoMirrorsError(f"All mirrors failed to run {func.__name__}. Errors: {'\n'.join(err_details)}")
 
     def _initialize_all_mirrors(self) -> None:
         """
@@ -96,9 +92,7 @@ class GenericMirrorManager(ABC):
         Those that do not will be removed.
         """
         latest_version: Version = max(mirror.version for mirror in self._mirrors)
-        self.try_for_all_mirrors(
-            lambda m: m.version == latest_version, check_bool_output=True
-        )
+        self.try_for_all_mirrors(lambda m: m.version == latest_version, check_bool_output=True)
 
     def attempt_download(self, local_file: Path) -> None:
         self.try_for_all_mirrors(

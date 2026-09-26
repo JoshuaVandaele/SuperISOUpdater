@@ -44,10 +44,6 @@ class GParted(GenericHTTPMirror):
             if not re.search(self._download_regex, line):
                 cur_sum_type = None
                 continue
-            sums.append(
-                Checksum.from_sum_type(
-                    cur_sum_type, parse_hash(line, self._download_regex, 0)
-                )
-            )
+            sums.append(Checksum.from_sum_type(cur_sum_type, parse_hash(line, self._download_regex, 0)))
             cur_sum_type = None
         return sums

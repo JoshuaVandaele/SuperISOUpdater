@@ -31,9 +31,7 @@ class MirrorService(GenericHTTPMirror):
         )
         ver_r.raise_for_status()
         ver_soup = BeautifulSoup(ver_r.content, features="html.parser")
-        ver_urls = [
-            str(a_tag.get("href")) for a_tag in ver_soup.find_all("a", href=True)
-        ]
+        ver_urls = [str(a_tag.get("href")) for a_tag in ver_soup.find_all("a", href=True)]
 
         latest_version = Version("0")
         for ver_url in sorted(ver_urls, reverse=True):
@@ -48,10 +46,7 @@ class MirrorService(GenericHTTPMirror):
                 )
                 rel_r.raise_for_status()
                 rel_soup = BeautifulSoup(rel_r.content, features="html.parser")
-                rel_urls = [
-                    str(a_tag.get("href"))
-                    for a_tag in rel_soup.find_all("a", href=True)
-                ]
+                rel_urls = [str(a_tag.get("href")) for a_tag in rel_soup.find_all("a", href=True)]
 
                 for rel_url in rel_urls:
                     if rel_url == "release/":

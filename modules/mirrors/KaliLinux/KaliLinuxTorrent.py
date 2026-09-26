@@ -2,8 +2,8 @@ import asyncio
 import contextlib
 import re
 import shutil
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from torrentp import TorrentDownloader
 
@@ -14,14 +14,22 @@ from modules.utils import download_file_to_tmp
 
 
 # TODO: Create a GenericTorrentMirror then have KaliLinux extend that instead of GenericHTTPMirror.
-# Because this is currently the only mirror that uses torrents, I'm not sure of all the requirements yet, but some stoppers are:
-# - What do we do if torrents contain multiple files? (e.g. multiple ISOs, or an ISO and a checksum file) Can we select which file(s) to download?
+# Because this is currently the only mirror that uses torrents, I'm not sure of all the requirements yet,
+# but some stoppers are:
+# - What do we do if torrents contain multiple files? (e.g. multiple ISOs, or an ISO and a checksum file) Can we select
+# which file(s) to download?
 # - How do we create a "self.speed" value for a torrent mirror that is fair to both torrent and non-torrent mirrors?
 # - In general, how do we make this as generic as possible to fit other torrent-based mirrors
 # Some notes:
-# - GenericTorrentMirror must be able to verify either one, or both the torrent file and the downloaded file, depending on what checksums and signatures are available for each. Those may be in separate files in separate locations, or in the same file.
+# - GenericTorrentMirror must be able to verify either one, or both the torrent file and the downloaded file,
+# depending on what checksums and signatures are available for each.
+# Those may be in separate files in separate locations, or in the same file.
 # - We want to support mirrors that use magnet links instead of torrent files
-# - We currently rely on torrentp to do the actual torrent downloading, but we may want to implement our own torrent downloading in the future if we need more control over the process (e.g. selecting which files to download from a torrent, or integrating with our existing download manager for speed testing and such), which would mean using libtorrent (which is a wrapper for libtorrent-rasterbar and not libtorrent-rtorrent)
+# - We currently rely on torrentp to do the actual torrent downloading,
+# but we may want to implement our own torrent downloading in the future if we need more control over the process
+# (e.g. selecting which files to download from a torrent,
+# or integrating with our existing download manager for speed testing and such),
+# which would mean using libtorrent (which is a wrapper for libtorrent-rasterbar and not libtorrent-rtorrent)
 class KaliLinuxTorrent(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str) -> None:
         self.torrent_checksums: list[Checksum] = []
@@ -30,9 +38,7 @@ class KaliLinuxTorrent(GenericHTTPMirror):
             uri="https://cdimage.kali.org/current/",
             download_regex=rf"kali-linux-([\d\.]+)-{edition}-{arch}\.iso\.torrent",
             version_regex=rf"kali-linux-([\d\.]+)-{edition}-{arch}\.iso",
-            signed_file=download_file_to_tmp(
-                "https://cdimage.kali.org/current/SHA256SUMS"
-            ),
+            signed_file=download_file_to_tmp("https://cdimage.kali.org/current/SHA256SUMS"),
         )
         self.checksums: None
         self._version_regex: re.Pattern
@@ -44,15 +50,9 @@ class KaliLinuxTorrent(GenericHTTPMirror):
         self.torrent_checksums = self._determine_torrent_sums()
         self.iso_checksums = self._determine_iso_sums()
 
-    def __extract_sums(
-        self, sumfile_content: str, condition: Callable[[str], bool | None]
-    ) -> str | None:
+    def __extract_sums(self, sumfile_content: str, condition: Callable[[str], bool | None]) -> str | None:
         return next(
-            (
-                line.split()[0]
-                for line in sumfile_content.splitlines()
-                if condition(line)
-            ),
+            (line.split()[0] for line in sumfile_content.splitlines() if condition(line)),
             None,
         )
 
@@ -110,9 +110,7 @@ class KaliLinuxTorrent(GenericHTTPMirror):
             self._download_file(torrent_file)
 
             if not self.checksum_file(torrent_file, self.torrent_checksums):
-                raise IntegrityCheckError(
-                    "Integrity check failed for torrent file! (Checksum)"
-                )
+                raise IntegrityCheckError("Integrity check failed for torrent file! (Checksum)")
 
             torrent_folder = Path(f"{torrent_file}.d")
             stack.callback(shutil.rmtree, torrent_folder, ignore_errors=True)
@@ -125,16 +123,12 @@ class KaliLinuxTorrent(GenericHTTPMirror):
 
             downloaded_iso = next(torrent_folder.glob("*.iso"), None)
             if not downloaded_iso:
-                raise IntegrityCheckError(
-                    "Downloaded torrent did not contain an ISO file"
-                )
+                raise IntegrityCheckError("Downloaded torrent did not contain an ISO file")
 
             self.signature_check(downloaded_iso)
 
             if not self.checksum_file(downloaded_iso, self.iso_checksums):
-                raise IntegrityCheckError(
-                    "Integrity check failed for ISO file! (Checksum)"
-                )
+                raise IntegrityCheckError("Integrity check failed for ISO file! (Checksum)")
             downloaded_iso.rename(file)
 
     def _determine_signature(self) -> bytes:

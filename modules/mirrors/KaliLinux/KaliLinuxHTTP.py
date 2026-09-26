@@ -8,9 +8,7 @@ class KaliLinuxHTTP(GenericHTTPMirror):
             uri="https://cdimage.kali.org/current/",
             download_regex=rf"kali-linux-([\d\.]+)-{edition}-{arch}\.iso",
             version_regex=rf"kali-linux-([\d\.]+)-{edition}-{arch}\.iso",
-            signed_file=download_file_to_tmp(
-                "https://cdimage.kali.org/current/SHA256SUMS"
-            ),
+            signed_file=download_file_to_tmp("https://cdimage.kali.org/current/SHA256SUMS"),
         )
 
     def _determine_signature(self) -> bytes:

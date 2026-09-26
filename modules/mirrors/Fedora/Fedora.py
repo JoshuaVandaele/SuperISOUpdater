@@ -30,9 +30,7 @@ class Fedora(GenericHTTPMirror):
         )
 
     def determine_version(self) -> Version:
-        r = self.session.get(
-            "https://download.fedoraproject.org/pub/fedora/linux/releases/"
-        )
+        r = self.session.get("https://download.fedoraproject.org/pub/fedora/linux/releases/")
         r.raise_for_status()
 
         versions = re.findall(r'href="(?:\./)?(\d+)/?"', r.text)

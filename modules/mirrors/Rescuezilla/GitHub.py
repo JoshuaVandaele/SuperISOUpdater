@@ -14,9 +14,5 @@ class GitHub(GitHubMirror):
         )
 
     def _determine_latest_version(self) -> Version:
-        self.github_info = [
-            release
-            for release in self.github_info
-            if "rolling" not in release["tag_name"]
-        ]
+        self.github_info = [release for release in self.github_info if "rolling" not in release["tag_name"]]
         return super()._determine_latest_version()

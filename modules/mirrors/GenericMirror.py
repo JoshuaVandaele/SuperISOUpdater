@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Self
+from typing import ClassVar, Self
 
 from modules.Checksum import Checksum
 from modules.exceptions import IntegrityCheckError
@@ -18,7 +19,7 @@ class GenericMirror(ABC):
     - Get and verify the PGP/GPG signature if available
     """
 
-    _init_steps: list[str] = [
+    _init_steps: ClassVar[list[str]] = [
         "_init_version",
         "_init_checksums",
         "_init_signature",
@@ -72,21 +73,14 @@ class GenericMirror(ABC):
 
     @property
     def signed_file(self):
-        return (
-            self.__signed_file
-            if not callable(self.__signed_file)
-            else self.__signed_file(self)
-        )
+        return self.__signed_file if not callable(self.__signed_file) else self.__signed_file(self)
 
     def initialize(self) -> None:
         for step in self._init_steps:
             getattr(self, step)()
 
     def checksum_file(self, file: Path, sums: list[Checksum]) -> bool:
-        for checksum in sums:
-            if not checksum.verify_file(file):
-                return False
-        return True
+        return all(checksum.verify_file(file) for checksum in sums)
 
     def signature_check(self, file: Path) -> None:
         if not self.has_signature:
@@ -107,9 +101,7 @@ class GenericMirror(ABC):
         if not signature_success:
             if file:
                 file.unlink()
-            raise IntegrityCheckError(
-                f"Integrity check failed! (Signature){f': {sig_error}' if sig_error else ''}"
-            )
+            raise IntegrityCheckError(f"Integrity check failed! (Signature){f': {sig_error}' if sig_error else ''}")
 
     def download_and_verify(self, file: Path) -> None:
         """Downloads a file and verifies its integrity through checksum and signature.

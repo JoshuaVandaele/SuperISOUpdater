@@ -15,9 +15,7 @@ class OVH(GenericHTTPMirror):
     def __init__(self, arch: str, edition: str) -> None:
         self.session = requests_cache.CachedSession(backend="memory")
         version = self._determine_latest_version()
-        checksum_url: str = (
-            f"https://ubuntu.mirrors.ovh.net/releases/{version}/SHA256SUMS"
-        )
+        checksum_url: str = f"https://ubuntu.mirrors.ovh.net/releases/{version}/SHA256SUMS"
 
         super().__init__(
             uri=f"https://ubuntu.mirrors.ovh.net/releases/{version}/",

@@ -14,19 +14,12 @@ class DotDashVersion(Version):
             raise ValueError("The version string cannot be empty.")
         self.zero_pad = zero_pad
         components: list[str] = re.split(r"[.-]", version_string)
-        self._parsed_components: list[ParsedTokens] = [
-            self._parse_component(c) for c in components
-        ]
+        self._parsed_components: list[ParsedTokens] = [self._parse_component(c) for c in components]
 
     def __str__(self) -> str:
         str_components = [
             "".join(
-                (
-                    f"{tok:0{self.zero_pad}d}"
-                    if isinstance(tok, int) and self.zero_pad > 0
-                    else str(tok)
-                )
-                for tok in comp
+                (f"{tok:0{self.zero_pad}d}" if isinstance(tok, int) and self.zero_pad > 0 else str(tok)) for tok in comp
             )
             for comp in self._parsed_components
         ]

@@ -8,9 +8,7 @@ class Kernel(GenericHTTPMirror):
     KEY_SERVER = "keys.openpgp.org"
 
     def __init__(self, edition: str) -> None:
-        checksum_url: str = (
-            "https://mirrors.edge.kernel.org/linuxmint/debian/sha256sum.txt"
-        )
+        checksum_url: str = "https://mirrors.edge.kernel.org/linuxmint/debian/sha256sum.txt"
 
         super().__init__(
             uri="https://mirrors.edge.kernel.org/linuxmint/debian/",

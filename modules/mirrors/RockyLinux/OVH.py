@@ -34,9 +34,7 @@ class OVH(GenericHTTPMirror):
 
     def _determine_public_key(self) -> bytes:
         # https://rockylinux.org/resources/gpg-key-info
-        r = self.session.get(
-            f"https://dl.rockylinux.org/pub/rocky/RPM-GPG-KEY-Rocky-{self.version.components[0]}"
-        )
+        r = self.session.get(f"https://dl.rockylinux.org/pub/rocky/RPM-GPG-KEY-Rocky-{self.version.components[0]}")
         r.raise_for_status()
         return r.content
 

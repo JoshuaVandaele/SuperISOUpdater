@@ -4,7 +4,6 @@ from abc import ABCMeta
 from dataclasses import dataclass
 from functools import cache
 from sys import modules
-from typing import Type
 
 import modules.updaters
 from modules.ISOPath import ISOPath
@@ -14,7 +13,7 @@ from modules.updaters import GenericUpdater
 @dataclass
 class ISOConfig:
     iso_path: ISOPath
-    updater: Type[GenericUpdater]
+    updater: type[GenericUpdater]
     archs: list[str] | None = None
     editions: list[str] | None = None
     langs: list[str] | None = None
@@ -32,7 +31,7 @@ class SISOUConfig(list[ISOConfig]):
 
     @staticmethod
     @cache
-    def __get_available_updaters() -> list[Type[GenericUpdater]]:
+    def __get_available_updaters() -> list[type[GenericUpdater]]:
         return [
             getattr(modules.updaters, updater)
             for updater in dir(modules.updaters)
@@ -50,16 +49,13 @@ class SISOUConfig(list[ISOConfig]):
         return updater_name in SISOUConfig.__get_available_updaters_names()
 
     @staticmethod
-    def __string_to_updater(updater_name: str) -> Type[GenericUpdater]:
+    def __string_to_updater(updater_name: str) -> type[GenericUpdater]:
         if not SISOUConfig.__is_valid_updater(updater_name):
             raise ValueError(
-                f"Invalid updater name: {updater_name}. Available updaters are: {SISOUConfig.__get_available_updaters_names()}"
+                f"Invalid updater name: {updater_name}. "
+                "Available updaters are: {SISOUConfig.__get_available_updaters_names()}"
             )
-        return next(
-            updater
-            for updater in SISOUConfig.__get_available_updaters()
-            if updater.__name__ == updater_name
-        )
+        return next(updater for updater in SISOUConfig.__get_available_updaters() if updater.__name__ == updater_name)
 
     @staticmethod
     def __load_config(config_path: str) -> dict:
@@ -90,21 +86,17 @@ class SISOUConfig(list[ISOConfig]):
                 isos += self._parse_dir(v, os.path.join(cur_path))
             else:
                 raise ValueError(
-                    f"Invalid updater or directory: {k}. Must be either a supported updater or a category with a 'directory' key."
+                    f"Invalid updater or directory: {k}. "
+                    "Must be either a supported updater or a category with a 'directory' key."
                 )
         return isos
 
-    def _parse_iso(
-        self, updater_name: str, iso_dict: dict, cur_path: str = ""
-    ) -> ISOConfig | None:
+    def _parse_iso(self, updater_name: str, iso_dict: dict, cur_path: str = "") -> ISOConfig | None:
         if "name" not in iso_dict:
             raise ValueError(f"'{updater_name}' config must have 'name' key")
         path = ISOPath(iso_dict["name"])
         directory = iso_dict.get("directory")
-        if directory:
-            path = ISOPath(os.path.join(cur_path, directory, path))
-        else:
-            path = ISOPath(os.path.join(cur_path, path))
+        path = ISOPath(os.path.join(cur_path, directory, path)) if directory else ISOPath(os.path.join(cur_path, path))
         return ISOConfig(
             iso_path=path,
             updater=self.__string_to_updater(updater_name),

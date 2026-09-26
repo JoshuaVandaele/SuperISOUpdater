@@ -41,9 +41,6 @@ dependencies = [
     "torrentp~=0.2.7",
 ]
 
-[project.optional-dependencies]
-dev = ["ruff~=0.16"]
-
 [project.urls]
 Homepage = "https://github.com/JoshuaVandaele/SuperISOUpdater"
 "Bug Reports" = "https://github.com/JoshuaVandaele/SuperISOUpdater/issues"
@@ -60,3 +57,14 @@ where = ["."]
 
 [tool.setuptools.data-files]
 "sisou/config" = ["config/sisou.toml.default"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S", "BLE", "PYI", "SIM", "RUF"]
+ignore = ["LOG015", "B019", "BLE001"]
+
+[dependency-groups]
+dev = ["ruff~=0.16"]

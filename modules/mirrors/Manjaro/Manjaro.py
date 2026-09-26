@@ -13,9 +13,7 @@ class Manjaro(GenericHTTPMirror):
 
     def _determine_public_key(self):
         # https://wiki.manjaro.org/index.php/How-to_verify_GPG_key_of_official_.ISO_images
-        r = self.session.get(
-            "https://gitlab.manjaro.org/packages/core/manjaro-keyring/-/raw/master/manjaro.gpg"
-        )
+        r = self.session.get("https://gitlab.manjaro.org/packages/core/manjaro-keyring/-/raw/master/manjaro.gpg")
         r.raise_for_status()
         return r.content
 

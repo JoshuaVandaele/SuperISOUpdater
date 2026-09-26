@@ -23,9 +23,7 @@ class HirensBootCD(GenericHTTPMirror):
         version = version_pattern.search(self._text_page)
         if version:
             return Version(version.group(1))
-        raise ValueError(
-            f"No version found on the page '{self.uri}' using regex '{self._version_regex}'"
-        )
+        raise ValueError(f"No version found on the page '{self.uri}' using regex '{self._version_regex}'")
 
     def _determine_sums(self) -> list[Checksum]:
         # TODO: Extract all checksums

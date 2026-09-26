@@ -21,12 +21,8 @@ class Microsoft(GenericHTTPMirror):
         self.windows_version = "11" if arch == "x64" else "11arm64"
 
     def _determine_sums(self) -> list[Checksum]:
-        hash = WindowsConsumerDownloader.windows_consumer_file_hash(
-            self.windows_version, self.lang
-        )
+        hash = WindowsConsumerDownloader.windows_consumer_file_hash(self.windows_version, self.lang)
         return [SHA256Sum(hash)]
 
     def _determine_download_link(self) -> str:
-        return WindowsConsumerDownloader.windows_consumer_download(
-            self.windows_version, self.lang
-        )
+        return WindowsConsumerDownloader.windows_consumer_download(self.windows_version, self.lang)

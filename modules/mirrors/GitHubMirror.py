@@ -1,4 +1,5 @@
 import re
+from typing import ClassVar
 
 from modules.Checksum import Checksum, SumType
 from modules.GitHubVersion import GitHubVersion
@@ -9,7 +10,7 @@ from modules.Version import Version
 
 class GitHubMirror(GenericHTTPMirror):
     API_URL = "https://api.github.com"
-    _init_steps: list[str] = [
+    _init_steps: ClassVar[list[str]] = [
         "_init_github",
         "_init_version",
         "_init_download_link",
@@ -51,32 +52,20 @@ class GitHubMirror(GenericHTTPMirror):
         latest_version = Version("0")
         self.current_release_json = {}
         for release in self.github_info:
-            if (
-                self.determine_version_using == GitHubVersion.TAG
-                or self.determine_version_using == GitHubVersion.NAME
-            ):
-                if self.determine_version_using == GitHubVersion.TAG:
-                    version_key = "tag_name"
-                else:
-                    version_key = "name"
-                current_version = self._determine_latest_version_from_search(
-                    self._version_regex, release[version_key]
-                )
+            if self.determine_version_using == GitHubVersion.TAG or self.determine_version_using == GitHubVersion.NAME:
+                version_key = "tag_name" if self.determine_version_using == GitHubVersion.TAG else "name"
+                current_version = self._determine_latest_version_from_search(self._version_regex, release[version_key])
                 if current_version and current_version > latest_version:
                     latest_version = current_version
                     self.current_release_json = release
             elif self.determine_version_using == GitHubVersion.FILE_NAME:
                 for asset in release["assets"]:
-                    current_version = self._determine_latest_version_from_search(
-                        self._version_regex, asset["name"]
-                    )
+                    current_version = self._determine_latest_version_from_search(self._version_regex, asset["name"])
                     if current_version and current_version > latest_version:
                         latest_version = current_version
                         self.current_release_json = release
         if latest_version == Version("0"):
-            raise ValueError(
-                f"No version found on the page '{self.uri}' using regex '{self._version_regex}'"
-            )
+            raise ValueError(f"No version found on the page '{self.uri}' using regex '{self._version_regex}'")
         return latest_version
 
     def _urls(self) -> list[str]:
@@ -99,16 +88,12 @@ class GitHubMirror(GenericHTTPMirror):
                 try:
                     sum_file_text, sum_pos = self._fetch_and_parse_sum(url)
                 except Exception as e:
-                    errors.append(
-                        f"Error fetching or parsing sum file from '{url}': {e}"
-                    )
+                    errors.append(f"Error fetching or parsing sum file from '{url}': {e}")
                     continue
 
                 has_whitespace = re.search(r"\s", sum_file_text)
                 hash_value = (
-                    sum_file_text
-                    if not has_whitespace
-                    else parse_hash(sum_file_text, self._download_regex, sum_pos)
+                    sum_file_text if not has_whitespace else parse_hash(sum_file_text, self._download_regex, sum_pos)
                 )
                 sums.append(Checksum.from_sum_type(sum_type, hash_value))
         if sums:

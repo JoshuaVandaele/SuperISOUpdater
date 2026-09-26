@@ -7,7 +7,6 @@ from abc import ABCMeta
 from functools import cache
 from itertools import product
 from pathlib import Path
-from typing import Type
 
 import modules.updaters
 from modules.SISOUConfig import SISOUConfig
@@ -16,7 +15,7 @@ from modules.utils import format_size
 
 
 @cache
-def get_available_updaters() -> list[Type[GenericUpdater]]:
+def get_available_updaters() -> list[type[GenericUpdater]]:
     """Get a list of available updaters.
 
     Returns:
@@ -57,46 +56,44 @@ def run_updater(updater: GenericUpdater):
     Args:
         updater (GenericUpdater): The updater instance to run.
     """
-    installer_for = f"{updater.__class__.__name__}{' ' + updater.edition if updater.edition else ''}{' ' + updater.lang if updater.lang else ''}{' ' + updater.arch if updater.arch else ''}"
+    installer_for = (
+        f"{updater.__class__.__name__}{' ' + updater.edition if updater.edition else ''}"
+        f"{' ' + updater.lang if updater.lang else ''}{' ' + updater.arch if updater.arch else ''}"
+    )
 
     logging.info(f"[{installer_for}] Checking for updates...")
 
     try:
         if updater.is_update_available():
             logging.info(
-                f"[{installer_for}] Update available. Updating from version {updater._get_local_version()} to {updater._get_latest_version()}..."
+                f"[{installer_for}] Update available. "
+                f"Updating from version {updater._get_local_version()} to {updater._get_latest_version()}..."
             )
-            old_size = (
-                local_file.stat().st_size
-                if (local_file := updater._get_local_file())
-                else 0
-            )
+            old_size = local_file.stat().st_size if (local_file := updater._get_local_file()) else 0
             updater.install_latest_version()
-            new_size = (
-                local_file.stat().st_size
-                if (local_file := updater._get_local_file())
-                else 0
-            )
+            new_size = local_file.stat().st_size if (local_file := updater._get_local_file()) else 0
             diff_size = new_size - old_size
             logging.info(
-                f"[{installer_for}] Update completed successfully! ({'-' if diff_size < 0 else '+'}{format_size(abs(diff_size))})"
+                f"[{installer_for}] Update completed successfully! "
+                f"({'-' if diff_size < 0 else '+'}{format_size(abs(diff_size))})"
             )
         else:
             logging.info(f"[{installer_for}] No updates available.")
     except Exception:
-        logging.exception(
-            f"[{installer_for}] An error occurred while updating. See traceback below."
-        )
+        logging.exception(f"[{installer_for}] An error occurred while updating. See traceback below.")
 
 
 def create_and_run_updaters(config: SISOUConfig) -> None:
     for iso_config in config:
-        edition = iso_config.editions or [None]
-        lang = iso_config.langs or [None]
-        arch = iso_config.archs or [None]
+        editions = iso_config.editions or [None]
+        langs = iso_config.langs or [None]
+        archs = iso_config.archs or [None]
 
-        for edition, lang, arch in product(edition, lang, arch):
-            installer_for = f"{iso_config.updater.__name__}{' ' + edition if edition else ''}{' ' + lang if lang else ''}{' ' + arch if arch else ''}"
+        for edition, lang, arch in product(editions, langs, archs):
+            installer_for = (
+                f"{iso_config.updater.__name__}{' ' + edition if edition else ''}"
+                f"{' ' + lang if lang else ''}{' ' + arch if arch else ''}"
+            )
             try:
                 updater_instance = iso_config.updater(
                     iso_path=iso_config.iso_path,
@@ -105,9 +102,7 @@ def create_and_run_updaters(config: SISOUConfig) -> None:
                     lang=lang,
                 )  # type: ignore // We don't pass a mirror_mgr parameter to child classes of GenericUpdater
             except Exception:
-                logging.exception(
-                    f"[{installer_for}] An error occurred while updating. See traceback below."
-                )
+                logging.exception(f"[{installer_for}] An error occurred while updating. See traceback below.")
                 continue
             run_updater(updater_instance)
 
@@ -126,9 +121,7 @@ def main():
         default="INFO",
         help="Set the log level (default: INFO)",
     )
-    parser.add_argument(
-        "-f", "--log-file", help="Path to the log file (default: log to console)"
-    )
+    parser.add_argument("-f", "--log-file", help="Path to the log file (default: log to console)")
     parser.add_argument(
         "-v",
         "--version",
@@ -146,13 +139,9 @@ def main():
         config_path = os.path.join(config_path, "sisou.toml")
 
     if not os.path.exists(config_path):
-        default_config_path = os.path.join(
-            os.path.dirname(__file__), "config", "sisou.toml.default"
-        )
+        default_config_path = os.path.join(os.path.dirname(__file__), "config", "sisou.toml.default")
         shutil.copyfile(default_config_path, config_path)
-        logging.info(
-            f"No config file found. A default config file has been created at: {config_path}"
-        )
+        logging.info(f"No config file found. A default config file has been created at: {config_path}")
         return
 
     os.chdir(os.path.dirname(config_path))

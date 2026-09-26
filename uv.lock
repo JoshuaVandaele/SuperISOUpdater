@@ -448,22 +448,23 @@ dependencies = [
     { name = "tqdm" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "~=4.14" },
+    { name = "beautifulsoup4", specifier = "~=4.15" },
     { name = "python-gnupg", specifier = "~=0.5" },
-    { name = "requests", specifier = "~=2.32" },
+    { name = "requests", specifier = "~=2.34" },
     { name = "requests-cache", specifier = "~=1.3" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = "~=0.15" },
     { name = "torrentp", specifier = "~=0.2.7" },
-    { name = "tqdm", specifier = "~=4.67" },
+    { name = "tqdm", specifier = "~=4.70" },
 ]
-provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff", specifier = "~=0.16" }]
 
 [[package]]
 name = "soupsieve"

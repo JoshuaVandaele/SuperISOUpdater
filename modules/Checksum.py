@@ -64,9 +64,7 @@ class Checksum(ABC):
         digest = self.compute_file_hash(file)
 
         if digest is None:
-            logging.info(
-                f"[{type(self).__name__}] No hash implementation, skipping verification"
-            )
+            logging.info(f"[{type(self).__name__}] No hash implementation, skipping verification")
             return True
 
         logging.debug(f"[{type(self).__name__}] {file.resolve()} -> {digest}")

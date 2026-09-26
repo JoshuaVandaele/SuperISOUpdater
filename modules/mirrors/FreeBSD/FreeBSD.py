@@ -35,7 +35,8 @@ class FreeBSD(GenericHTTPMirror):
             uri=f"https://download.freebsd.org/releases/{self.parent_arch}/{self.arch}/ISO-IMAGES/{self.version}/",
             download_regex=rf"FreeBSD-{self.version}-RELEASE-{arch_file_part}-{self.edition}\.iso",
             version=self.version,
-            # FIXME: There is a signed checksum file, but importing https://docs.freebsd.org/pgpkeys/pgpkeys.txt with gpg fails due to signatures being corrupted.
+            # FIXME: There is a signed checksum file, but importing https://docs.freebsd.org/pgpkeys/pgpkeys.txt
+            # with gpg fails due to signatures being corrupted.
             # Even trying to use the (partially) working keys fails to verify the signatures.
             # https://docs.freebsd.org/en/books/handbook/pgpkeys/
             # https://www.freebsd.org/releases/{version}R/signatures/

@@ -35,6 +35,5 @@ class Tails(GenericHTTPMirror):
             return sums
 
         raise ValueError(
-            "Could not determine the checksum from "
-            "https://tails.net/install/v2/Tails/amd64/stable/latest.json"
+            "Could not determine the checksum from https://tails.net/install/v2/Tails/amd64/stable/latest.json"
         )

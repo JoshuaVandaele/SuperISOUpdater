@@ -1,8 +1,9 @@
 import logging
 import re
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Self
+from typing import ClassVar, Self
 from urllib.parse import urljoin
 
 import requests
@@ -17,7 +18,7 @@ from modules.Version import Version
 
 
 class GenericHTTPMirror(GenericMirror):
-    _init_steps: list[str] = [
+    _init_steps: ClassVar[list[str]] = [
         "_init_soup",
         "_init_version",
         "_init_download_link",
@@ -26,8 +27,8 @@ class GenericHTTPMirror(GenericMirror):
         "_init_speed",
     ]
 
-    SIGNATURE_EXTENSIONS = ["asc", "sig", "gpg"]
-    PUBKEY_EXTENSIONS = ["key", "pub", "pem"]
+    SIGNATURE_EXTENSIONS: ClassVar[list[str]] = ["asc", "sig", "gpg"]
+    PUBKEY_EXTENSIONS: ClassVar[list[str]] = ["key", "pub", "pem"]
 
     def __init__(
         self,
@@ -43,9 +44,7 @@ class GenericHTTPMirror(GenericMirror):
         signed_file: Path | Callable[[Self], Path] | None = None,
     ) -> None:
         if not version_regex and not version:
-            raise ValueError(
-                "Either 'version_regex' or 'version' must be provided to determine the version."
-            )
+            raise ValueError("Either 'version_regex' or 'version' must be provided to determine the version.")
         super().__init__(
             uri,
             version_class,
@@ -66,9 +65,7 @@ class GenericHTTPMirror(GenericMirror):
         return super()._init_version()
 
     def _init_soup(self) -> None:
-        response = self.session.get(
-            self.uri, headers=self.headers, allow_redirects=True
-        )
+        response = self.session.get(self.uri, headers=self.headers, allow_redirects=True)
         response.raise_for_status()
         self._soup_page = BeautifulSoup(response.content, features="html.parser")
         self._text_page = response.text
@@ -78,14 +75,13 @@ class GenericHTTPMirror(GenericMirror):
 
     def _determine_download_link(self) -> str:
         for link in self._urls_with_download_regex():
-            if (
-                re.search(rf"{self._download_regex}$", link)
-                and str(self.version) in link
-            ):
+            if re.search(rf"{self._download_regex}$", link) and str(self.version) in link:
                 return link
 
         raise DownloadLinkNotFoundError(
-            f"Download link not found for regex '{self._download_regex}' and version '{self.version}' on page '{self.uri}'"
+            f"Download link not found for regex '{self._download_regex}' "
+            f"and version '{self.version}' "
+            f"on page '{self.uri}'"
         )
 
     def _determine_public_key(self) -> bytes:
@@ -154,16 +150,10 @@ class GenericHTTPMirror(GenericMirror):
 
     def _determine_latest_version_from_search(self, regex, string) -> Version | None:
         version_match = re.search(regex, string)
-        if (
-            not version_match
-            or not version_match.lastindex
-            or version_match.lastindex < 1
-        ):
+        if not version_match or not version_match.lastindex or version_match.lastindex < 1:
             return None
 
-        return self.VersionClass(
-            version_match.group(1), self.version_separator, self.version_padding
-        )
+        return self.VersionClass(version_match.group(1), self.version_separator, self.version_padding)
 
     def _determine_latest_version(self) -> Version:
         """
@@ -177,24 +167,16 @@ class GenericHTTPMirror(GenericMirror):
         """
         latest_version = self.VersionClass("0")
         for url in self._urls_with_download_regex():
-            logging.debug(
-                f"Checking URL for version: {url} with regex {self._version_regex}"
-            )
-            current_version = self._determine_latest_version_from_search(
-                self._version_regex, url
-            )
+            logging.debug(f"Checking URL for version: {url} with regex {self._version_regex}")
+            current_version = self._determine_latest_version_from_search(self._version_regex, url)
             if current_version and current_version > latest_version:
                 latest_version = current_version
         if latest_version == self.VersionClass("0"):
-            current_version = self._determine_latest_version_from_search(
-                self._version_regex, self._text_page
-            )
+            current_version = self._determine_latest_version_from_search(self._version_regex, self._text_page)
             if current_version and current_version > latest_version:
                 latest_version = current_version
         if latest_version == self.VersionClass("0"):
-            raise ValueError(
-                f"No version found on the page '{self.uri}' using regex '{self._version_regex}'"
-            )
+            raise ValueError(f"No version found on the page '{self.uri}' using regex '{self._version_regex}'")
         return latest_version
 
     def _fetch_and_parse_sum(self, url: str) -> tuple[str, int]:
@@ -235,9 +217,7 @@ class GenericHTTPMirror(GenericMirror):
                     try:
                         sum_file_text, sum_pos = self._fetch_and_parse_sum(url)
                     except Exception as e:
-                        errors.append(
-                            f"Error fetching or parsing sum file from '{url}': {e}"
-                        )
+                        errors.append(f"Error fetching or parsing sum file from '{url}': {e}")
                         continue
 
                     has_whitespace = re.search(r"\s", sum_file_text)
@@ -257,9 +237,7 @@ class GenericHTTPMirror(GenericMirror):
 
     def _determine_speed(self) -> float:
         PROBE_BYTES: int = 512 * 1024  # 512 KB
-        with requests.get(
-            self.download_link, stream=True, timeout=10, headers=self.headers
-        ) as response:
+        with requests.get(self.download_link, stream=True, timeout=10, headers=self.headers) as response:
             response.raise_for_status()
             start = time.time_ns()
             total_size = 0

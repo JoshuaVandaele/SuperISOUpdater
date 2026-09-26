@@ -4,10 +4,10 @@ import shutil
 import tempfile
 import traceback
 import zipfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from io import BytesIO
 from pathlib import Path
-from typing import Generator
 
 import gnupg
 import requests
@@ -65,9 +65,7 @@ def pgp_check(file_path: Path, signature: str | bytes, public_key: str | bytes) 
 
     result = verify_result.valid
 
-    logging.debug(
-        f"[pgp_check] {file_path.resolve()}: Signature is{' ' if result else ' not '}valid"
-    )
+    logging.debug(f"[pgp_check] {file_path.resolve()}: Signature is{' ' if result else ' not '}valid")
 
     return result
 
@@ -147,12 +145,11 @@ def parse_hash(hashes: str, match_regex: str, hash_position_in_line: int):
         The extracted hash value.
     """
     logging.debug(
-        f"[parse_hash] Parsing hashes with match strings `{match_regex}` and hash position {hash_position_in_line} in those hashes:\n{hashes}"
+        f"[parse_hash] Parsing hashes with match strings `{match_regex}` "
+        f"and hash position {hash_position_in_line} in those hashes:\n{hashes}"
     )
     hash = next(
-        line.split()[hash_position_in_line]
-        for line in hashes.strip().splitlines()
-        if re.search(match_regex, line)
+        line.split()[hash_position_in_line] for line in hashes.strip().splitlines() if re.search(match_regex, line)
     )
     logging.debug(f"[parse_hash] Extracted hash: `{hash}`")
     return hash
@@ -174,15 +171,13 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
     logging.debug(f"[download_file] Downloading {url} to {part_file.resolve()}")
 
     try:
-        with requests.get(url, stream=True) as r:
+        with requests.get(url, stream=True) as r:  # noqa: S113
             r.raise_for_status()
             total_size = int(r.headers.get("content-length", 0))  # Sizes in bytes
 
             with open(part_file, "wb") as f:
                 if progress_bar:
-                    with tqdm(
-                        total=total_size, unit="B", desc=part_file.name, unit_scale=True
-                    ) as pbar:
+                    with tqdm(total=total_size, unit="B", desc=part_file.name, unit_scale=True) as pbar:
                         for chunk in r.iter_content(chunk_size=1024):
                             if chunk:
                                 f.write(chunk)
@@ -204,9 +199,7 @@ def download_file(url: str, local_file: Path, progress_bar: bool = True) -> None
 
 
 @contextmanager
-def extract_matching_zip_file(
-    zip_path: Path, pattern: str
-) -> Generator[Path, None, None]:
+def extract_matching_zip_file(zip_path: Path, pattern: str) -> Generator[Path]:
     """
     Context manager that extracts a single file from a ZIP archive if its name matches
     a given regex pattern, using a temporary directory for extraction.
@@ -242,7 +235,7 @@ def download_file_to_tmp(url) -> Path:
     r = session.get(url)
     r.raise_for_status()
 
-    sig_file = tempfile.NamedTemporaryFile(delete=False, prefix="sisou_", mode="wb")
+    sig_file = tempfile.NamedTemporaryFile(delete=False, prefix="sisou_", mode="wb")  # noqa: SIM115
     sig_file.write(r.content)
     sig_file.flush()
     sig_file.close()
