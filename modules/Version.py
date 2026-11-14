@@ -1,7 +1,7 @@
 import re
 
 from modules.ParsedTokens import ParsedTokens, Token
-
+from itertools import zip_longest
 
 class Version:
     _token_regex = re.compile(r"\d+|[A-Za-z]+")
@@ -48,7 +48,7 @@ class Version:
 
     @classmethod
     def _compare_parsed(cls, left_tokens: ParsedTokens, right_tokens: ParsedTokens) -> int:
-        for left_token, right_token in zip(left_tokens, right_tokens, strict=True):
+        for left_token, right_token in zip_longest(left_tokens, right_tokens, fillvalue=[0]):
             c = cls._cmp_tokens(left_token, right_token)
             if c:
                 return c
@@ -56,7 +56,7 @@ class Version:
         return (len(left_tokens) > len(right_tokens)) - (len(left_tokens) < len(right_tokens))
 
     def _compare(self, other: "Version") -> int:
-        for me, you in zip(self._parsed_components, other._parsed_components, strict=True):
+        for me, you in zip_longest(self._parsed_components, other._parsed_components, fillvalue=[0]):
             c = self._compare_parsed(me, you)
             if c:
                 return c
